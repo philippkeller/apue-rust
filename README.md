@@ -1,2 +1,1 @@
-# apue-rust
-Examples and Exercises in Rust from "Advanced Programming in the UNIX Environment"
+I'm reading through "[Advanced Programming in the UNIX Environment](https://www.amazon.com/dp/0321637739)". My dislike of C caused me to learn Rust and port some of the examples and exercises from C to Rust.
