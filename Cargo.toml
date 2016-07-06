@@ -2,6 +2,13 @@
 name="apue"
 version = "0.0.2"
 authors = ["philipp.keller@gmail.com"]
+description = "Code from 'Advanced Programming in the UNIX environment' (APUE) ported to Rust"
+homepage = "https://github.com/philippkeller/apue-rust"
+repository = "https://github.com/philippkeller/apue-rust"
+keywords = [
+  "unix",
+  "book"
+]
 
 [dependencies]
 libc = "*"
