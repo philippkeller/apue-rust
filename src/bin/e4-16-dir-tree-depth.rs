@@ -22,9 +22,12 @@ fn main() {
 			    if libc::getcwd(ptr, buf.capacity()).is_null() {
 			    	panic!(io::Error::last_os_error());
 			    }
-				CStr::from_ptr(ptr).to_bytes()
+				let len = CStr::from_ptr(ptr).to_bytes().len();
+				buf.set_len(len);
+				CString::new(buf)
 			};
-			println!("path length: {}, max path: {}", str::from_utf8(buf).unwrap().len(), path_max);
+			let s = buf.expect("Not a C string").into_string().expect("Not UTF-8");
+			println!("path length: {}, max path: {}", s, path_max);
 		}
 	}
 }
