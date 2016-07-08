@@ -1,7 +1,9 @@
 extern crate libc;
+extern crate apue;
 
 use std::ffi::CString;
 use std::io;
+use apue::LibcIntResult;
 
 static FILE_MODE:libc::mode_t = 	
 	libc::S_IRUSR + libc::S_IWUSR +
@@ -14,11 +16,12 @@ fn main() {
 		if libc::unlink(fd1) < 0 {
 			println!("{}", io::Error::last_os_error());	
 		}
-		libc::creat(fd1, FILE_MODE)
+		if let Some(fd) = libc::creat(fd1, FILE_MODE).to_option() {
+			fd
+		} else {
+			panic!("{}", io::Error::last_os_error());
+		}
 	};
-	if fd < 0 {
-		println!("{}", io::Error::last_os_error());
-	}
 	println!("{}", fd);
 }
 
