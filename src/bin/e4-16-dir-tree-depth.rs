@@ -5,7 +5,7 @@ use std::io;
 use std::str;
 
 static BUF_BYTES: usize = 4096;
-pub const _PC_PATH_MAX: libc::c_int = 5; // constant is missing in libc
+const _PC_PATH_MAX: libc::c_int = 5; // constant is missing in libc
 
 fn main() {
 	unsafe {
