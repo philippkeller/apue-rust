@@ -1,4 +1,16 @@
 extern crate libc;
+use std::ffi::CString;
+
+
+pub trait ToPtr {
+	fn to_ptr(&self) -> *const i8;
+}
+
+impl ToPtr for str {
+	fn to_ptr(&self) -> *const i8 {
+		CString::new(self).unwrap().as_ptr()
+	}
+}
 
 pub trait LibcIntResult {
 	/// returns None if the `c_int` is below 0, and Some otherwise

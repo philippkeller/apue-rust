@@ -1,5 +1,4 @@
 extern crate libc;
-extern crate apue;
 
 static MAXLINE:libc::c_int = 10;
 
