@@ -1,11 +1,10 @@
+#![allow(non_camel_case_types)]
+
 /// Works for OS X only. To make this work on other platforms run 
 /// bindgen on stdio.h and replace the bindgen generated code below
 ///
 /// Main captcha here is that you first need to perform operations on
 /// the stream before you can get any buffer information from it.
-
-
-#![allow(non_camel_case_types)]
 
 extern crate libc;
 use std::ffi::CString;
