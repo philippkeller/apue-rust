@@ -1,11 +1,14 @@
+/// Works for OS X only. To make this work on other platforms run 
+/// bindgen on stdio.h and replace the bindgen generated code below
+///
+/// Main captcha here is that you first need to perform operations on
+/// the stream before you can get any buffer information from it.
+
+
 #![allow(non_camel_case_types)]
 
 extern crate libc;
 use std::ffi::CString;
-
-extern {
-    pub fn getchar() -> libc::c_int;
-}
 
 // bindgen generaged code starts...
 extern "C" {
@@ -86,7 +89,7 @@ fn main() {
         let stderr = __stderrp as *mut libc::FILE;
         let passwd = libc::fopen(b"/etc/passwd\0".as_ptr() as *const libc::c_char, b"r\0".as_ptr() as *const libc::c_char);
         libc::fputs(CString::new("enter any character\n").unwrap().as_ptr(), stdout);
-        getchar();
+        libc::getchar();
         libc::fputs(CString::new("one line to stderr\n").unwrap().as_ptr(), stderr);
         libc::fgetc(passwd);
         pr_stdio("stdin", stdin);
