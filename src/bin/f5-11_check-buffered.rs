@@ -9,6 +9,11 @@
 extern crate libc;
 use std::ffi::CString;
 
+// can be called from libc::getchar once https://github.com/rust-lang/libc/pull/372 is released
+extern {
+    pub fn getchar() -> libc::c_int;
+}
+
 // bindgen generaged code starts...
 extern "C" {
     pub static mut __stdinp: *mut MY_FILE;
@@ -88,7 +93,7 @@ fn main() {
         let stderr = __stderrp as *mut libc::FILE;
         let passwd = libc::fopen(b"/etc/passwd\0".as_ptr() as *const libc::c_char, b"r\0".as_ptr() as *const libc::c_char);
         libc::fputs(CString::new("enter any character\n").unwrap().as_ptr(), stdout);
-        libc::getchar();
+        getchar();
         libc::fputs(CString::new("one line to stderr\n").unwrap().as_ptr(), stderr);
         libc::fgetc(passwd);
         pr_stdio("stdin", stdin);
