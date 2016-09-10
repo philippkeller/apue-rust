@@ -1,3 +1,10 @@
+/// Code for Figure 5.13 (Demonstrate mkstemp function)
+///
+/// implementation in rust was quite straight forward
+/// only caveat was that the pointer to the variable on the stack
+/// is not possible (or I just didn't find out how to do that and
+/// didn't dare to ask on stackoverflow)
+
 extern crate libc;
 
 use std::ffi::{CString,CStr};
