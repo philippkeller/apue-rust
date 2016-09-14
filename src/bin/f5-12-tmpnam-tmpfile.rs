@@ -10,37 +10,38 @@ use std::ffi::{CStr, CString};
 
 const MAXLINE: usize = 4096;
 
-extern {
+extern "C" {
     pub fn tmpnam(ptr: *mut libc::c_char) -> *mut libc::c_char;
 }
 
 fn main() {
-	// method 1: get pointer to new buffer	
-	let tmp = unsafe { 
-		let tmp_ptr = tmpnam(std::ptr::null_mut());
-		CStr::from_ptr(tmp_ptr).to_owned().into_string().unwrap()
-	};
-	println!("{}", tmp);
+    // method 1: get pointer to new buffer
+    let tmp = unsafe {
+        let tmp_ptr = tmpnam(std::ptr::null_mut());
+        CStr::from_ptr(tmp_ptr).to_owned().into_string().unwrap()
+    };
+    println!("{}", tmp);
 
-	// method 2: create buffer ourselves, make tmpnam fill this buffer
-	let tmp = unsafe {
-		let name = CString::from_vec_unchecked(Vec::with_capacity(libc::L_tmpnam as usize)).into_raw();
-		tmpnam(name);
-		CStr::from_ptr(name).to_owned().into_string().unwrap()
-	};
-	println!("{}", tmp);
+    // method 2: create buffer ourselves, make tmpnam fill this buffer
+    let tmp = unsafe {
+        let name = CString::from_vec_unchecked(Vec::with_capacity(libc::L_tmpnam as usize))
+            .into_raw();
+        tmpnam(name);
+        CStr::from_ptr(name).to_owned().into_string().unwrap()
+    };
+    println!("{}", tmp);
 
-	unsafe {
-		let fp = libc::tmpfile();
-		if fp.is_null() {
-			panic!("tmpfile error");
-		}
-		libc::fputs(CString::new("one line of output").unwrap().as_ptr(), fp);
-		libc::rewind(fp);
-		let line = CString::from_vec_unchecked(Vec::with_capacity(MAXLINE)).into_raw();
-		if libc::fgets(line, MAXLINE as i32, fp).is_null() {
-    		panic!("fgets error");
-		}
-		println!("{}", CStr::from_ptr(line).to_owned().into_string().unwrap());
-	}
+    unsafe {
+        let fp = libc::tmpfile();
+        if fp.is_null() {
+            panic!("tmpfile error");
+        }
+        libc::fputs(CString::new("one line of output").unwrap().as_ptr(), fp);
+        libc::rewind(fp);
+        let line = CString::from_vec_unchecked(Vec::with_capacity(MAXLINE)).into_raw();
+        if libc::fgets(line, MAXLINE as i32, fp).is_null() {
+            panic!("fgets error");
+        }
+        println!("{}", CStr::from_ptr(line).to_owned().into_string().unwrap());
+    }
 }

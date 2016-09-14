@@ -1,16 +1,17 @@
 #![allow(non_camel_case_types)]
 
-/// Works for OS X only. To make this work on other platforms run 
+/// Works for OS X only. To make this work on other platforms run
 /// bindgen on stdio.h and replace the bindgen generated code below
 ///
 /// Main captcha here is that you first need to perform operations on
 /// the stream before you can get any buffer information from it.
-
 extern crate libc;
+
+#[cfg(any(target_os = "macos"))]
 use std::ffi::CString;
 
 // can be called from libc::getchar once https://github.com/rust-lang/libc/pull/372 is released
-extern {
+extern "C" {
     pub fn getchar() -> libc::c_int;
 }
 
@@ -72,33 +73,46 @@ pub struct MY_FILE {
 }
 // ... bindgen generated code ends
 
+#[cfg(any(target_os = "macos"))]
 unsafe fn pr_stdio(name: &str, fp: *mut libc::FILE) {
     let fp = &mut *(fp as *mut MY_FILE);
-    let buffer_type = 
-      if (fp._flags & libc::_IONBF as i16) != 0 {
+    let buffer_type = if (fp._flags & libc::_IONBF as i16) != 0 {
         "unbuffered"
-      } else if (fp._flags & libc::_IOLBF as i16) != 0 {
+    } else if (fp._flags & libc::_IOLBF as i16) != 0 {
         "line buffered"
-      } else {
+    } else {
         "fully buffered"
-      };
+    };
 
-    println!("stream = {}, {}, buffer size = {}, fp = {}", name, buffer_type, fp._bf._size, fp._file);
+    println!("stream = {}, {}, buffer size = {}, fp = {}",
+             name,
+             buffer_type,
+             fp._bf._size,
+             fp._file);
 }
 
+#[cfg(any(target_os = "macos"))]
 fn main() {
     unsafe {
         let stdin = __stdinp as *mut libc::FILE;
         let stdout = __stdoutp as *mut libc::FILE;
         let stderr = __stderrp as *mut libc::FILE;
-        let passwd = libc::fopen(b"/etc/passwd\0".as_ptr() as *const libc::c_char, b"r\0".as_ptr() as *const libc::c_char);
-        libc::fputs(CString::new("enter any character\n").unwrap().as_ptr(), stdout);
+        let passwd = libc::fopen(b"/etc/passwd\0".as_ptr() as *const libc::c_char,
+                                 b"r\0".as_ptr() as *const libc::c_char);
+        libc::fputs(CString::new("enter any character\n").unwrap().as_ptr(),
+                    stdout);
         getchar();
-        libc::fputs(CString::new("one line to stderr\n").unwrap().as_ptr(), stderr);
+        libc::fputs(CString::new("one line to stderr\n").unwrap().as_ptr(),
+                    stderr);
         libc::fgetc(passwd);
         pr_stdio("stdin", stdin);
         pr_stdio("stdout", stdout);
         pr_stdio("stderr", stderr);
         pr_stdio("passwd", passwd);
-    }    
+    }
+}
+
+#[cfg(not(target_os = "macos"))]
+fn main() {
+    unimplemented!();
 }
