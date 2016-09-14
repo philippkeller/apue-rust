@@ -1,5 +1,7 @@
 #![allow(non_camel_case_types)]
 
+/// Figure 5.11: Print buffering for various standard I/O streams
+///
 /// Works for OS X only. To make this work on other platforms run
 /// bindgen on stdio.h and replace the bindgen generated code below
 ///
