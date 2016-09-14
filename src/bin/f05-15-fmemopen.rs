@@ -1,3 +1,5 @@
+#![allow(unused_imports, dead_code)]
+
 /// Figure 5.15: Investigate memory stream write behavior
 ///
 /// This works for Linux only (MacOS/BSD don't have fmemopen implemented)
@@ -8,12 +10,12 @@ extern crate libc;
 extern crate itertools;
 extern crate apue;
 
-use apue::*;
 use libc::{c_void, size_t, c_char, c_uchar, c_int, FILE, SEEK_SET, memset, fprintf, fseek, fflush,
            strlen, printf, fclose};
 
+#[cfg(any(target_os = "linux"))]
+use apue::*;
 const BSZ: usize = 48;
-
 extern "C" {
     pub fn fmemopen(buf: *mut c_void, size: size_t, mode: *const c_char) -> *mut FILE;
 }
