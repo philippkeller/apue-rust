@@ -49,7 +49,8 @@ fn main() {
         fprintf(fp, "hello, world".to_ptr());
         printf("before flush: %s\n".to_ptr(), buf.as_muti8());
         fflush(fp);
-        // fflush resets the position of the fp, that's a bug: https://sourceware.org/bugzilla/show_bug.cgi?id=20005
+        // fflush resets the position of the fp, that's a bug:
+        // https://sourceware.org/bugzilla/show_bug.cgi?id=20005
         fseek(fp, ("hello world".len() + 1) as i64, SEEK_SET);
         printf("after fflush: %s\n".to_ptr(), buf.as_muti8());
         printf("len of string in buf = %ld\n".to_ptr(),
