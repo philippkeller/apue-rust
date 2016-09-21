@@ -1,6 +1,6 @@
 extern crate libc;
 extern crate apue;
-use apue::LibcIntResult;
+use apue::LibcResult;
 
 
 fn main() {

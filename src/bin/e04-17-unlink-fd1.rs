@@ -3,7 +3,7 @@ extern crate apue;
 
 use std::ffi::CString;
 use std::io;
-use apue::LibcIntResult;
+use apue::LibcResult;
 
 static FILE_MODE: libc::mode_t = libc::S_IRUSR + libc::S_IWUSR + libc::S_IRGRP + libc::S_IWGRP +
                                  libc::S_IROTH + libc::S_IWOTH;

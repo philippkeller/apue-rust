@@ -1,6 +1,6 @@
 extern crate libc;
 use std::ffi::CString;
-
+use libc::{c_int};
 
 pub trait ToPtr {
     fn to_ptr(&self) -> *const i8;
@@ -12,7 +12,7 @@ impl ToPtr for str {
     }
 }
 
-pub trait LibcIntResult {
+pub trait LibcResult<T> {
     /// returns None if the `c_int` is below 0, and Some otherwise
     ///
     /// # Example
@@ -21,11 +21,11 @@ pub trait LibcIntResult {
     /// } else {
     ///     panic!("{}", io::Error::last_os_error());
     /// }
-    fn to_option(&self) -> Option<libc::c_int>;
+    fn to_option(&self) -> Option<T>;
 }
 
-impl LibcIntResult for libc::c_int {
-    fn to_option(&self) -> Option<libc::c_int> {
+impl LibcResult<c_int> for c_int {
+    fn to_option(&self) -> Option<c_int> {
         if *self < 0 { None } else { Some(*self) }
     }
 }
