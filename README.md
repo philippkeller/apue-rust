@@ -2,7 +2,7 @@ I'm reading through "[Advanced Programming in the UNIX Environment](https://www.
 
 ## Progress
 
-- [ ] Chapter 5: Standard I/O Library
+- [x] Chapter 5: Standard I/O Library
 - [ ] Chapter 6: System Data Files and Information
 
 for Chapter 1-4 see [Andelf's github repo](https://github.com/andelf/rust-apue)
