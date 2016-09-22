@@ -1,7 +1,12 @@
 /// Figure 6.2: The getpwname function
 ///
-/// Takeaway: there's no cheap way to own the struct returned
-/// by getpwent(). We need to build PasswdOwned to own the name string.
+/// Takeaways: 
+/// - there's no cheap way to own the struct returned by getpwent(). 
+///   We need to build PasswdOwned to own the name string.
+/// - originally used CString::from_raw on pw.pw_name, this worked well on OSX
+///   but segfaulted on Linux. CStr::from_ptr needs to be called on Strings that originate
+///   in C
+
 
 extern crate libc;
 
