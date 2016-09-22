@@ -6,7 +6,7 @@
 extern crate libc;
 
 use libc::{getpwent, endpwent, setpwent};
-use std::ffi::CString;
+use std::ffi::CStr;
 
 #[derive(Debug)]
 struct PasswdOwned {
@@ -18,10 +18,11 @@ struct PasswdOwned {
 unsafe fn getpwnam(name: &str) -> Option<PasswdOwned> {
     setpwent();
     while let Some(pw) = getpwent().as_ref() {
-        let pw_name = CString::from_raw(pw.pw_name).into_string().expect("found null");
+        let pw_name = CStr::from_ptr(pw.pw_name).to_string_lossy().into_owned();
         if pw_name == name {
             endpwent();
-            return Some(PasswdOwned{name: pw_name, uid: pw.pw_uid, gid: pw.pw_gid});
+            let pw = PasswdOwned{name: pw_name, uid: pw.pw_uid, gid: pw.pw_gid};
+            return Some(pw);
         }
     }
     endpwent();
