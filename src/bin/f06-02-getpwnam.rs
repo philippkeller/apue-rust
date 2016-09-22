@@ -1,8 +1,11 @@
 /// Figure 6.2: The getpwname function
 ///
 /// Takeaways: 
-/// - there's no cheap way to own the struct returned by getpwent(). 
-///   We need to build PasswdOwned to own the name string.
+/// - from the book (p. 186): "the get functions return a pointer to a static structure, 
+///   so we always have to copy the structure if we want to save it.", although in the
+///   C example code they just return the struct so I'd say that's broken. We need
+///   to copy the struct. Unfortunately, there's no cheap way to own the struct returned
+///   by getpwent(). We need to build PasswdOwned to own the name string.
 /// - originally used CString::from_raw on pw.pw_name, this worked well on OSX
 ///   but segfaulted on Linux. CStr::from_ptr needs to be called on Strings that originate
 ///   in C
