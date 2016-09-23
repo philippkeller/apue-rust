@@ -1,6 +1,6 @@
 extern crate libc;
 use std::ffi::CString;
-use libc::{c_int};
+use libc::c_int;
 
 pub trait ToPtr {
     fn to_ptr(&self) -> *const i8;

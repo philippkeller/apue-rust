@@ -110,7 +110,7 @@ unsafe fn fmemopen(cookie: *mut c_void) -> *mut FILE {
     if cfg!(target_os = "macos") || cfg!(target_os = "bsd") {
         funopen(cookie, Some(read), Some(write), Some(seek), None)
     } else {
-        unimplemented!();    
+        unimplemented!();
     }
 }
 

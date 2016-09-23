@@ -1,7 +1,7 @@
 /// Figure 6.2: The getpwname function
 ///
-/// Takeaways: 
-/// - from the book (p. 186): "the get functions return a pointer to a static structure, 
+/// Takeaways:
+/// - from the book (p. 186): "the get functions return a pointer to a static structure,
 ///   so we always have to copy the structure if we want to save it.", although in the
 ///   C example code they just return the struct so I'd say that's broken. We need
 ///   to copy the struct. Unfortunately, there's no cheap way to own the struct returned
@@ -29,7 +29,11 @@ unsafe fn getpwnam(name: &str) -> Option<PasswdOwned> {
         let pw_name = CStr::from_ptr(pw.pw_name).to_string_lossy().into_owned();
         if pw_name == name {
             endpwent();
-            let pw = PasswdOwned{name: pw_name, uid: pw.pw_uid, gid: pw.pw_gid};
+            let pw = PasswdOwned {
+                name: pw_name,
+                uid: pw.pw_uid,
+                gid: pw.pw_gid,
+            };
             return Some(pw);
         }
     }
@@ -39,6 +43,7 @@ unsafe fn getpwnam(name: &str) -> Option<PasswdOwned> {
 
 fn main() {
     unsafe {
-        println!("{:?}", getpwnam("philipp").expect("no user found with that name!"));
+        println!("{:?}",
+                 getpwnam("philipp").expect("no user found with that name!"));
     }
 }
