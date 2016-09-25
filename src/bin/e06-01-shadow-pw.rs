@@ -1,19 +1,17 @@
-/// Figure 6.2: The getpwname function
+/// Excercise 6.1: If the system uses a shadow file and we need to
+///                obtain the encrypted password, how do we do so?
 ///
-/// Takeaways:
-/// - from the book (p. 186): "the get functions return a pointer to a static structure,
-///   so we always have to copy the structure if we want to save it.", although in the
-///   C example code they just return the struct so I'd say that's broken. We need
-///   to copy the struct. Unfortunately, there's no cheap way to own the struct returned
-///   by getpwent(). We need to build PasswdOwned to own the name string.
-/// - originally used CString::from_raw on pw.pw_name, this worked well on OSX
-///   but segfaulted on Linux. CStr::from_ptr needs to be called on Strings that originate
-///   in C
-
+/// Takeaways
+///
+/// - bindgen is great, spend time to get it working instead of trying to come
+///   up with the bindings yourself
+/// - user needs to be root, checking for root with getuid
+/// - first tried with iterating via getspent, then saw getspnam which is a lot easier of course
 
 extern crate libc;
+use std::ffi::{CStr, CString};
 
-use std::ffi::CStr;
+use libc::getuid;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -34,6 +32,7 @@ extern "C" {
     pub fn setspent();
     pub fn endspent();
     pub fn getspent() -> *mut spwd;
+    pub fn getspnam(__name: *const ::std::os::raw::c_char) -> *mut spwd;
 }
 
 #[derive(Debug)]
@@ -42,11 +41,10 @@ struct PasswdOwned {
     pw: String,
 }
 
-unsafe fn getpwnam(name: &str) -> Option<PasswdOwned> {
+unsafe fn getpwnam_iter(name: &str) -> Option<PasswdOwned> {
     setspent();
     while let Some(pw) = getspent().as_ref() {
         let pw_name = CStr::from_ptr(pw.sp_namp).to_string_lossy().into_owned();
-        println!("{:?}", pw_name);
         if pw_name == name {
             endspent();
             let pw = PasswdOwned {
@@ -60,8 +58,25 @@ unsafe fn getpwnam(name: &str) -> Option<PasswdOwned> {
     None
 }
 
+unsafe fn getpwnam(name: &str) -> Option<PasswdOwned> {
+    match getspnam(CString::new(name).unwrap().as_ptr()).as_ref() {
+        Some(pw) => {
+            Some(PasswdOwned {
+                name: CStr::from_ptr(pw.sp_namp).to_string_lossy().into_owned(),
+                pw: CStr::from_ptr(pw.sp_pwdp).to_string_lossy().into_owned(),
+            })
+        }
+        None => None,
+    }
+}
+
 fn main() {
     unsafe {
+        if getuid() != 0 {
+            panic!("you need to start as root, e.g. via sudo");
+        }
+        println!("{:?}",
+                 getpwnam_iter("philipp").expect("no user found with that name!"));
         println!("{:?}",
                  getpwnam("philipp").expect("no user found with that name!"));
     }
