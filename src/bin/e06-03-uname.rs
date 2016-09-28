@@ -2,8 +2,8 @@
 /// in the utsname structure.
 /// Compare the output to the output from the uname(1) command.
 ///
-/// Takeaway: couldn't find a method in CStr or CString
-///           this came close:
+/// Takeaway: couldn't find a method in CStr or CString to convert the &[i8:265]
+///           nul terminated byte array into a string. This came close:
 ///           https://gist.github.com/philippkeller/89a8a0b47362e86570958dc7a14e84d7
 ///           but produced Err(FromBytesWithNulError { _a: () })
 
