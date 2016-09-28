@@ -1,3 +1,4 @@
+#![cfg(any(target_os = "linux"))]
 #![allow(unused_imports, dead_code)]
 
 /// Figure 5.15: Investigate memory stream write behavior
@@ -13,7 +14,6 @@ extern crate apue;
 use libc::{c_void, size_t, c_char, c_uchar, c_int, FILE, SEEK_SET, memset, fprintf, fseek, fflush,
            strlen, printf, fclose};
 
-#[cfg(any(target_os = "linux"))]
 use apue::*;
 const BSZ: usize = 48;
 extern "C" {
@@ -34,7 +34,6 @@ impl CArray for [u8] {
     }
 }
 
-#[cfg(any(target_os = "linux"))]
 fn main() {
     unsafe {
         let mut buf: [c_uchar; BSZ] = std::mem::uninitialized();
@@ -76,8 +75,5 @@ fn main() {
                strlen(buf.as_muti8()));
     }
 }
-
 #[cfg(not(target_os = "linux"))]
-fn main() {
-    unimplemented!();
-}
+fn main() {}

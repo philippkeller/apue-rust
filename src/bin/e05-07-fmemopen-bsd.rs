@@ -1,3 +1,4 @@
+#![cfg(any(target_os = "macos", target_os= "bsd"))]
 #![allow(unused_variables)]
 
 /// Exercise: BSD-based systems provide a function called funopen that
@@ -107,11 +108,7 @@ unsafe extern "C" fn seek(cookie: *mut c_void, offset: off_t, whence: c_int) -> 
 }
 
 unsafe fn fmemopen(cookie: *mut c_void) -> *mut FILE {
-    if cfg!(target_os = "macos") || cfg!(target_os = "bsd") {
-        funopen(cookie, Some(read), Some(write), Some(seek), None)
-    } else {
-        unimplemented!();
-    }
+    funopen(cookie, Some(read), Some(write), Some(seek), None)
 }
 
 fn main() {

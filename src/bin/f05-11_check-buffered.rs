@@ -1,4 +1,5 @@
 #![allow(non_camel_case_types)]
+#![cfg(any(target_os = "macos"))]
 
 /// Figure 5.11: Print buffering for various standard I/O streams
 ///
@@ -9,7 +10,6 @@
 /// the stream before you can get any buffer information from it.
 extern crate libc;
 
-#[cfg(any(target_os = "macos"))]
 use std::ffi::CString;
 
 // can be called from libc::getchar once https://github.com/rust-lang/libc/pull/372 is released
@@ -75,7 +75,6 @@ pub struct MY_FILE {
 }
 // ... bindgen generated code ends
 
-#[cfg(any(target_os = "macos"))]
 unsafe fn pr_stdio(name: &str, fp: *mut libc::FILE) {
     let fp = &mut *(fp as *mut MY_FILE);
     let buffer_type = if (fp._flags & libc::_IONBF as i16) != 0 {
@@ -93,7 +92,6 @@ unsafe fn pr_stdio(name: &str, fp: *mut libc::FILE) {
              fp._file);
 }
 
-#[cfg(any(target_os = "macos"))]
 fn main() {
     unsafe {
         let stdin = __stdinp as *mut libc::FILE;
@@ -112,9 +110,4 @@ fn main() {
         pr_stdio("stderr", stderr);
         pr_stdio("passwd", passwd);
     }
-}
-
-#[cfg(not(target_os = "macos"))]
-fn main() {
-    unimplemented!();
 }

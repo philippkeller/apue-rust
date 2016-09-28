@@ -1,3 +1,5 @@
+#![cfg(target_os = "linux")]
+
 /// Excercise 6.1: If the system uses a shadow file and we need to
 ///                obtain the encrypted password, how do we do so?
 ///
@@ -9,23 +11,24 @@
 /// - first tried with iterating via getspent, then saw getspnam which is a lot easier of course
 
 extern crate libc;
+#[cfg(target_os = "linux")]
 use std::ffi::{CStr, CString};
-
+#[cfg(target_os = "linux")]
 use libc::getuid;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
 #[derive(Debug)]
 pub struct spwd {
-    pub sp_namp: *mut ::std::os::raw::c_char,
-    pub sp_pwdp: *mut ::std::os::raw::c_char,
-    pub sp_lstchg: ::std::os::raw::c_long,
-    pub sp_min: ::std::os::raw::c_long,
-    pub sp_max: ::std::os::raw::c_long,
-    pub sp_warn: ::std::os::raw::c_long,
-    pub sp_inact: ::std::os::raw::c_long,
-    pub sp_expire: ::std::os::raw::c_long,
-    pub sp_flag: ::std::os::raw::c_ulong,
+    pub sp_namp: *mut c_char,
+    pub sp_pwdp: *mut c_char,
+    pub sp_lstchg: c_long,
+    pub sp_min: c_long,
+    pub sp_max: c_long,
+    pub sp_warn: c_long,
+    pub sp_inact: c_long,
+    pub sp_expire: c_long,
+    pub sp_flag: c_ulong,
 }
 
 extern "C" {
@@ -81,3 +84,6 @@ fn main() {
                  getpwnam("philipp").expect("no user found with that name!"));
     }
 }
+
+#[cfg(not(target_os = "linux"))]
+fn main() {}
