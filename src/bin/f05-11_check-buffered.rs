@@ -1,5 +1,4 @@
 #![allow(non_camel_case_types)]
-#![cfg(any(target_os = "macos"))]
 
 /// Figure 5.11: Print buffering for various standard I/O streams
 ///
@@ -10,28 +9,35 @@
 /// the stream before you can get any buffer information from it.
 extern crate libc;
 
+#[cfg(any(target_os = "macos"))]
 use std::ffi::CString;
 
 // can be called from libc::getchar once https://github.com/rust-lang/libc/pull/372 is released
+#[cfg(any(target_os = "macos"))]
 extern "C" {
     pub fn getchar() -> libc::c_int;
 }
 
 // bindgen generaged code starts...
+#[cfg(any(target_os = "macos"))]
 extern "C" {
     pub static mut __stdinp: *mut MY_FILE;
     pub static mut __stdoutp: *mut MY_FILE;
     pub static mut __stderrp: *mut MY_FILE;
 }
+#[cfg(any(target_os = "macos"))]
 pub type fpos_t = ::std::os::raw::c_ulonglong;
 #[repr(C)]
+#[cfg(any(target_os = "macos"))]
 pub struct __sbuf {
     pub _base: *mut ::std::os::raw::c_uchar,
     pub _size: ::std::os::raw::c_int,
     _bindgen_padding_0_: [u8; 4usize],
 }
+#[cfg(any(target_os = "macos"))]
 pub enum __sFILEX { }
 #[repr(C,)]
+#[cfg(any(target_os = "macos"))]
 pub struct MY_FILE {
     pub _p: *mut ::std::os::raw::c_uchar,
     pub _r: ::std::os::raw::c_int,
@@ -75,6 +81,7 @@ pub struct MY_FILE {
 }
 // ... bindgen generated code ends
 
+#[cfg(any(target_os = "macos"))]
 unsafe fn pr_stdio(name: &str, fp: *mut libc::FILE) {
     let fp = &mut *(fp as *mut MY_FILE);
     let buffer_type = if (fp._flags & libc::_IONBF as i16) != 0 {
@@ -92,6 +99,7 @@ unsafe fn pr_stdio(name: &str, fp: *mut libc::FILE) {
              fp._file);
 }
 
+#[cfg(any(target_os = "macos"))]
 fn main() {
     unsafe {
         let stdin = __stdinp as *mut libc::FILE;
@@ -110,4 +118,9 @@ fn main() {
         pr_stdio("stderr", stderr);
         pr_stdio("passwd", passwd);
     }
+}
+
+#[cfg(not(target_os = "macos"))]
+fn main() {
+    unimplemented!();
 }

@@ -2,10 +2,10 @@
 /// (fgets and fputs) from Figure 5.5, but use a MAXLINE of 4.
 
 extern crate libc;
+#[macro_use(cstr)]
 extern crate apue;
 
 use libc::{fopen, fgets, fputs, printf};
-use apue::*;
 
 const BUFLEN: usize = 4;
 
@@ -20,12 +20,12 @@ fn main() {
         args.next(); // skip filename
         let f_in = args.next().unwrap();
         let f_out = args.next().unwrap();
-        let fd_in = fopen(f_in.to_ptr(), "r".to_ptr());
-        let fd_out = fopen(f_out.to_ptr(), "w".to_ptr());
+        let fd_in = fopen(cstr!(f_in), cstr!("r"));
+        let fd_out = fopen(cstr!(f_out), cstr!("w"));
 
         let buffer: [u8; BUFLEN] = std::mem::uninitialized();
         while !fgets(buffer.as_ptr() as *mut i8, BUFLEN as i32, fd_in).is_null() {
-            printf("buffer = %s\n".to_ptr(), buffer.as_ptr());
+            printf(cstr!("buffer = %s\n"), buffer.as_ptr());
             fputs(buffer.as_ptr() as *mut i8, fd_out);
         }
     }
