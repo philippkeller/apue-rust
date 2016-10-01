@@ -1,3 +1,5 @@
+#![cfg(target_os = "linux")]
+
 /// Excercise 6.1: If the system uses a shadow file and we need to
 ///                obtain the encrypted password, how do we do so?
 ///
@@ -9,15 +11,12 @@
 /// - first tried with iterating via getspent, then saw getspnam which is a lot easier of course
 
 extern crate libc;
-#[cfg(target_os = "linux")]
 use std::ffi::{CStr, CString};
-#[cfg(target_os = "linux")]
 use libc::{getuid, c_char, c_long, c_ulong};
 
 #[repr(C)]
 #[derive(Copy, Clone)]
 #[derive(Debug)]
-#[cfg(target_os = "linux")]
 pub struct spwd {
     pub sp_namp: *mut c_char,
     pub sp_pwdp: *mut c_char,
@@ -30,7 +29,6 @@ pub struct spwd {
     pub sp_flag: c_ulong,
 }
 
-#[cfg(target_os = "linux")]
 extern "C" {
     pub fn setspent();
     pub fn endspent();
@@ -39,13 +37,11 @@ extern "C" {
 }
 
 #[derive(Debug)]
-#[cfg(target_os = "linux")]
 struct PasswdOwned {
     name: String,
     pw: String,
 }
 
-#[cfg(target_os = "linux")]
 unsafe fn getpwnam_iter(name: &str) -> Option<PasswdOwned> {
     setspent();
     while let Some(pw) = getspent().as_ref() {
@@ -63,7 +59,6 @@ unsafe fn getpwnam_iter(name: &str) -> Option<PasswdOwned> {
     None
 }
 
-#[cfg(target_os = "linux")]
 unsafe fn getpwnam(name: &str) -> Option<PasswdOwned> {
     match getspnam(CString::new(name).unwrap().as_ptr()).as_ref() {
         Some(pw) => {
@@ -76,7 +71,6 @@ unsafe fn getpwnam(name: &str) -> Option<PasswdOwned> {
     }
 }
 
-#[cfg(any(target_os = "linux"))]
 fn main() {
     unsafe {
         if getuid() != 0 {
@@ -88,6 +82,3 @@ fn main() {
                  getpwnam("philipp").expect("no user found with that name!"));
     }
 }
-
-#[cfg(not(target_os = "linux"))]
-fn main() {}

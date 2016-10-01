@@ -1,3 +1,4 @@
+#![cfg(any(target_os = "macos", target_os= "bsd"))]
 #![allow(unused_variables)]
 
 /// Exercise: BSD-based systems provide a function called funopen that
@@ -28,22 +29,17 @@ extern crate libc;
 #[macro_use(cstr)]
 extern crate apue;
 
-#[cfg(any(target_os = "macos", target_os= "bsd"))]
 use libc::{c_void, c_char, c_int, off_t, FILE, SEEK_SET, memset, memcpy, fgets, fputs, printf,
            fseek};
-#[cfg(any(target_os = "macos", target_os= "bsd"))]
 use std::option::Option;
 
-#[cfg(any(target_os = "macos", target_os= "bsd"))]
 const BUFLEN: usize = 30;
 
-#[cfg(any(target_os = "macos", target_os= "bsd"))]
 pub struct MemStream<'a> {
     buffer: &'a mut [u8; BUFLEN],
     pos: u8,
 }
 
-#[cfg(any(target_os = "macos", target_os= "bsd"))]
 extern "C" {
     fn funopen(cookie: *mut c_void,
                readfn: Option<unsafe extern "C" fn(cookie: *mut c_void,
@@ -62,13 +58,11 @@ extern "C" {
                -> *mut FILE;
 }
 
-#[cfg(any(target_os = "macos", target_os= "bsd"))]
 trait CArray {
     fn as_muti8(&self) -> *mut i8;
     fn as_void(&self) -> *mut c_void;
 }
 
-#[cfg(any(target_os = "macos", target_os= "bsd"))]
 impl CArray for [u8] {
     fn as_muti8(&self) -> *mut i8 {
         self.as_ptr() as *mut i8
@@ -78,12 +72,10 @@ impl CArray for [u8] {
     }
 }
 
-#[cfg(any(target_os = "macos", target_os= "bsd"))]
 unsafe fn max_bytes(nbyte: u8, status: *mut MemStream) -> u8 {
     std::cmp::min(nbyte, ((*status).buffer.len() as u8 - (*status).pos))
 }
 
-#[cfg(any(target_os = "macos", target_os= "bsd"))]
 unsafe extern "C" fn read(cookie: *mut c_void, buffer: *mut c_char, nbyte: c_int) -> c_int {
     let status = cookie as *mut MemStream;
     println!("position is: {:?}", (*status).pos);
@@ -97,7 +89,6 @@ unsafe extern "C" fn read(cookie: *mut c_void, buffer: *mut c_char, nbyte: c_int
     }
 }
 
-#[cfg(any(target_os = "macos", target_os= "bsd"))]
 unsafe extern "C" fn write(cookie: *mut c_void, buffer: *mut c_char, nbyte: c_int) -> c_int {
     let status = cookie as *mut MemStream;
     let nbyte = max_bytes(nbyte as u8, status);
@@ -113,19 +104,16 @@ unsafe extern "C" fn write(cookie: *mut c_void, buffer: *mut c_char, nbyte: c_in
     }
 }
 
-#[cfg(any(target_os = "macos", target_os= "bsd"))]
 unsafe extern "C" fn seek(cookie: *mut c_void, offset: off_t, whence: c_int) -> off_t {
     let status = cookie as *mut MemStream;
     (*status).pos = offset as u8;
     offset
 }
 
-#[cfg(any(target_os = "macos", target_os= "bsd"))]
 unsafe fn fmemopen(cookie: *mut c_void) -> *mut FILE {
     funopen(cookie, Some(read), Some(write), Some(seek), None)
 }
 
-#[cfg(any(target_os = "macos", target_os= "bsd"))]
 fn main() {
     unsafe {
         let mut buf: [u8; BUFLEN] = std::mem::uninitialized();
@@ -162,9 +150,4 @@ fn main() {
             printf(cstr!("buffer = %s\n"), tmpbuf.as_ptr());
         }
     }
-}
-
-#[cfg(not(any(target_os = "macos", target_os= "bsd")))]
-fn main() {
-    unimplemented!();
 }
