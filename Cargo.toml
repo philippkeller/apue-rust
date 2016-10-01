@@ -9,7 +9,29 @@ keywords = [
   "unix",
   "book"
 ]
+include = ["src/bin/*/*.rs", "Cargo.toml"]
 
 [dependencies]
 libc = "*"
 itertools = "*"
+
+[[bin]]
+name="e01-shadow-pw"
+path = "src/bin/chapter-6-system-data-files/e01-shadow-pw.rs"
+
+[[bin]]
+name="e03-uname"
+path = "src/bin/chapter-6-system-data-files/e03-uname.rs"
+
+[[bin]]
+name="e04-time_t-wrap"
+path = "src/bin/chapter-6-system-data-files/e04-time_t-wrap.rs"
+
+[[bin]]
+name="f02-getpwnam"
+path = "src/bin/chapter-6-system-data-files/f02-getpwnam.rs"
+
+[[bin]]
+name="f11-strftime"
+path = "src/bin/chapter-6-system-data-files/f11-strftime.rs"
+
