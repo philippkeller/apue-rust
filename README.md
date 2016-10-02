@@ -6,7 +6,7 @@ Beware: this is my first Rust project. This code is far from beautiful and might
 
 - [ ] Chapter 4: Files and Directories
 - [x] Chapter 5: Standard I/O Library
-- [ ] Chapter 6: System Data Files and Information
+- [x] Chapter 6: System Data Files and Information
 
 for Chapter 1-4 see [Andelf's github repo](https://github.com/andelf/rust-apue)
 
