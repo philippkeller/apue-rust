@@ -8,7 +8,7 @@ extern crate apue;
 use libc::{tm, time_t, c_char, size_t, printf};
 use std::mem::uninitialized;
 
-use apue::{CArray};
+use apue::CArray;
 
 extern "C" {
     fn localtime(time: *const time_t) -> *mut tm;
@@ -25,7 +25,10 @@ fn main() {
         let mut t: time_t = 1;
         loop {
             println!("{:?}", t - 1);
-            strftime(buf.as_char(), 1024, cstr!("%a %b %d, %Y"), localtime(&mut (t - 1)));
+            strftime(buf.as_char(),
+                     1024,
+                     cstr!("%a %b %d, %Y"),
+                     localtime(&mut (t - 1)));
             printf(cstr!("%s\n"), buf.as_ptr());
             t *= 2;
         }

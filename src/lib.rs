@@ -1,12 +1,14 @@
 extern crate libc;
+extern crate itertools;
 
 use libc::{c_int, c_char};
+use itertools::Itertools;
 
 #[macro_export]
 macro_rules! cstr {
-    ($s:expr) => {{ 
+    ($s:expr) => {{
         use std::ffi::CString;
-        CString::new($s).unwrap().as_ptr() 
+        CString::new($s).unwrap().as_ptr()
     }}
 }
 
@@ -36,4 +38,8 @@ impl CArray for [c_char] {
     fn as_char(&self) -> *mut c_char {
         self.as_ptr() as *mut c_char
     }
+}
+
+pub fn array_to_string(slice: &[i8]) -> String {
+    slice.iter().take_while(|&x| *x != 0).map(|&a| a as u8 as char).join("")
 }
