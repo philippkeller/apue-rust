@@ -2,13 +2,11 @@
 /// After it wraps around, what happens?
 
 extern crate libc;
-#[macro_use(cstr)]
+#[macro_use(cstr, as_char)]
 extern crate apue;
 
 use libc::{tm, time_t, c_char, size_t, printf};
 use std::mem::uninitialized;
-
-use apue::CArray;
 
 extern "C" {
     fn localtime(time: *const time_t) -> *mut tm;
@@ -25,7 +23,7 @@ fn main() {
         let mut t: time_t = 1;
         loop {
             println!("{:?}", t - 1);
-            strftime(buf.as_char(),
+            strftime(as_char!(buf),
                      1024,
                      cstr!("%a %b %d, %Y"),
                      localtime(&mut (t - 1)));

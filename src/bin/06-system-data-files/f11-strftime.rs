@@ -3,12 +3,11 @@
 /// the current date and time.
 
 extern crate libc;
-#[macro_use(cstr)]
+#[macro_use(cstr, as_char)]
 extern crate apue;
 
 use libc::{tm, time_t, c_char, size_t, printf, exit};
 use std::mem::uninitialized;
-use apue::CArray;
 
 extern "C" {
     fn time(time: *mut time_t) -> time_t;
@@ -29,12 +28,12 @@ fn main() {
         time(&mut t);
         let tmp = localtime(&mut t);
         let fmt = "time and date: %r, %a %b %d, %Y";
-        if strftime(buf1.as_char(), 16, cstr!(fmt), tmp) == 0 {
+        if strftime(as_char!(buf1), 16, cstr!(fmt), tmp) == 0 {
             printf(cstr!("buffer length 16 is too small\n"));
         } else {
             printf(cstr!("%s\n"), buf1.as_ptr());
         }
-        if strftime(buf2.as_char(), 64, cstr!(fmt), tmp) == 0 {
+        if strftime(as_char!(buf2), 64, cstr!(fmt), tmp) == 0 {
             printf(cstr!("buffer length 64 is too small\n"));
         } else {
             printf(cstr!("%s\n"), buf2.as_ptr());

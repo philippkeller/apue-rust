@@ -13,8 +13,13 @@ use apue::{array_to_string, LibcResult};
 use libc::{opendir, closedir, DIR, dirent};
 
 extern "C" {
+    #[cfg(target_os = "macos")]
     #[link_name = "readdir$INODE64"]
     pub fn readdir(arg1: *mut DIR) -> *mut dirent;
+
+    #[cfg(not(target_os = "macos"))]
+    pub fn readdir(arg1: *mut DIR) -> *mut dirent;
+
 }
 
 fn main() {
