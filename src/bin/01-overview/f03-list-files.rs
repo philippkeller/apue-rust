@@ -1,6 +1,6 @@
 /// Figure 1.3 List all the files in a directory
 ///
-/// Takeaways: look more closely on the definition in the
+/// Takeaways: Look more closely on the definition in the
 /// headerfile. I missed the `$INODE64` bit first.
 /// See [issue on rust-lang](https://github.com/rust-lang/libc/issues/414)
 /// for details

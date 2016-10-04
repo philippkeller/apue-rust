@@ -1,3 +1,5 @@
+/// Figure 1.5 Copy standard input to standard output, using standard I/O
+
 extern crate libc;
 extern crate apue;
 

@@ -1,3 +1,5 @@
+/// Figure 1.4 Copy standard input to standard output
+
 extern crate libc;
 #[macro_use(as_void)]
 extern crate apue;
