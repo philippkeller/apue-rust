@@ -49,9 +49,11 @@ impl LibcResult<c_int> for c_int {
         if *self < 0 { None } else { Some(*self) }
     }
 }
+
+// implementation for isize, sentinel = 0 (means end of file/buffer/... e.g. in read)
 impl LibcResult<isize> for isize {
     fn to_option(&self) -> Option<isize> {
-        if *self < 0 { None } else { Some(*self) }
+        if *self <= 0 { None } else { Some(*self) }
     }
 }
 impl<T> LibcResult<*mut T> for *mut T {
