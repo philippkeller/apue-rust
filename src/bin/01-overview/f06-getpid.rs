@@ -3,5 +3,5 @@
 extern crate libc;
 
 fn main() {
-	println!("hello world from process ID {}", unsafe {libc::getpid()});
+    println!("hello world from process ID {}", unsafe { libc::getpid() });
 }
