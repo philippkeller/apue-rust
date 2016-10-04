@@ -13,7 +13,8 @@ macro_rules! cstr {
 }
 
 pub trait LibcResult<T> {
-    /// returns None if the `c_int` is below 0, and Some otherwise
+    /// returns None if the result is empty (-1 if an integer, Null if a pointer)
+    /// and Some otherwise
     ///
     /// # Example
     /// if let Some(fd) = libc::creat(fd1, FILE_MODE).to_option() {
@@ -27,6 +28,12 @@ pub trait LibcResult<T> {
 impl LibcResult<c_int> for c_int {
     fn to_option(&self) -> Option<c_int> {
         if *self < 0 { None } else { Some(*self) }
+    }
+}
+
+impl<T> LibcResult<*mut T> for *mut T {
+    fn to_option(&self) -> Option<*mut T> {
+        if self.is_null() { None } else { Some(*self) }
     }
 }
 
