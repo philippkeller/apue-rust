@@ -1,9 +1,11 @@
 extern crate libc;
 extern crate itertools;
 
-use libc::c_int;
+use libc::{c_int, utsname};
 use itertools::Itertools;
 
+/// Turns a str into a c string. Warning: the cstring only lives as long the
+/// str lives. Don't e.g. assign the return value to a variable!
 #[macro_export]
 macro_rules! cstr {
     ($s:expr) => {{
@@ -49,6 +51,11 @@ impl LibcResult<c_int> for c_int {
         if *self < 0 { None } else { Some(*self) }
     }
 }
+impl LibcResult<i64> for i64 {
+    fn to_option(&self) -> Option<i64> {
+        if *self < 0 { None } else { Some(*self) }
+    }
+}
 
 // implementation for isize, sentinel = 0 (means end of file/buffer/... e.g. in read)
 impl LibcResult<isize> for isize {
@@ -64,4 +71,13 @@ impl<T> LibcResult<*mut T> for *mut T {
 
 pub fn array_to_string(slice: &[i8]) -> String {
     slice.iter().take_while(|&x| *x != 0).map(|&a| a as u8 as char).join("")
+}
+
+/// Return uname -s
+pub fn uname() -> Option<String> {
+    let mut uc: utsname = unsafe { std::mem::uninitialized() };
+    if unsafe { libc::uname(&mut uc) } == 0 {
+        return Some(array_to_string(&uc.sysname));
+    }
+    None
 }
