@@ -10,14 +10,16 @@
 /// Linux (/usr/include/unistd.h only). The crux is that in Linux the constants are inside
 /// an enum so this program tries to emulate that enum which of course is very error prone.
 ///
-/// Current state: works for OSX, on Linux is still has a bug which makes every single constant wrong.
+/// Current state: works for OSX, and Linux (PC_: seems 100% correct, SC_ seems correct until
+/// there is a off by 1 error around _SC_THREAD_SAFE_FUNCTIONS)
+///
+/// to validate the results compare it against `getconf -a`
 
 extern crate libc;
 #[macro_use(cstr)]
 extern crate apue;
 extern crate errno;
 extern crate regex;
-
 
 use libc::{EINVAL, puts, printf, pathconf, sysconf};
 use apue::{LibcResult, uname};
@@ -55,6 +57,7 @@ fn parse_header(hfile:&str) {
 	let re = Regex::new(r"^\s*#define\s+(_[PS]C_\w+)\s+(\w+).*").unwrap();
 	let mut pc_counter = 0;
 	let mut sc_counter = 0;
+	let mut define_line = false;
 	for line in file.lines() {
 		if let Ok(line) = line {
 			if let Some(groups) = re.captures(&line) {
@@ -68,16 +71,28 @@ fn parse_header(hfile:&str) {
 						// that's highly unstable of course..
   						Err(_) => {
 							if key.starts_with("_PC_") {
-  								pc_counter+=1; 
-  								pc_counter
+								// if there are two #define after each other
+								// there's no increase in the enum value
+								// e.g. here:
+								// #define _SC_PAGESIZE                    _SC_PAGESIZE
+								// #define _SC_PAGE_SIZE                   _SC_PAGESIZE
+								if !define_line {
+	  								pc_counter+=1; 
+	  							}
+  								pc_counter - 1 // enum starts with zero
   							} else {
-  								sc_counter+=1;
-  								sc_counter
+								if !define_line {
+	  								sc_counter+=1;
+	  							}
+  								sc_counter - 1
   							}
   						},
 					};
 	    			pr_conf(key, "/", val);
+	    			define_line = true;
 				}
+	    	} else {
+	    		define_line = false;
 	    	}
 		}
 	}
