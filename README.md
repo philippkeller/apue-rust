@@ -5,7 +5,8 @@ Beware: this is my first Rust project. This code is far from beautiful and might
 ## Progress
 
 - [x] Chapter 1: Overview
-- [ ] Chapter 2: UNIX Standardization and Implementations
+- [x] Chapter 2: UNIX Standardization and Implementations
+- [ ] Chapter 3: File I/O
 - [ ] Chapter 4: Files and Directories
 - [x] Chapter 5: Standard I/O Library
 - [x] Chapter 6: System Data Files and Information
