@@ -5,14 +5,15 @@ extern crate libc;
 #[macro_use(cstr, as_char)]
 extern crate apue;
 
-use libc::{STDIN_FILENO, SIGINT, SIG_ERR, c_char, c_int, printf, strlen, fgets, fdopen, fork, waitpid, signal};
+use libc::{STDIN_FILENO, SIGINT, SIG_ERR, c_char, c_int, printf, strlen, fgets, fdopen, fork,
+           waitpid, signal};
 use apue::{array_to_string, LibcResult};
 
 extern "C" {
     pub fn execlp(file: *const c_char, arg0: *const c_char, ...) -> c_int;
 }
 
-extern "C" fn sig_int(_:c_int) {
+extern "C" fn sig_int(_: c_int) {
     unsafe {
         printf(cstr!("interrupted..\n"));
         printf(cstr!("%% "));
