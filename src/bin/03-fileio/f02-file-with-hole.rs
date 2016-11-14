@@ -1,12 +1,17 @@
 /// Figure 3.2: Create a file with a hole in it
 
 /// Takeaway: On OSX the sparse file seems to use the full disk space:
-/// > ./f02-file-with-hole
-/// > du -h file.hole
-/// 20K   file.hole
 ///
-/// Apperently the sparse files are not using disk space but du is not able to spot this,
+/// > ./f02-file-with-hole
+/// > cat file.hole > file.nohole
+/// > ls -ls file.hole file.nohole
+/// 40 -rw-r--r--  1 philipp  staff  16394 Nov 14 08:10 file.hole
+/// 40 -rw-r--r--  1 philipp  staff  16394 Nov 14 08:10 file.nohole
+///
+/// Apperently the sparse files are not using disk space but ls -s is not able to spot this,
 /// here's some explanation: http://superuser.com/questions/199109
+/// Even in Virtual Box on OSX this is applying, so this seems to be a "feature" of HFS.
+/// On a Linux host running on ext4 ls -ls shows 8 for file.hole and 40 for file.nohole
 
 extern crate libc;
 #[macro_use(cstr, as_void)]
