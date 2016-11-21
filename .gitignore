@@ -10,3 +10,4 @@ Cargo.lock
 
 *.bk
 .idea
+.DS_Store
