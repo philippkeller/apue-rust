@@ -12,16 +12,12 @@ for os in linux macos; do
 	cp Cargo.toml $os/Cargo.toml
 	echo "" >> $os/Cargo.toml
 	for l in `ls src/bin/*/*.rs`; do
-		# check if the file is legit for this os (e.g. has target_os=$os in first line or has no target attribute)
-		m=`head -1 $l | grep -vE "target_os.*=.*$os" | grep -E '^#!\[cfg\(.*target_os'`;
-		if [ "$m" == "" ]; then 
 			bin=${l//src\/bin\/[^\/]*\//}
 			bin=${bin//.rs/}
 			echo "[[bin]]"
 			echo name=\"$bin\"
-			echo path = \"../$l\"
+			echo path = \"$l\"
 			echo
-		fi;
 	done >> $os/Cargo.toml
 done
 

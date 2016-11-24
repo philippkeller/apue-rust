@@ -1,4 +1,3 @@
-#![cfg(any(target_os = "linux"))]
 #![allow(unused_imports, dead_code)]
 
 /// Figure 5.15: Investigate memory stream write behavior
@@ -34,6 +33,7 @@ impl CArray for [u8] {
     }
 }
 
+#[cfg(target_os = "linux")]
 fn main() {
     unsafe {
         let mut buf: [c_uchar; BSZ] = std::mem::uninitialized();
@@ -74,4 +74,9 @@ fn main() {
         printf(cstr!("len of string in buf = %ld\n"),
                strlen(buf.as_muti8()));
     }
+}
+
+#[cfg(target_os = "macos")]
+fn main() {
+    unimplemented!();
 }

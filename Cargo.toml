@@ -13,10 +13,134 @@ include = ["src/bin/*/*.rs", "Cargo.toml"]
 
 [lib]
 name = "apue"
-path = "../src/lib.rs"
+path = "src/lib.rs"
 
 [dependencies]
 libc = "*"
 itertools = "*"
 errno = "*"
 regex = "*"
+
+[[bin]]
+name="f03-list-files"
+path = "src/bin/01-overview/f03-list-files.rs"
+
+[[bin]]
+name="f04-copy-stdin-stdout"
+path = "src/bin/01-overview/f04-copy-stdin-stdout.rs"
+
+[[bin]]
+name="f05-copy-stdin-stdout2"
+path = "src/bin/01-overview/f05-copy-stdin-stdout2.rs"
+
+[[bin]]
+name="f06-getpid"
+path = "src/bin/01-overview/f06-getpid.rs"
+
+[[bin]]
+name="f07-read-execute"
+path = "src/bin/01-overview/f07-read-execute.rs"
+
+[[bin]]
+name="f08-strerror-perror"
+path = "src/bin/01-overview/f08-strerror-perror.rs"
+
+[[bin]]
+name="f09-userid-groupid"
+path = "src/bin/01-overview/f09-userid-groupid.rs"
+
+[[bin]]
+name="f10-read-execute2"
+path = "src/bin/01-overview/f10-read-execute2.rs"
+
+[[bin]]
+name="f14-limits"
+path = "src/bin/02-unix-standards/f14-limits.rs"
+
+[[bin]]
+name="f16-pathname-alloc-space"
+path = "src/bin/02-unix-standards/f16-pathname-alloc-space.rs"
+
+[[bin]]
+name="f17-open-max"
+path = "src/bin/02-unix-standards/f17-open-max.rs"
+
+[[bin]]
+name="f01-seek-stdio"
+path = "src/bin/03-fileio/f01-seek-stdio.rs"
+
+[[bin]]
+name="f02-file-with-hole"
+path = "src/bin/03-fileio/f02-file-with-hole.rs"
+
+[[bin]]
+name="f05-copy-stdin-stdout"
+path = "src/bin/03-fileio/f05-copy-stdin-stdout.rs"
+
+[[bin]]
+name="e16-dir-tree-depth"
+path = "src/bin/04-files-and-directories/e16-dir-tree-depth.rs"
+
+[[bin]]
+name="e17-unlink-fd1"
+path = "src/bin/04-files-and-directories/e17-unlink-fd1.rs"
+
+[[bin]]
+name="e01-setbuf-setvbuf"
+path = "src/bin/05-stdio/e01-setbuf-setvbuf.rs"
+
+[[bin]]
+name="e02-fgets-4"
+path = "src/bin/05-stdio/e02-fgets-4.rs"
+
+[[bin]]
+name="e07-fmemopen-bsd"
+path = "src/bin/05-stdio/e07-fmemopen-bsd.rs"
+
+[[bin]]
+name="f04-getc"
+path = "src/bin/05-stdio/f04-getc.rs"
+
+[[bin]]
+name="f05_fgets"
+path = "src/bin/05-stdio/f05_fgets.rs"
+
+[[bin]]
+name="f11_check-buffered"
+path = "src/bin/05-stdio/f11_check-buffered.rs"
+
+[[bin]]
+name="f12-tmpnam-tmpfile"
+path = "src/bin/05-stdio/f12-tmpnam-tmpfile.rs"
+
+[[bin]]
+name="f13-mkstemp"
+path = "src/bin/05-stdio/f13-mkstemp.rs"
+
+[[bin]]
+name="f15-fmemopen"
+path = "src/bin/05-stdio/f15-fmemopen.rs"
+
+[[bin]]
+name="e01-shadow-pw"
+path = "src/bin/06-system-data-files/e01-shadow-pw.rs"
+
+[[bin]]
+name="e03-uname"
+path = "src/bin/06-system-data-files/e03-uname.rs"
+
+[[bin]]
+name="e04-time_t-wrap"
+path = "src/bin/06-system-data-files/e04-time_t-wrap.rs"
+
+[[bin]]
+name="e05-strftime"
+path = "src/bin/06-system-data-files/e05-strftime.rs"
+
+[[bin]]
+name="f02-getpwnam"
+path = "src/bin/06-system-data-files/f02-getpwnam.rs"
+
+[[bin]]
+name="f11-strftime"
+path = "src/bin/06-system-data-files/f11-strftime.rs"

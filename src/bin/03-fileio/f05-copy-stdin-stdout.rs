@@ -1,7 +1,7 @@
 /// Figure 3.5: Copy standard input to standard output
 ///
 /// Takeaways:
-/// 
+///
 /// - there's a difference when doing `cat file.dat | myprog` or `myprog < file.dat`:
 ///   with the pipe the data goes through the pipe buffer and this might cap the max
 ///   read buffer size, see http://unix.stackexchange.com/a/11954/168663
@@ -29,7 +29,8 @@
 /// $ stat -f '%k'  bigfile.dat
 /// 4096
 /// $ uname -prsv
-/// Darwin 16.1.0 Darwin Kernel Version 16.1.0: Thu Oct 13 21:26:57 PDT 2016; root:xnu-3789.21.3~60/RELEASE_X86_64 i386
+/// Darwin 16.1.0 Darwin Kernel Version 16.1.0: Thu Oct 13 21:26:57 PDT 2016;
+/// root:xnu-3789.21.3~60/RELEASE_X86_64 i386
 ///
 /// | buffsize | num loops | real time | user time | sys time |
 /// |----------|-----------|-----------|-----------|----------|
@@ -96,7 +97,7 @@ use std::io::Write;
 
 fn main() {
     let args = std::env::args();
-    let buffsize:usize = if args.len() == 2 {
+    let buffsize: usize = if args.len() == 2 {
         let args: Vec<String> = args.collect();
         args[1].parse::<usize>().expect("arg needs to be a number")
     } else {
@@ -106,7 +107,8 @@ fn main() {
         let mut num_loops = 0;
         let buf = vec![0; buffsize];
         while let Some(n) = read(STDIN_FILENO, as_void!(buf), buffsize).to_option() {
-            assert!(write(STDOUT_FILENO, as_void!(buf), n as _) == n, "write error");
+            assert!(write(STDOUT_FILENO, as_void!(buf), n as _) == n,
+                    "write error");
             num_loops += 1;
         }
         if errno().0 > 0 {
