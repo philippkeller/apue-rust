@@ -20,6 +20,7 @@ libc = "*"
 itertools = "*"
 errno = "*"
 regex = "*"
+clap = "2.1"
 
 [[bin]]
 name="f03-list-files"
@@ -76,6 +77,10 @@ path = "src/bin/03-fileio/f02-file-with-hole.rs"
 [[bin]]
 name="f05-copy-stdin-stdout"
 path = "src/bin/03-fileio/f05-copy-stdin-stdout.rs"
+
+[[bin]]
+name="f11-fcntl"
+path = "src/bin/03-fileio/f11-fcntl.rs"
 
 [[bin]]
 name="e16-dir-tree-depth"
