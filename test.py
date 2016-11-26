@@ -6,12 +6,17 @@ def check_same(file_path, cmd, from_cmd, comments):
     from_comments = "\n".join(comments)
     if from_cmd != from_comments:
         print("error in", file_path, "executing", cmd)
-        print("expected: ", from_comments)
-        print("got: ", from_cmd)
+        print("expected >>{}<<, len:{}".format(from_comments, len(from_comments)))
+        print("got: >>{}<<, len:{}".format(from_cmd, len(from_cmd)))
+
 
 def run(cmd):
-    a = subprocess.check_output(cmd, shell=True,
-                                universal_newlines=True)
+    try:
+        a = subprocess.check_output(cmd, shell=True,
+                                    universal_newlines=True)
+    except subprocess.CalledProcessError as e:
+        a = e.output + "ERROR: return code {}".format(e.returncode)
+
     return a.strip()
 
 class CommentStateMachine:

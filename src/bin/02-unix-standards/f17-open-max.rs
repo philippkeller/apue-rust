@@ -5,6 +5,9 @@
 /// OPEN_MAX is defined in /usr/include/sys/syslimits.h as 10240 but I didn't find a way
 /// how to reference that (AFAIK extern blocks can only reference functions, not constants)
 /// On Linux it returns 1024 (which matches `ulimit -n`)
+///
+/// $ f17-open-max | grep succeeded
+/// sysconf succeeded..
 
 extern crate libc;
 extern crate errno;

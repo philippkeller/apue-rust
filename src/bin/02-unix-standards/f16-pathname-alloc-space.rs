@@ -4,6 +4,11 @@
 /// by one "since it’s relative to root" but both on OSX and Linux I don't need to do that.
 /// A short online research also showed that _PC_PATH_MAX is not relative to the given path
 /// but the absolute pathmax value for the filesystem where the path points to.
+///
+/// $ f16-pathname-alloc-space
+/// from libc constant: PATH_MAX=4096
+/// from pathconf: pathmax = 4096
+/// length of pointer = 4096
 
 extern crate libc;
 #[macro_use(cstr)]
@@ -67,7 +72,4 @@ fn main() {
         let (_, size) = path_alloc(&mut pathmax, &mut posix_version, &mut xsi_version);
         println!("length of pointer = {:?}", size);
     }
-    println!("posix_version = {:?}, xsi_version = {:?}",
-             posix_version,
-             xsi_version);
 }

@@ -9,6 +9,11 @@
 ///   course is obvious. But the difference is big: with a buffer size of 1 writing
 ///   into /tmp/discard.txt took 23.5 minutes. Writing to /dev/null only 8.5 minutes.
 ///
+/// $ dd if=/dev/zero of=/tmp/file.dat bs=1024 count=1 2>/dev/null
+/// $ f05-copy-stdin-stdout 64 < /tmp/file.dat 2>&1 >/dev/null
+/// total loops: 16
+
+
 /// ## Timing
 ///
 /// > dd if=/dev/zero of=bigfile.dat bs=516581760 count=1
@@ -114,6 +119,6 @@ fn main() {
         if errno().0 > 0 {
             panic!("read error");
         }
-        writeln!(&mut std::io::stderr(), "total loops: {:?}", num_loops).unwrap();
+        writeln!(&mut std::io::stderr(), "total loops: {}", num_loops).unwrap();
     }
 }

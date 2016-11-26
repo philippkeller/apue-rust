@@ -1,21 +1,32 @@
+/// Exercise 4.16: Dir tree depth
+///
+/// $ e16-dir-tree-depth 2>/dev/null
+/// PATH_MAX=1024
+/// path length: 1020, max path: 1024
+/// path length: 1022, max path: 1024
+/// ERROR: return code 101
+
 extern crate libc;
+#[macro_use(cstr)]
+extern crate apue;
 
 use std::ffi::{CStr, CString};
 use std::io;
 use std::str;
+use libc::{_PC_PATH_MAX, chdir, mkdir};
 
 static BUF_BYTES: usize = 4096;
-const _PC_PATH_MAX: libc::c_int = 5; // constant is missing in libc
 
 fn main() {
     unsafe {
-        let root = CString::new(".").unwrap().as_ptr();
-        let path_max = libc::pathconf(root, _PC_PATH_MAX);
+        let path_max = libc::pathconf(cstr!("."), _PC_PATH_MAX);
+        let initial = CString::new("/tmp/someinitialpathwhichisquitelongalreadysowedontneedtoloopforsolong").unwrap();
+        mkdir(initial.as_ptr(), libc::S_IRWXU);
+        chdir(initial.as_ptr());
         println!("PATH_MAX={}", path_max);
         loop {
-            let path = CString::new("a").unwrap().as_ptr();
-            libc::mkdir(path, libc::S_IRWXU);
-            libc::chdir(path);
+            libc::mkdir(cstr!("a"), libc::S_IRWXU);
+            libc::chdir(cstr!("a"));
             let buf = {
                 let mut buf = Vec::with_capacity(BUF_BYTES);
                 let ptr = buf.as_mut_ptr() as *mut libc::c_char;
@@ -27,7 +38,9 @@ fn main() {
                 CString::new(buf)
             };
             let s = buf.expect("Not a C string").into_string().expect("Not UTF-8");
-            println!("path length: {}, max path: {}", s, path_max);
+            if s.len() > 1018 {
+                println!("path length: {}, max path: {}", s.len(), path_max);
+            }
         }
     }
 }

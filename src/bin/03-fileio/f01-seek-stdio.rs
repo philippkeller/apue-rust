@@ -1,6 +1,11 @@
 /// Figure 3.1: Test whether standard input is capable of seeking
 ///
 /// Takaway: yea, you cannot
+///
+/// $ f01-seek-stdio < /etc/passwd
+/// seek OK
+/// $ cat < /etc/passwd | f01-seek-stdio
+/// cannot seek
 
 extern crate libc;
 extern crate apue;
