@@ -1,17 +1,17 @@
 /// Figure 3.11: Print file flags for specified descriptor
 ///
-/// $ target/debug/f11-fcntl 0 < /dev/tty
+/// $ f11-fcntl 0 < /dev/tty
 /// read only
-/// $ target/debug/f11-fcntl 0
+/// $ f11-fcntl 0
 /// read write
-/// $ target/debug/f11-fcntl 0 < /dev/tty
+/// $ f11-fcntl 0 < /dev/tty
 /// read only
-/// $ target/debug/f11-fcntl 1 > /tmp/temp.foo
+/// $ f11-fcntl 1 > /tmp/temp.foo
 /// $ cat /tmp/temp.foo
 /// write only
-/// $ target/debug/f11-fcntl 2 2>>/tmp/temp.foo
+/// $ f11-fcntl 2 2>>/tmp/temp.foo
 /// write only, append
-/// $ target/debug/f11-fcntl 5 5<>/tmp/temp.foo
+/// $ f11-fcntl 5 5<>/tmp/temp.foo
 /// read write
 
 extern crate libc;

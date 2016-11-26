@@ -1,4 +1,6 @@
 /// Figure 1.6 Print the process ID
+///
+/// $ f06-getpid > /dev/null
 
 extern crate libc;
 

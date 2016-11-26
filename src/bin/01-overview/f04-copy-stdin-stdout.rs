@@ -1,4 +1,7 @@
 /// Figure 1.4 Copy standard input to standard output
+///
+/// $ echo asdf | f04-copy-stdin-stdout
+/// asdf
 
 extern crate libc;
 #[macro_use(as_void)]

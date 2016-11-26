@@ -4,6 +4,15 @@
 /// headerfile. I missed the `$INODE64` bit first.
 /// See [issue on rust-lang](https://github.com/rust-lang/libc/issues/414)
 /// for details
+///
+/// $ mkdir -p /tmp/apue
+/// $ touch /tmp/apue/hans
+/// $ f03-list-files /tmp/apue
+/// .
+/// ..
+/// hans
+/// $ rm /tmp/apue/hans
+/// $ rm -d /tmp/apue
 
 extern crate libc;
 #[macro_use(cstr)]

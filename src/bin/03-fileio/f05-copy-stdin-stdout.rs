@@ -26,9 +26,9 @@
 ///
 /// ### Mac OSX
 ///
-/// $ stat -f '%k'  bigfile.dat
+/// > stat -f '%k'  bigfile.dat
 /// 4096
-/// $ uname -prsv
+/// > uname -prsv
 /// Darwin 16.1.0 Darwin Kernel Version 16.1.0: Thu Oct 13 21:26:57 PDT 2016;
 /// root:xnu-3789.21.3~60/RELEASE_X86_64 i386
 ///
@@ -57,9 +57,9 @@
 ///
 /// ### Linux
 ///
-/// $ stat -f -c '%S' .
+/// > stat -f -c '%S' .
 /// 4096
-/// $ uname -prsv
+/// > uname -prsv
 /// Linux 3.16.0-4-amd64 #1 SMP Debian 3.16.7-ckt25-2+deb8u3 (2016-07-02) unknown
 ///
 /// | buffsize | num loops | real time | user time | sys time |
