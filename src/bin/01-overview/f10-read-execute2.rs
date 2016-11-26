@@ -1,5 +1,10 @@
 /// Figure 1.10 Read commands from standard input and execute them
 /// source from Figure 1.7 and added the signal handling
+///
+/// $ echo man | f10-read-execute2 2>&1
+/// What manual page do you want?
+/// % %
+
 
 extern crate libc;
 #[macro_use(cstr, as_char)]

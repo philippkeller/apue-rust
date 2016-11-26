@@ -15,6 +15,10 @@
 /// there is a off by 1 error around _SC_THREAD_SAFE_FUNCTIONS)
 ///
 /// to validate the results compare it against `getconf -a`
+///
+/// $ f14-limits | grep _PC_NAME_MAX
+/// _PC_NAME_MAX =  255
+
 
 extern crate libc;
 #[macro_use(cstr)]
@@ -30,7 +34,7 @@ use regex::Regex;
 
 fn pr_conf(key: &str, path: &str, name: i32) {
     unsafe {
-        printf(cstr!("%s(%d) = "), cstr!(key), name);
+        printf(cstr!("%s = "), cstr!(key));
         let res = match &key[0..4] {
             "_SC_" => sysconf(name),
             "_PC_" => pathconf(cstr!(path), name),

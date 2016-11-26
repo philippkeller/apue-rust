@@ -7,6 +7,10 @@
 ///   why it is in the separate errno crate.
 /// - Without the extra fflush, on OSX the perror() output is printed first, only then the fprintf.
 ///   On linux it's the "right" way around.
+///
+/// $ f08-strerror-perror 2>&1 | grep EACCES
+/// EACCES: Permission denied
+
 
 extern crate libc;
 #[macro_use(cstr)]
