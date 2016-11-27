@@ -21,6 +21,11 @@
 ///   than a public singleton (which isn't really supported by rust).
 ///   As the struct instance outlives the pointer (is only dropped at end of main)
 ///   we're safe here
+///
+/// $ e07-fmemopen-bsd 2>/dev/null
+/// buffer = aaaaaaaaaaaaaaaaaaaaaaaaaaaa
+/// mem buffer = lorem ipsum doloraaaaaaaaaaa
+/// mem buffer = lorem ipsuhansaplast!aaaaaaa
 
 extern crate libc;
 #[macro_use(cstr)]
@@ -80,7 +85,6 @@ mod fmemopen {
 
     unsafe extern "C" fn read(cookie: *mut c_void, buffer: *mut c_char, nbyte: c_int) -> c_int {
         let status = cookie as *mut MemStream;
-        println!("position is: {:?}", (*status).pos);
         let nbyte = max_bytes(nbyte as u8, status);
         if nbyte > 0 {
             memcpy(buffer as _, (*status).buffer.as_void(), nbyte as usize);
@@ -95,7 +99,6 @@ mod fmemopen {
         let status = cookie as *mut MemStream;
         let nbyte = max_bytes(nbyte as u8, status);
         if nbyte > 0 {
-            println!("need to write.. position is: {:?}", (*status).pos);
             memcpy((*(*status).buffer).as_void().offset((*status).pos as _),
                    buffer as *mut _,
                    nbyte as usize);
