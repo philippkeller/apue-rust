@@ -1,4 +1,6 @@
-/// Exercise: Implement setbuf using setvbuf
+/// Exercise 5.1: Implement setbuf using setvbuf
+///
+/// $ e01-setbuf-setvbuf
 
 extern crate libc;
 #[macro_use(cstr)]
@@ -18,7 +20,7 @@ unsafe fn setbuf(stream: *mut libc::FILE, buf: *mut c_char) {
 
 fn main() {
     unsafe {
-        let fd = fopen(cstr!("/etc/passwd"), cstr!("r"));
-        setbuf(fd, std::ptr::null_mut());
+        let stream = fopen(cstr!("/etc/passwd"), cstr!("r"));
+        setbuf(stream, std::ptr::null_mut());
     }
 }

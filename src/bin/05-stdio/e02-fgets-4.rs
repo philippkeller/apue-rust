@@ -1,5 +1,16 @@
-/// Type in the program that copies a file using line-at-a-time I/O
-/// (fgets and fputs) from Figure 5.5, but use a MAXLINE of 4.
+/// Exercise 5.2:
+///
+/// Type in the program that copies a file using line-at-a-time I/O (fgets and fputs)
+/// from Figure 5.5, but use a MAXLINE of 4. What happens if you copy lines that exceed
+/// this length? Explain what is happening.
+///
+/// $ echo hansaplasti > /tmp/e02.txt
+/// $ e02-fgets-4 /tmp/e02.txt /dev/stderr 2>/dev/null
+/// buffer = han
+/// buffer = sap
+/// buffer = las
+/// buffer = ti
+/// $ rm /tmp/e02.txt
 
 extern crate libc;
 #[macro_use(cstr)]
