@@ -5,6 +5,16 @@
 /// This works for Linux only (MacOS/BSD don't have fmemopen implemented)
 /// Translation C->Rust was very straight forward, only caveat
 /// is the glibc bug that causes fflush to reset the file pointer position
+///
+/// linux only:
+/// $ initial buffer contents:
+/// before flush:
+/// after fflush: hello, world
+/// len of string in buf = 12
+/// after  fseek: bbbbbbbbbbbbhello, world
+/// len of string in buf = 24
+/// after fclose: hello, worldcccccccccccccccccccccccccccccccccc
+/// len of string in buf = 46
 
 extern crate libc;
 extern crate itertools;
