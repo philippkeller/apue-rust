@@ -2,6 +2,9 @@
 
 import subprocess, os
 
+# 'Darwin' or 'Linux'
+uname = os.uname().sysname
+
 def check_same(file_path, cmd, from_cmd, comments):
     from_comments = "\n".join(comments)
     if from_cmd != from_comments:
@@ -25,10 +28,13 @@ class CommentStateMachine:
         self.last_command_output = None
         self.comments_below_command = []
         self.file_path = file_path
+        self.osrestriction = None
 
     # seen a line without comment -> end of comment block
     def no_comment(self):
         if len(self.comments_below_command) == 0:
+            return
+        if self.osrestriction and self.osrestriction != uname:
             return
         if self.last_command_output != None:
             check_same(self.file_path, self.last_command,
@@ -41,6 +47,9 @@ class CommentStateMachine:
 
     def line_with_command(self, line):
         self.no_comment()
+        if self.osrestriction and self.osrestriction != uname:
+            return
+
         self.last_command_output = run(line)
         self.last_command = line
 
@@ -57,13 +66,17 @@ if __name__ == "__main__":
             for line in open(os.path.join(root, f)):
                 if line.startswith('///'):
                     line = line[3:].strip()
-                    if line.startswith('$'):
+                    if line.lower() == 'linux only:':
+                        m.osrestriction = 'Linux'
+                    elif line.lower() == 'mac only:':
+                        m.osrestriction = 'Darwin'
+                    elif line.startswith('$'):
                         m.line_with_command(line[1:].strip())
                     elif len(line) == 0:
                         m.no_comment()
                     else:
                         m.comment(line)
-                elif line.strip() == 0:
+                elif len(line.strip()) == 0:
                     m.no_comment()
                 else:
                     # stop when we see the first non-comment line, e.g. `extern crate`

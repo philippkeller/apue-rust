@@ -10,13 +10,13 @@
 /// $ f02-file-with-hole
 /// $ rm file.*hole
 
-/// this _should_ be the case, but is not on OSX, that's why there's a blank line above
-/// so it's not tested by test.py:
-///
-/// $ cat file.hole > file.nohole
-/// $ ls -s file.hole file.nohole
-/// 40 file.hole
-/// 40 file.nohole
+// this _should_ be the case, but is not on OSX, that's why it's only commented with //
+// so it's not tested by test.py:
+//
+// $ cat file.hole > file.nohole
+// $ ls -s file.hole file.nohole
+// 40 file.hole
+// 40 file.nohole
 
 extern crate libc;
 #[macro_use(cstr, as_void)]

@@ -107,12 +107,12 @@ name="f04-getc"
 path = "src/bin/05-stdio/f04-getc.rs"
 
 [[bin]]
-name="f05_fgets"
-path = "src/bin/05-stdio/f05_fgets.rs"
+name="f05-fgets"
+path = "src/bin/05-stdio/f05-fgets.rs"
 
 [[bin]]
-name="f11_check-buffered"
-path = "src/bin/05-stdio/f11_check-buffered.rs"
+name="f11-check-buffered"
+path = "src/bin/05-stdio/f11-check-buffered.rs"
 
 [[bin]]
 name="f12-tmpnam-tmpfile"

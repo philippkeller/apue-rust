@@ -5,13 +5,23 @@
 /// bindgen on stdio.h and replace the bindgen generated code below
 ///
 /// Main captcha here is that you first need to perform operations on
-/// the stream before you can get any buffer information from it.
+/// the stream before you can get any buffer information from it
+///
+/// mac only:
+/// $ echo input | f11-check-buffered 2>/dev/null
+/// stream = stdin, fully buffered, buffer size = 16384, fp = 0
+/// stream = stdout, fully buffered, buffer size = 0, fp = 1
+/// stream = stderr, unbuffered, buffer size = 1, fp = 2
+/// stream = passwd, fully buffered, buffer size = 4096, fp = 3
+
+#[macro_use(cstr)]
+extern crate apue;
+
 
 #[cfg(any(target_os = "macos"))]
 #[allow(non_camel_case_types)]
 mod buffered {
     extern crate libc;
-    use std::ffi::CString;
 
     // can be called from libc::getchar once https://github.com/rust-lang/libc/pull/372 is released
     extern "C" {
@@ -102,13 +112,10 @@ mod buffered {
             let stdin = __stdinp as *mut libc::FILE;
             let stdout = __stdoutp as *mut libc::FILE;
             let stderr = __stderrp as *mut libc::FILE;
-            let passwd = libc::fopen(b"/etc/passwd\0".as_ptr() as *const libc::c_char,
-                                     b"r\0".as_ptr() as *const libc::c_char);
-            libc::fputs(CString::new("enter any character\n").unwrap().as_ptr(),
-                        stdout);
+            let passwd = libc::fopen(cstr!("/etc/passwd"), cstr!("r"));
+            libc::fputs(cstr!("enter any character\n"), stderr);
             getchar();
-            libc::fputs(CString::new("one line to stderr\n").unwrap().as_ptr(),
-                        stderr);
+            libc::fputs(cstr!("one line to stderr\n"), stderr);
             libc::fgetc(passwd);
             pr_stdio("stdin", stdin);
             pr_stdio("stdout", stdout);

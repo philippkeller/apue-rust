@@ -1,3 +1,8 @@
+/// Figure 5.5: Copy standard input to standard output using fgets and fputs
+///
+/// $ echo kurt | f05-fgets
+/// kurt
+
 extern crate libc;
 
 static MAXLINE: libc::c_int = 10;

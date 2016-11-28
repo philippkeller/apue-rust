@@ -1,3 +1,8 @@
+/// Figure 5.4: Copy standard input to standard output using getc and putc
+///
+/// $ echo hans | f04-getc
+/// hans
+
 extern crate libc;
 extern crate apue;
 use apue::LibcResult;

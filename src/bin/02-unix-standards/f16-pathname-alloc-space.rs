@@ -6,9 +6,9 @@
 /// but the absolute pathmax value for the filesystem where the path points to.
 ///
 /// $ f16-pathname-alloc-space
-/// from libc constant: PATH_MAX=4096
-/// from pathconf: pathmax = 4096
-/// length of pointer = 4096
+/// from libc constant: PATH_MAX=1024
+/// from pathconf: pathmax = 1024
+/// length of pointer = 1024
 
 extern crate libc;
 #[macro_use(cstr)]
