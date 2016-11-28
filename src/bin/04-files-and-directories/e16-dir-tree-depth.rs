@@ -1,9 +1,16 @@
 /// Exercise 4.16: Dir tree depth
 ///
+/// mac only:
 /// $ e16-dir-tree-depth 2>/dev/null
 /// PATH_MAX=1024
 /// path length: 1020, max path: 1024
 /// path length: 1022, max path: 1024
+/// ERROR: return code 101
+///
+/// linux only:
+/// $ e16-dir-tree-depth 2>/dev/null
+/// PATH_MAX=4096
+/// path length: 4094, max path: 4096
 /// ERROR: return code 101
 
 extern crate libc;
@@ -16,6 +23,10 @@ use std::str;
 use libc::{_PC_PATH_MAX, chdir, mkdir};
 
 static BUF_BYTES: usize = 4096;
+#[cfg(target_os = "macos")]
+const GUESS_PATH_LENGH:usize = 1024;
+#[cfg(target_os = "linux")]
+const GUESS_PATH_LENGH:usize = 4096;
 
 fn main() {
     unsafe {
@@ -38,7 +49,7 @@ fn main() {
                 CString::new(buf)
             };
             let s = buf.expect("Not a C string").into_string().expect("Not UTF-8");
-            if s.len() > 1018 {
+            if s.len() > GUESS_PATH_LENGH - 4 {
                 println!("path length: {}, max path: {}", s.len(), path_max);
             }
         }

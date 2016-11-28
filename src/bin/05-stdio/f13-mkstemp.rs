@@ -4,8 +4,14 @@
 /// only caveat was that the pointer to the variable on the stack
 /// is not possible (or I just didn't find out how to do that and
 /// didn't dare to ask on stackoverflow)
+///
+/// $ f13-mkstemp 2>/dev/null
+/// trying to create first temp file...
+/// file exists
 
 extern crate libc;
+#[macro_use(print_err)]
+extern crate apue;
 
 use std::ffi::{CString, CStr};
 use std::io;
@@ -17,7 +23,7 @@ fn make_temp(template: *mut libc::c_char) -> Result<String, String> {
         if fd < 0 {
             return Err("can't create tmp dir".to_owned());
         }
-        println!("temp name = {:?}", CStr::from_ptr(template));
+        print_err!("temp name = {:?}", CStr::from_ptr(template));
         libc::close(fd);
         let mut stat: libc::stat = mem::uninitialized();
         if libc::stat(template, &mut stat) < 0 {
@@ -37,7 +43,8 @@ fn make_temp(template: *mut libc::c_char) -> Result<String, String> {
 fn main() {
     let good_template = CString::new("/tmp/dirXXXXXX").unwrap();
     println!("trying to create first temp file...");
-    println!("{:?}", make_temp(good_template.into_raw()));
+    let res = make_temp(good_template.into_raw());
+    print_err!("{:?}", res);
 
     // the second part with the bad template I was just
     // unable to do in rust, seems that the type safety

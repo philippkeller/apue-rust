@@ -3,8 +3,13 @@
 /// Sad thing is that the rust code is about double the number of lines (40 lines)
 /// of the C code (20 lines), mostly because of the string conversions.
 /// It's a bit silly that there's no neat abstraction for that.
+///
+/// $ f12-tmpnam-tmpfile 2>/dev/null
+/// one line of output
 
 extern crate libc;
+#[macro_use(print_err)]
+extern crate apue;
 
 use std::ffi::{CStr, CString};
 
@@ -20,7 +25,7 @@ fn main() {
         let tmp_ptr = tmpnam(std::ptr::null_mut());
         CStr::from_ptr(tmp_ptr).to_owned().into_string().unwrap()
     };
-    println!("{}", tmp);
+    print_err!("tmp file={}", tmp);
 
     // method 2: create buffer ourselves, make tmpnam fill this buffer
     let tmp = unsafe {
@@ -29,7 +34,7 @@ fn main() {
         tmpnam(name);
         CStr::from_ptr(name).to_owned().into_string().unwrap()
     };
-    println!("{}", tmp);
+    print_err!("tmp file={}", tmp);
 
     unsafe {
         let fp = libc::tmpfile();

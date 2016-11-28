@@ -7,9 +7,7 @@
 ///
 /// $ mkdir -p /tmp/apue
 /// $ touch /tmp/apue/hans
-/// $ f03-list-files /tmp/apue
-/// .
-/// ..
+/// $ f03-list-files /tmp/apue | grep hans
 /// hans
 /// $ rm /tmp/apue/hans
 /// $ rm -d /tmp/apue

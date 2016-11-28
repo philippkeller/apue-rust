@@ -22,6 +22,8 @@
 ///   As the struct instance outlives the pointer (is only dropped at end of main)
 ///   we're safe here
 ///
+/// mac only:
+///
 /// $ e07-fmemopen-bsd 2>/dev/null
 /// buffer = aaaaaaaaaaaaaaaaaaaaaaaaaaaa
 /// mem buffer = lorem ipsum doloraaaaaaaaaaa

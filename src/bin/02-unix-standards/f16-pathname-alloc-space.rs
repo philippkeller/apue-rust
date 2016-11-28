@@ -5,10 +5,17 @@
 /// A short online research also showed that _PC_PATH_MAX is not relative to the given path
 /// but the absolute pathmax value for the filesystem where the path points to.
 ///
+/// mac only:
 /// $ f16-pathname-alloc-space
 /// from libc constant: PATH_MAX=1024
 /// from pathconf: pathmax = 1024
 /// length of pointer = 1024
+///
+/// linux only:
+/// $ f16-pathname-alloc-space
+/// from libc constant: PATH_MAX=4096
+/// from pathconf: pathmax = 4096
+/// length of pointer = 4096
 
 extern crate libc;
 #[macro_use(cstr)]
