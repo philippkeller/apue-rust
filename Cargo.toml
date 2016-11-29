@@ -91,6 +91,10 @@ name="e02-dup2"
 path = "src/bin/03-fileio/e02-dup2.rs"
 
 [[bin]]
+name="e06-read-write-seek"
+path = "src/bin/03-fileio/e06-read-write-seek.rs"
+
+[[bin]]
 name="e16-dir-tree-depth"
 path = "src/bin/04-files-and-directories/e16-dir-tree-depth.rs"
 
