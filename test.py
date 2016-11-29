@@ -56,9 +56,14 @@ class CommentStateMachine:
 if __name__ == "__main__":
     # add target/debug to path
     cur_path = os.path.dirname(os.path.realpath(__file__))
-    build_dir = os.path.join(cur_path, 'target', 'debug')
+    if os.environ.get('CARGO_TARGET_DIR'):
+        d = os.environ.get('CARGO_TARGET_DIR')
+        build_dir = os.path.join(cur_path, d, 'debug')
+    else:
+        build_dir = os.path.join(cur_path, 'target', 'debug')
+    os.environ["PATH"] += os.pathsep + build_dirCARGO_TARGET_DIR
+
     src_dir = os.path.join(cur_path, 'src', 'bin')
-    os.environ["PATH"] += os.pathsep + build_dir
 
     for root, dirs, files in os.walk(src_dir):
         for f in [i for i in files if i.endswith('.rs')]:

@@ -83,6 +83,11 @@ name="f11-fcntl"
 path = "src/bin/03-fileio/f11-fcntl.rs"
 
 [[bin]]
+name="f12-setfl"
+path = "src/bin/03-fileio/f12-setfl.rs"
+
+
+[[bin]]
 name="e16-dir-tree-depth"
 path = "src/bin/04-files-and-directories/e16-dir-tree-depth.rs"
 

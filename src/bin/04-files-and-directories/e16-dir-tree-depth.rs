@@ -3,7 +3,6 @@
 /// mac only:
 /// $ e16-dir-tree-depth 2>/dev/null
 /// PATH_MAX=1024
-/// path length: 1020, max path: 1024
 /// path length: 1022, max path: 1024
 /// ERROR: return code 101
 ///
