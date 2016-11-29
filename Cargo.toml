@@ -95,6 +95,10 @@ name="e06-read-write-seek"
 path = "src/bin/03-fileio/e06-read-write-seek.rs"
 
 [[bin]]
+name="f03-file-type"
+path = "src/bin/04-files-and-directories/f03-file-type.rs"
+
+[[bin]]
 name="e16-dir-tree-depth"
 path = "src/bin/04-files-and-directories/e16-dir-tree-depth.rs"
 
