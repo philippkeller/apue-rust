@@ -86,6 +86,9 @@ path = "src/bin/03-fileio/f11-fcntl.rs"
 name="f12-setfl"
 path = "src/bin/03-fileio/f12-setfl.rs"
 
+[[bin]]
+name="e02-dup2"
+path = "src/bin/03-fileio/e02-dup2.rs"
 
 [[bin]]
 name="e16-dir-tree-depth"

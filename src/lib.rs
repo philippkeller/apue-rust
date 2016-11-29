@@ -46,7 +46,7 @@ macro_rules! print_err {
     )
 }
 
-
+/// turn libc result into an option
 pub trait LibcResult<T> {
     /// returns None if the result is empty (-1 if an integer, Null if a pointer)
     /// and Some otherwise

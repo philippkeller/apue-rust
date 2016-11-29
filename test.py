@@ -61,7 +61,7 @@ if __name__ == "__main__":
         build_dir = os.path.join(cur_path, d, 'debug')
     else:
         build_dir = os.path.join(cur_path, 'target', 'debug')
-    os.environ["PATH"] += os.pathsep + build_dirCARGO_TARGET_DIR
+    os.environ["PATH"] += os.pathsep + build_dir
 
     src_dir = os.path.join(cur_path, 'src', 'bin')
 
