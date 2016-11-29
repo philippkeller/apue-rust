@@ -99,6 +99,10 @@ name="f03-file-type"
 path = "src/bin/04-files-and-directories/f03-file-type.rs"
 
 [[bin]]
+name="f08-access"
+path = "src/bin/04-files-and-directories/f08-access.rs"
+
+[[bin]]
 name="e16-dir-tree-depth"
 path = "src/bin/04-files-and-directories/e16-dir-tree-depth.rs"
 
