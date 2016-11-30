@@ -15,8 +15,10 @@ def check_same(file_path, cmd, from_cmd, comments):
 
 def run(cmd):
     try:
-        a = subprocess.check_output(cmd, shell=True,
-                                    universal_newlines=True)
+        a = subprocess.check_output(cmd,
+                                    shell=True,
+                                    universal_newlines=True,
+                                    executable='/bin/bash')
     except subprocess.CalledProcessError as e:
         a = e.output + "ERROR: return code {}".format(e.returncode)
 
