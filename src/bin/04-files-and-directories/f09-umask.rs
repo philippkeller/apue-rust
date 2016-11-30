@@ -2,19 +2,19 @@
 ///
 /// Takeaway: formatting stat output is totally different on linux and on macos
 ///
+/// $ rm /tmp/{foo,bar}
+///
 /// linux only:
 /// $ f09-umask
-/// $ stat -c %A /tmp/foo
+/// $ stat -c %A /tmp/{foo,bar}
 /// -rw-rw-rw-
-/// $ stat -c %A /tmp/bar
 /// -rw-------
 /// $ rm /tmp/{foo,bar}
 ///
 /// mac only:
 /// $ f09-umask
-/// $ stat -f "%Sp" /tmp/foo
+/// $ stat -f "%Sp" /tmp/{foo,bar}
 /// -rw-rw-rw-
-/// $ stat -f "%Sp" /tmp/bar
 /// -rw-------
 /// $ rm /tmp/{foo,bar}
 

@@ -1,8 +1,9 @@
 extern crate libc;
 extern crate itertools;
 
-use libc::{c_int, utsname};
+use libc::{c_int, utsname, exit};
 use itertools::Itertools;
+use std::io::Write;
 
 /// Turns a str into a c string. Warning: the cstring only lives as long the
 /// str lives. Don't e.g. assign the return value to a variable!
@@ -94,4 +95,11 @@ pub fn uname() -> Option<String> {
         return Some(array_to_string(&uc.sysname));
     }
     None
+}
+
+pub fn err_sys(msg: &str) {
+    std::io::stderr().write(format!("{}{}", msg, "\n").as_bytes()).unwrap();
+    unsafe {
+        exit(1);
+    }
 }

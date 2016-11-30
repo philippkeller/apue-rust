@@ -45,6 +45,8 @@ class CommentStateMachine:
         self.comments_below_command = []
 
     def comment(self, line):
+        if self.osrestriction and self.osrestriction != uname:
+            return
         self.comments_below_command.append(line)
 
     def line_with_command(self, line):
@@ -75,8 +77,10 @@ if __name__ == "__main__":
                     line = line[3:].strip()
                     if line.lower() == 'linux only:':
                         m.osrestriction = 'Linux'
+                        m.no_comment()
                     elif line.lower() == 'mac only:':
                         m.osrestriction = 'Darwin'
+                        m.no_comment()
                     elif line.startswith('$'):
                         m.line_with_command(line[1:].strip())
                     elif len(line) == 0:

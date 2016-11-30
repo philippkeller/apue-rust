@@ -107,6 +107,10 @@ name="f09-umask"
 path = "src/bin/04-files-and-directories/f09-umask.rs"
 
 [[bin]]
+name="f12-chmod"
+path = "src/bin/04-files-and-directories/f12-chmod.rs"
+
+[[bin]]
 name="e16-dir-tree-depth"
 path = "src/bin/04-files-and-directories/e16-dir-tree-depth.rs"
 
