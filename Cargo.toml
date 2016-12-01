@@ -115,6 +115,11 @@ name="f16-unlink"
 path = "src/bin/04-files-and-directories/f16-unlink.rs"
 
 [[bin]]
+name="f21-futimes"
+path = "src/bin/04-files-and-directories/f21-futimes.rs"
+
+
+[[bin]]
 name="e16-dir-tree-depth"
 path = "src/bin/04-files-and-directories/e16-dir-tree-depth.rs"
 
