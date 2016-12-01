@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import subprocess, os
+import subprocess, os, sys
 
 # 'Darwin' or 'Linux'
 uname = os.uname().sysname
@@ -58,6 +58,10 @@ class CommentStateMachine:
         self.last_command = line
 
 if __name__ == "__main__":
+    if len(sys.argv) == 2:
+        limit = sys.argv[1]
+    else:
+        limit = None
     # add target/debug to path
     cur_path = os.path.dirname(os.path.realpath(__file__))
     if os.environ.get('CARGO_TARGET_DIR'):
@@ -71,6 +75,9 @@ if __name__ == "__main__":
 
     for root, dirs, files in os.walk(src_dir):
         for f in [i for i in files if i.endswith('.rs')]:
+            # limit execution of tests to only files which match the first argument
+            if limit and f.find(limit) < 0:
+                continue
             m = CommentStateMachine(os.path.join(root, f))
             for line in open(os.path.join(root, f)):
                 if line.startswith('///'):
