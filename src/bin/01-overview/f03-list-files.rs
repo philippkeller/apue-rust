@@ -17,17 +17,8 @@ extern crate libc;
 extern crate apue;
 
 use apue::{array_to_string, LibcResult};
-use libc::{opendir, closedir, DIR, dirent};
-
-extern "C" {
-    #[cfg(target_os = "macos")]
-    #[link_name = "readdir$INODE64"]
-    pub fn readdir(arg1: *mut DIR) -> *mut dirent;
-
-    #[cfg(not(target_os = "macos"))]
-    pub fn readdir(arg1: *mut DIR) -> *mut dirent;
-
-}
+use apue::my_libc::readdir;
+use libc::{opendir, closedir};
 
 fn main() {
     let dir = std::env::args().nth(1).expect("please specify a path");

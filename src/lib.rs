@@ -103,3 +103,16 @@ pub fn err_sys(msg: &str) {
         exit(1);
     }
 }
+
+pub mod my_libc {
+    use libc::{dirent, DIR};
+    extern "C" {
+        #[cfg(target_os = "macos")]
+        #[link_name = "readdir$INODE64"]
+        pub fn readdir(arg1: *mut DIR) -> *mut dirent;
+
+        #[cfg(not(target_os = "macos"))]
+        pub fn readdir(arg1: *mut DIR) -> *mut dirent;
+
+    }
+}

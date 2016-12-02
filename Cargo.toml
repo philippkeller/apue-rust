@@ -118,6 +118,9 @@ path = "src/bin/04-files-and-directories/f16-unlink.rs"
 name="f21-futimes"
 path = "src/bin/04-files-and-directories/f21-futimes.rs"
 
+[[bin]]
+name="f22-path-traversal"
+path = "src/bin/04-files-and-directories/f22-path-traversal.rs"
 
 [[bin]]
 name="e16-dir-tree-depth"
