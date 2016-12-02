@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 /// Figure 4.21 Example of futimens function
 ///
 /// Takeaways:
