@@ -2,7 +2,7 @@ extern crate libc;
 extern crate itertools;
 extern crate errno;
 
-use libc::{c_int, c_char, utsname, exit, PATH_MAX};
+use libc::{c_int, c_char, dev_t, utsname, exit, PATH_MAX};
 use std::io::Write;
 use std::ffi::{CStr};
 
@@ -112,6 +112,15 @@ pub fn path_alloc() -> std::vec::Vec<c_char> {
     // the terminating null byte. For simplicity sake we don't check for the posix
     // version and just increase by one
     Vec::with_capacity((PATH_MAX + 1) as usize)
+}
+// major device number, impl ported from /usr/include/sys/types.h
+pub fn major(x:dev_t) -> dev_t {
+    (x >> 24) & 0xff
+}
+
+// minor device number, impl ported from /usr/include/sys/types.h
+pub fn minor(x:dev_t) -> dev_t {
+    x & 0xffffff
 }
 
 pub mod my_libc {
