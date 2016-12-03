@@ -13,7 +13,7 @@
 ///
 /// timing wise this rust implementation is about 100% slower than the C program,
 /// most probably due to string copying (solved some heavy issues already, but still some
-/// are remaining)
+/// are remaining, maybe doing `chdir` into the directory would get rid of that string concat)
 ///
 /// $ rm -rf /tmp/f21
 /// $ mkdir /tmp/f21
