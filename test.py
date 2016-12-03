@@ -22,7 +22,7 @@ def run(cmd):
     except subprocess.CalledProcessError as e:
         a = e.output + "ERROR: return code {}".format(e.returncode)
 
-    return a.strip()
+    return a.rstrip()
 
 class CommentStateMachine:
     def __init__(self, file_path):
@@ -81,7 +81,7 @@ if __name__ == "__main__":
             m = CommentStateMachine(os.path.join(root, f))
             for line in open(os.path.join(root, f)):
                 if line.startswith('///'):
-                    line = line[3:].strip()
+                    line = line[4:].rstrip()
                     if line.lower() == 'linux only:':
                         m.osrestriction = 'Linux'
                         m.no_comment()
@@ -89,7 +89,7 @@ if __name__ == "__main__":
                         m.osrestriction = 'Darwin'
                         m.no_comment()
                     elif line.startswith('$'):
-                        m.line_with_command(line[1:].strip())
+                        m.line_with_command(line[2:])
                     elif len(line) == 0:
                         m.no_comment()
                     else:
