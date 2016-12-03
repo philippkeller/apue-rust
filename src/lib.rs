@@ -2,8 +2,8 @@ extern crate libc;
 extern crate itertools;
 
 use libc::{c_int, utsname, exit};
-use itertools::Itertools;
 use std::io::Write;
+use std::ffi::{CStr};
 
 /// Turns a str into a c string. Warning: the cstring only lives as long the
 /// str lives. Don't e.g. assign the return value to a variable!
@@ -84,15 +84,17 @@ impl<T> LibcResult<*mut T> for *mut T {
     }
 }
 
-pub fn array_to_string(slice: &[i8]) -> String {
-    slice.iter().take_while(|&x| *x != 0).map(|&a| a as u8 as char).join("")
+pub unsafe fn array_to_string(sl: &[i8]) -> &str {
+    CStr::from_ptr(sl.as_ptr()).to_str().expect("invalid string")
 }
 
 /// Return uname -s
 pub fn uname() -> Option<String> {
     let mut uc: utsname = unsafe { std::mem::uninitialized() };
-    if unsafe { libc::uname(&mut uc) } == 0 {
-        return Some(array_to_string(&uc.sysname));
+    unsafe {
+        if libc::uname(&mut uc) == 0 {
+            return Some(String::from(array_to_string(&uc.sysname)));
+        }
     }
     None
 }
