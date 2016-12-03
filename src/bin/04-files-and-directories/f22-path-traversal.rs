@@ -1,19 +1,48 @@
 /// Figure 4.22: Recursively descend a directory hierarchy, counting file types
 ///
-/// TODO: explain why this is better than the C program, object oriented and yada yada
-/// TODO: doctest
+/// takeaways:
+///
+/// - calling the libc functions was straightforward (with the exception of readdir which
+///   is missing in rusts libc (only readdir_r is there)
+/// - first forgot to call `closedir` and ran into the "too many files open" limit
+/// - the C code in the book suffers is hard to read. Rusts OOP features help a lot in making
+///   the code easier to read:
+///   + Counter struct instead of static variables and passing a function
+///     pointer
+///   + Enum instead of constants
+///
+/// timing wise this rust implementation is about 100% slower than the C program,
+/// most probably due to string copying (solved some heavy issues already, but still some
+/// are remaining)
+///
+/// $ rm -rf /tmp/f21
+/// $ mkdir /tmp/f21
+/// $ touch /tmp/f21/{a,b,c,d,e}
+/// $ ln -s /tmp /tmp/f21/tmp
+/// $ mkdir /tmp/f21/0
+/// $ touch /tmp/f21/0/{f,g,e}
+/// $ f22-path-traversal /tmp/f21
+///                8 regular files    72.73%
+///                2 directories      18.18%
+///                1 symbolic links    9.09%
+///                0 block special     0.00%
+///                0 char special      0.00%
+///                0 FIFOs             0.00%
+///                0 sockets           0.00%
+/// $ rm -rf /tmp/f21
 
 extern crate clap;
 extern crate libc;
+#[macro_use(print_err)]
 extern crate apue;
 extern crate errno;
 
 use libc::{stat, S_IFMT, S_IFDIR, S_IFREG, S_IFBLK, S_IFCHR,
     S_IFIFO, S_IFLNK, S_IFSOCK, opendir, closedir, lstat};
-use apue::{LibcResult, array_to_string};
+use apue::{LibcResult};
 use apue::my_libc::readdir;
 use clap::App;
-use std::ffi::CString;
+use std::ffi::{CString, CStr};
 
 struct Counter {
     nreg:u64,
@@ -42,24 +71,27 @@ impl Counter {
     fn count_other(&mut self, path: &str, typ: FileType) {
         match typ {
             FileType::Directory => self.ndir+= 1,
-            FileType::DirectoryCannotRead => println!("cannot read dir: {}", path),
-            FileType::FileCannotStat => println!("cannot stat file: {}", path),
+            FileType::DirectoryCannotRead => print_err!("cannot read dir: {}", path),
+            FileType::FileCannotStat => print_err!("cannot stat file: {}", path),
         };
     }
 }
 
 impl std::fmt::Debug for Counter {
-    // TODO: percentages
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, r#"
-        {:8} regular files
-        {:8} directories
-        {:8} symbolic links
-        {:8} block special
-        {:8} char special
-        {:8} FIFOs
-        {:8} sockets"#,
-               self.nreg, self.ndir, self.nslink, self.nblk, self.nchr, self.nfifo, self.nsock)
+        let total = (self.nsock+self.ndir+self.nslink+self.nfifo+self.nblk+self.nchr+self.nreg) as f32 / 100.0;
+        write!(f, r#"        {0:8} regular files    {7:5.2}%
+        {1:8} directories      {8:5.2}%
+        {2:8} symbolic links   {9:5.2}%
+        {3:8} block special    {10:5.2}%
+        {4:8} char special     {11:5.2}%
+        {5:8} FIFOs            {12:5.2}%
+        {6:8} sockets          {13:5.2}%"#,
+               self.nreg, self.ndir, self.nslink, self.nblk, self.nchr, self.nfifo, self.nsock,
+               self.nreg as f32 / total, self.ndir as f32 / total, self.nslink as f32 / total,
+               self.nblk as f32 / total, self.nchr as f32 / total, self.nfifo as f32 / total,
+               self.nsock as f32 / total
+        )
     }
 }
 
@@ -74,17 +106,17 @@ unsafe fn myftw(path: &str, cnt: &mut Counter) {
     let dp = match opendir(p.as_ptr()).to_option() {
         Some(dp) => dp,
         None => {
-            println!("cannot open dir: {}", errno::errno());
+            print_err!("cannot open dir: {}", errno::errno());
             cnt.count_other(path, FileType::DirectoryCannotRead);
             return
         },
     };
     while let Some(dirp) = readdir(dp).to_option() {
-        let filename = array_to_string(&(*dirp).d_name);
+        let filename = CStr::from_ptr((&(*dirp).d_name).as_ptr()).to_str().expect("invalid string");
         if filename == "." || filename == ".." {
             continue;
         }
-        let filename = format!("{}/{}", path, filename);
+        let filename = [path, &filename].join("/");
         let mut statbuf:stat = std::mem::uninitialized();
         if let None = lstat(CString::new(filename.to_owned()).unwrap().as_ptr(), &mut statbuf).to_option() {
             cnt.count_other(&filename, FileType::FileCannotStat);
