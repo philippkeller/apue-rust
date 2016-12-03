@@ -1,7 +1,8 @@
 extern crate libc;
 extern crate itertools;
+extern crate errno;
 
-use libc::{c_int, utsname, exit};
+use libc::{c_int, c_char, utsname, exit, PATH_MAX};
 use std::io::Write;
 use std::ffi::{CStr};
 
@@ -104,6 +105,13 @@ pub fn err_sys(msg: &str) {
     unsafe {
         exit(1);
     }
+}
+
+pub fn path_alloc() -> std::vec::Vec<c_char> {
+    // Before POSIX.1-2001, we aren’t guaranteed that PATH_MAX includes
+    // the terminating null byte. For simplicity sake we don't check for the posix
+    // version and just increase by one
+    Vec::with_capacity((PATH_MAX + 1) as usize)
 }
 
 pub mod my_libc {
