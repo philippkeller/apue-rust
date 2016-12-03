@@ -131,6 +131,10 @@ name="f24-getcwd"
 path = "src/bin/04-files-and-directories/f24-getcwd.rs"
 
 [[bin]]
+name="f25-st_dev"
+path = "src/bin/04-files-and-directories/f25-st_dev.rs"
+
+[[bin]]
 name="e16-dir-tree-depth"
 path = "src/bin/04-files-and-directories/e16-dir-tree-depth.rs"
 
