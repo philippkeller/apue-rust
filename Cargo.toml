@@ -135,6 +135,10 @@ name="f25-st_dev"
 path = "src/bin/04-files-and-directories/f25-st_dev.rs"
 
 [[bin]]
+name="e06-cp-sparse"
+path = "src/bin/04-files-and-directories/e06-cp-sparse.rs"
+
+[[bin]]
 name="e16-dir-tree-depth"
 path = "src/bin/04-files-and-directories/e16-dir-tree-depth.rs"
 
