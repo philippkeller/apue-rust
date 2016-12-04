@@ -1,4 +1,5 @@
 /// Figure 4.22: Recursively descend a directory hierarchy, counting file types
+/// adapted to chdir into directories as suggested in Exercise 4.11
 ///
 /// takeaways:
 ///
@@ -11,9 +12,9 @@
 ///     pointer
 ///   + Enum instead of constants
 ///
-/// timing wise this rust implementation is about 100% slower than the C program,
-/// most probably due to string copying (solved some heavy issues already, but still some
-/// are remaining, maybe doing `chdir` into the directory would get rid of that string concat)
+/// timing wise this rust implementation is about the same as the c program without chdir.
+/// (before implementing chdir it was about 100% slower, most probably due to the fact that
+/// this implementation does too much string copying)
 ///
 /// $ rm -rf /tmp/f21
 /// $ mkdir /tmp/f21
@@ -33,12 +34,12 @@
 
 extern crate clap;
 extern crate libc;
-#[macro_use(print_err)]
+#[macro_use(print_err, cstr)]
 extern crate apue;
 extern crate errno;
 
 use libc::{stat, S_IFMT, S_IFDIR, S_IFREG, S_IFBLK, S_IFCHR,
-    S_IFIFO, S_IFLNK, S_IFSOCK, opendir, closedir, lstat};
+    S_IFIFO, S_IFLNK, S_IFSOCK, opendir, closedir, lstat, chdir};
 use apue::{LibcResult};
 use apue::my_libc::readdir;
 use clap::App;
@@ -101,13 +102,12 @@ enum FileType {
     FileCannotStat,
 }
 
-unsafe fn myftw(path: &str, cnt: &mut Counter) {
-    let p = CString::new(path).unwrap();
-    let dp = match opendir(p.as_ptr()).to_option() {
+unsafe fn myftw(cnt: &mut Counter) {
+    let dp = match opendir(cstr!(".")).to_option() {
         Some(dp) => dp,
         None => {
             print_err!("cannot open dir: {}", errno::errno());
-            cnt.count_other(path, FileType::DirectoryCannotRead);
+            cnt.count_other(".", FileType::DirectoryCannotRead);
             return
         },
     };
@@ -116,7 +116,6 @@ unsafe fn myftw(path: &str, cnt: &mut Counter) {
         if filename == "." || filename == ".." {
             continue;
         }
-        let filename = [path, &filename].join("/");
         let mut statbuf:stat = std::mem::uninitialized();
         if let None = lstat(CString::new(filename.to_owned()).unwrap().as_ptr(), &mut statbuf).to_option() {
             cnt.count_other(&filename, FileType::FileCannotStat);
@@ -125,13 +124,16 @@ unsafe fn myftw(path: &str, cnt: &mut Counter) {
         match statbuf.st_mode & S_IFMT {
             S_IFDIR => {
                 cnt.count_other(&filename, FileType::Directory);
-                myftw(&filename, cnt);
+                if let Some(_) = chdir(cstr!(filename)).to_option() {
+                    myftw(cnt);
+                    chdir(cstr!(".."));
+                }
             },
             _ => cnt.count_file(&filename, &statbuf),
         }
     }
     if let None = closedir(dp).to_option() {
-        panic!("can’t close directory {}", path);
+        panic!("can’t close directory {}", errno::errno());
     }
 }
 
@@ -142,7 +144,8 @@ fn main() {
         let matches = App::new("tree-traversal")
             .args_from_usage("<path> beginning path for traversal").get_matches();
         let path = matches.value_of("path").unwrap();
-        myftw(path, &mut c);
+        chdir(cstr!(path));
+        myftw(&mut c);
         println!("{:?}", c);
     }
 }
