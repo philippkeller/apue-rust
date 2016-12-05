@@ -96,6 +96,9 @@ if __name__ == "__main__":
                         m.comment(line)
                 elif len(line.strip()) == 0:
                     m.no_comment()
+                elif line.startswith('#'):
+                    # skip build flags
+                    pass
                 else:
                     # stop when we see the first non-comment line, e.g. `extern crate`
                     m.no_comment()
