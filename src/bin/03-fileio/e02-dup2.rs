@@ -13,7 +13,7 @@ extern crate apue;
 use libc::dup;
 use apue::LibcResult;
 
-unsafe fn dup2(fd1:i32, fd2:i32) {
+unsafe fn dup2(fd1: i32, fd2: i32) {
     if fd2 < fd1 {
         panic!("the fd you want is already taken");
     }
@@ -22,7 +22,7 @@ unsafe fn dup2(fd1:i32, fd2:i32) {
         println!("registering fd={}", fd);
         fd = match dup(fd1).to_option() {
             Some(fd) => fd,
-            None => panic!("error calling dup")
+            None => panic!("error calling dup"),
         }
     }
 }

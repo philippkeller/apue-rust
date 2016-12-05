@@ -19,18 +19,24 @@ use apue::LibcResult;
 use libc::{atexit, printf};
 
 extern "C" fn my_exit1() {
-    unsafe{printf(cstr!("first exit handler\n"))};
+    unsafe { printf(cstr!("first exit handler\n")) };
 }
 
 extern "C" fn my_exit2() {
-    unsafe{printf(cstr!("second exit handler\n"))};
+    unsafe { printf(cstr!("second exit handler\n")) };
 }
 
 fn main() {
     unsafe {
-        atexit(my_exit2).to_option().expect(&format!("can't register my_exit2: {}", errno::errno()));
-        atexit(my_exit1).to_option().expect(&format!("can't register my_exit1: {}", errno::errno()));
-        atexit(my_exit1).to_option().expect(&format!("can't register my_exit1: {}", errno::errno()));
+        atexit(my_exit2)
+            .to_option()
+            .expect(&format!("can't register my_exit2: {}", errno::errno()));
+        atexit(my_exit1)
+            .to_option()
+            .expect(&format!("can't register my_exit1: {}", errno::errno()));
+        atexit(my_exit1)
+            .to_option()
+            .expect(&format!("can't register my_exit1: {}", errno::errno()));
         println!("main is done");
     }
 }

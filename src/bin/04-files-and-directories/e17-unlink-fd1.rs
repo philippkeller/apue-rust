@@ -22,7 +22,7 @@ use std::io::Error;
 use apue::LibcResult;
 use libc::{S_IRUSR, S_IWUSR, S_IRGRP, S_IWGRP, S_IROTH, S_IWOTH, mode_t, creat, unlink};
 
-const FILE_MODE: mode_t = S_IRUSR+S_IWUSR+S_IRGRP+S_IWGRP+S_IROTH+S_IWOTH;
+const FILE_MODE: mode_t = S_IRUSR + S_IWUSR + S_IRGRP + S_IWGRP + S_IROTH + S_IWOTH;
 
 fn main() {
     let fd = unsafe {

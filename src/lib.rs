@@ -4,7 +4,7 @@ extern crate errno;
 
 use libc::{c_int, c_char, dev_t, utsname, exit, PATH_MAX};
 use std::io::Write;
-use std::ffi::{CStr};
+use std::ffi::CStr;
 
 /// Turns a str into a c string. Warning: the cstring only lives as long the
 /// str lives. Don't e.g. assign the return value to a variable!
@@ -114,12 +114,12 @@ pub fn path_alloc() -> std::vec::Vec<c_char> {
     Vec::with_capacity((PATH_MAX + 1) as usize)
 }
 // major device number, impl ported from /usr/include/sys/types.h
-pub fn major(x:dev_t) -> dev_t {
+pub fn major(x: dev_t) -> dev_t {
     (x >> 24) & 0xff
 }
 
 // minor device number, impl ported from /usr/include/sys/types.h
-pub fn minor(x:dev_t) -> dev_t {
+pub fn minor(x: dev_t) -> dev_t {
     x & 0xffffff
 }
 

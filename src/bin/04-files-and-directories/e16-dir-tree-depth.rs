@@ -23,14 +23,16 @@ use libc::{_PC_PATH_MAX, chdir, mkdir};
 
 static BUF_BYTES: usize = 4096;
 #[cfg(target_os = "macos")]
-const GUESS_PATH_LENGH:usize = 1024;
+const GUESS_PATH_LENGH: usize = 1024;
 #[cfg(target_os = "linux")]
-const GUESS_PATH_LENGH:usize = 4096;
+const GUESS_PATH_LENGH: usize = 4096;
 
 fn main() {
     unsafe {
         let path_max = libc::pathconf(cstr!("."), _PC_PATH_MAX);
-        let initial = CString::new("/tmp/someinitialpathwhichisquitelongalreadysowedontneedtoloopforsolong").unwrap();
+        let initial =
+            CString::new("/tmp/someinitialpathwhichisquitelongalreadysowedontneedtoloopforsolong")
+                .unwrap();
         mkdir(initial.as_ptr(), libc::S_IRWXU);
         chdir(initial.as_ptr());
         println!("PATH_MAX={}", path_max);

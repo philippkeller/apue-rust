@@ -13,7 +13,6 @@
 /// $ f05-copy-stdin-stdout 64 < /tmp/file.dat 2>&1 >/dev/null
 /// total loops: 16
 
-
 /// ## Timing
 ///
 /// > dd if=/dev/zero of=bigfile.dat bs=516581760 count=1

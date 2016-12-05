@@ -22,10 +22,10 @@ extern crate libc;
 #[macro_use(cstr)]
 extern crate apue;
 
-use libc::{mode_t,S_IRUSR,S_IWUSR,S_IRGRP,S_IWGRP,S_IROTH,S_IWOTH, umask, creat};
+use libc::{mode_t, S_IRUSR, S_IWUSR, S_IRGRP, S_IWGRP, S_IROTH, S_IWOTH, umask, creat};
 use apue::LibcResult;
 
-const RWRWRW:mode_t = (S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+const RWRWRW: mode_t = (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
 
 fn main() {
     unsafe {

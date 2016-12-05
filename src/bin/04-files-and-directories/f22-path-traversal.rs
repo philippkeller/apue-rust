@@ -38,21 +38,21 @@ extern crate libc;
 extern crate apue;
 extern crate errno;
 
-use libc::{stat, S_IFMT, S_IFDIR, S_IFREG, S_IFBLK, S_IFCHR,
-    S_IFIFO, S_IFLNK, S_IFSOCK, opendir, closedir, lstat, chdir};
-use apue::{LibcResult};
+use libc::{stat, S_IFMT, S_IFDIR, S_IFREG, S_IFBLK, S_IFCHR, S_IFIFO, S_IFLNK, S_IFSOCK, opendir,
+           closedir, lstat, chdir};
+use apue::LibcResult;
 use apue::my_libc::readdir;
 use clap::App;
 use std::ffi::{CString, CStr};
 
 struct Counter {
-    nreg:u64,
-    ndir:u64,
-    nblk:u64,
-    nchr:u64,
-    nfifo:u64,
-    nslink:u64,
-    nsock:u64,
+    nreg: u64,
+    ndir: u64,
+    nblk: u64,
+    nchr: u64,
+    nfifo: u64,
+    nslink: u64,
+    nsock: u64,
 }
 
 impl Counter {
@@ -71,7 +71,7 @@ impl Counter {
     }
     fn count_other(&mut self, path: &str, typ: FileType) {
         match typ {
-            FileType::Directory => self.ndir+= 1,
+            FileType::Directory => self.ndir += 1,
             FileType::DirectoryCannotRead => print_err!("cannot read dir: {}", path),
             FileType::FileCannotStat => print_err!("cannot stat file: {}", path),
         };
@@ -80,19 +80,30 @@ impl Counter {
 
 impl std::fmt::Debug for Counter {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let total = (self.nsock+self.ndir+self.nslink+self.nfifo+self.nblk+self.nchr+self.nreg) as f32 / 100.0;
-        write!(f, r#"        {0:8} regular files    {7:5.2}%
+        let total = (self.nsock + self.ndir + self.nslink + self.nfifo + self.nblk +
+                     self.nchr + self.nreg) as f32 / 100.0;
+        write!(f,
+               r#"        {0:8} regular files    {7:5.2}%
         {1:8} directories      {8:5.2}%
         {2:8} symbolic links   {9:5.2}%
         {3:8} block special    {10:5.2}%
         {4:8} char special     {11:5.2}%
         {5:8} FIFOs            {12:5.2}%
         {6:8} sockets          {13:5.2}%"#,
-               self.nreg, self.ndir, self.nslink, self.nblk, self.nchr, self.nfifo, self.nsock,
-               self.nreg as f32 / total, self.ndir as f32 / total, self.nslink as f32 / total,
-               self.nblk as f32 / total, self.nchr as f32 / total, self.nfifo as f32 / total,
-               self.nsock as f32 / total
-        )
+               self.nreg,
+               self.ndir,
+               self.nslink,
+               self.nblk,
+               self.nchr,
+               self.nfifo,
+               self.nsock,
+               self.nreg as f32 / total,
+               self.ndir as f32 / total,
+               self.nslink as f32 / total,
+               self.nblk as f32 / total,
+               self.nchr as f32 / total,
+               self.nfifo as f32 / total,
+               self.nsock as f32 / total)
     }
 }
 
@@ -108,16 +119,18 @@ unsafe fn myftw(cnt: &mut Counter) {
         None => {
             print_err!("cannot open dir: {}", errno::errno());
             cnt.count_other(".", FileType::DirectoryCannotRead);
-            return
-        },
+            return;
+        }
     };
     while let Some(dirp) = readdir(dp).to_option() {
         let filename = CStr::from_ptr((&(*dirp).d_name).as_ptr()).to_str().expect("invalid string");
         if filename == "." || filename == ".." {
             continue;
         }
-        let mut statbuf:stat = std::mem::uninitialized();
-        if let None = lstat(CString::new(filename.to_owned()).unwrap().as_ptr(), &mut statbuf).to_option() {
+        let mut statbuf: stat = std::mem::uninitialized();
+        if let None = lstat(CString::new(filename.to_owned()).unwrap().as_ptr(),
+                            &mut statbuf)
+            .to_option() {
             cnt.count_other(&filename, FileType::FileCannotStat);
             continue;
         }
@@ -128,7 +141,7 @@ unsafe fn myftw(cnt: &mut Counter) {
                     myftw(cnt);
                     chdir(cstr!(".."));
                 }
-            },
+            }
             _ => cnt.count_file(&filename, &statbuf),
         }
     }
@@ -140,13 +153,21 @@ unsafe fn myftw(cnt: &mut Counter) {
 fn main() {
     unsafe {
         // put ndir=1 because we first start with the initial dir
-        let mut c = Counter { nreg: 0, ndir: 1, nblk: 0, nchr: 0, nfifo: 0, nslink: 0, nsock: 0};
+        let mut c = Counter {
+            nreg: 0,
+            ndir: 1,
+            nblk: 0,
+            nchr: 0,
+            nfifo: 0,
+            nslink: 0,
+            nsock: 0,
+        };
         let matches = App::new("tree-traversal")
-            .args_from_usage("<path> beginning path for traversal").get_matches();
+            .args_from_usage("<path> beginning path for traversal")
+            .get_matches();
         let path = matches.value_of("path").unwrap();
         chdir(cstr!(path));
         myftw(&mut c);
         println!("{:?}", c);
     }
 }
-

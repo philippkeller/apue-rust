@@ -31,7 +31,9 @@ fn main() {
         }
 
         // turn on set-group-ID and turn off group-execute
-        if let None = chmod(cstr!("/tmp/foo"), (statbuf.st_mode & !S_IXGRP) | S_ISGID as mode_t).to_option() {
+        if let None = chmod(cstr!("/tmp/foo"),
+                            (statbuf.st_mode & !S_IXGRP) | S_ISGID as mode_t)
+            .to_option() {
             err_sys("chmod error for foo");
         }
 

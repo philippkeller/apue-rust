@@ -24,7 +24,7 @@ extern crate libc;
 #[macro_use(cstr, print_err)]
 extern crate apue;
 
-use apue::{LibcResult};
+use apue::LibcResult;
 
 #[cfg(target_os = "linux")]
 use libc::{O_RDWR, O_TRUNC, stat, timespec, open, futimens, close};
@@ -41,10 +41,15 @@ fn main() {
             if let None = stat(filename.as_ptr(), &mut statbuf).to_option() {
                 print_err!("{:?}: stat error", filename);
             } else if let Some(fd) = open(filename.as_ptr(), O_RDWR | O_TRUNC).to_option() {
-                let times: [timespec; 2] = [
-                    timespec { tv_sec: statbuf.st_atime, tv_nsec: statbuf.st_atime_nsec },
-                    timespec { tv_sec: statbuf.st_mtime, tv_nsec: statbuf.st_mtime_nsec }];
-                /* reset times */
+                let times: [timespec; 2] = [timespec {
+                                                tv_sec: statbuf.st_atime,
+                                                tv_nsec: statbuf.st_atime_nsec,
+                                            },
+                                            timespec {
+                                                tv_sec: statbuf.st_mtime,
+                                                tv_nsec: statbuf.st_mtime_nsec,
+                                            }];
+                // reset times
                 if let None = futimens(fd, times.as_ptr() as *const _).to_option() {
                     print_err!("{:?}: futimens error", filename);
                 }

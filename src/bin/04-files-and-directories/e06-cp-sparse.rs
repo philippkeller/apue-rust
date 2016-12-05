@@ -31,10 +31,10 @@ extern crate errno;
 use clap::App;
 use std::vec::Vec;
 use std::io::{self, Write};
-use apue::{LibcResult};
+use apue::LibcResult;
 use libc::{O_RDWR, O_RDONLY, O_CREAT, SEEK_SET, SEEK_CUR, c_void, open, read, write, lseek};
 
-const BUFLEN:usize = 1;
+const BUFLEN: usize = 1;
 
 fn main() {
     unsafe {
@@ -43,11 +43,13 @@ fn main() {
             .get_matches();
         let from = matches.value_of("from").unwrap();
         let to = matches.value_of("to").unwrap();
-        let fd1 = open(cstr!(from), O_RDONLY).to_option()
+        let fd1 = open(cstr!(from), O_RDONLY)
+            .to_option()
             .expect(&format!("can't open file {}: {}", from, errno::errno()));
-        let fd2 = open(cstr!(to), O_RDWR | O_CREAT, 0o600).to_option()
+        let fd2 = open(cstr!(to), O_RDWR | O_CREAT, 0o600)
+            .to_option()
             .expect(&format!("can't open file {}: {}", to, errno::errno()));
-        let mut buf:Vec<u8> = vec![0; BUFLEN];
+        let mut buf: Vec<u8> = vec![0; BUFLEN];
         let mut sparse = false;
         while read(fd1, buf.as_mut_ptr() as *mut c_void, BUFLEN) == BUFLEN as _ {
             if buf[0] == 0 {
@@ -55,7 +57,7 @@ fn main() {
                 // but this is non-bsd only, so we implement that ourselves
                 // of course this is not fast at all
                 sparse = true;
-                continue
+                continue;
             }
             // end of a block of zeroes, seek the write file to the right pos
             if sparse {

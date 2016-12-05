@@ -16,10 +16,10 @@ use apue::{err_sys, major, minor, LibcResult};
 fn main() {
     let mut ar = args();
     ar.next();
-    let mut buf:stat = unsafe {std::mem::uninitialized()};
+    let mut buf: stat = unsafe { std::mem::uninitialized() };
     while let Some(a) = ar.next() {
         print!("{}: ", a);
-        if let None = unsafe{stat(CString::new(a).unwrap().as_ptr(), &mut buf)}.to_option() {
+        if let None = unsafe { stat(CString::new(a).unwrap().as_ptr(), &mut buf) }.to_option() {
             err_sys("stat error");
             continue;
         }
@@ -31,9 +31,12 @@ fn main() {
                 } else {
                     "block"
                 };
-                print!(" ({}) rdev = {}/{}", s, major(buf.st_rdev), minor(buf.st_rdev));
-            },
-            _ => {},
+                print!(" ({}) rdev = {}/{}",
+                       s,
+                       major(buf.st_rdev),
+                       minor(buf.st_rdev));
+            }
+            _ => {}
         }
         print!("\n");
     }

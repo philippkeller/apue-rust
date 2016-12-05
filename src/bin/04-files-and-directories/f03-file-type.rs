@@ -20,8 +20,9 @@ extern crate libc;
 extern crate apue;
 extern crate errno;
 
-use libc::{stat, lstat, mode_t,S_IFMT,S_IFBLK,S_IFCHR,S_IFDIR,S_IFIFO,S_IFREG,S_IFLNK,S_IFSOCK};
-use apue::{LibcResult};
+use libc::{stat, lstat, mode_t, S_IFMT, S_IFBLK, S_IFCHR, S_IFDIR, S_IFIFO, S_IFREG, S_IFLNK,
+           S_IFSOCK};
+use apue::LibcResult;
 use std::ffi::CString;
 
 fn main() {
@@ -39,7 +40,7 @@ fn main() {
             if let None = lstat(s.as_ptr(), &mut buf).to_option() {
                 panic!("lstat error: {}", errno::errno());
             }
-            let a:mode_t = buf.st_mode & S_IFMT;
+            let a: mode_t = buf.st_mode & S_IFMT;
             let t = match a {
                 S_IFREG => "regular",
                 S_IFBLK => "block special",
@@ -48,7 +49,7 @@ fn main() {
                 S_IFIFO => "fifo",
                 S_IFLNK => "symbolic link",
                 S_IFSOCK => "socket",
-                _ => "** unnown mode **"
+                _ => "** unnown mode **",
             };
             println!("mode of {:?}: {}", s, t);
         }

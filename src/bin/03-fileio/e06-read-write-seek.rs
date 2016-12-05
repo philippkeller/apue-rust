@@ -23,7 +23,9 @@ use clap::App;
 use std::ffi::CString;
 
 fn main() {
-    let matches = App::new("e06").args_from_usage("<file> path to file to be opened for read/write/seek").get_matches();
+    let matches = App::new("e06")
+        .args_from_usage("<file> path to file to be opened for read/write/seek")
+        .get_matches();
     let file = matches.value_of("file").unwrap();
     unsafe {
         if let Some(f) = fopen(CString::new(file).unwrap().as_ptr(), cstr!("r+")).to_option() {

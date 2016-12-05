@@ -48,7 +48,7 @@ extern crate apue;
 use libc::{open, sleep, unlink, c_int};
 use apue::{LibcResult, err_sys};
 
-const O_RDWR:c_int = 2; // taken from /usr/include/sys/fcntl.h
+const O_RDWR: c_int = 2; // taken from /usr/include/sys/fcntl.h
 
 fn main() {
     unsafe {

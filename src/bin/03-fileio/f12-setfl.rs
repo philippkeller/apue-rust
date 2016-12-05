@@ -30,11 +30,11 @@ use libc::{F_GETFL, F_SETFL, O_NONBLOCK, fcntl};
 use clap::App;
 use apue::LibcResult;
 
-unsafe fn get_fl(fd:i32) -> Option<i32> {
-    return fcntl(fd, F_GETFL, 0).to_option()
+unsafe fn get_fl(fd: i32) -> Option<i32> {
+    return fcntl(fd, F_GETFL, 0).to_option();
 }
 
-unsafe fn set_fl(fd:i32, flags:i32) {
+unsafe fn set_fl(fd: i32, flags: i32) {
     if let Some(val) = get_fl(fd) {
         println!("current flags: {:b}", val);
         let val = val | flags;
@@ -47,8 +47,9 @@ unsafe fn set_fl(fd:i32, flags:i32) {
 }
 
 fn main() {
-    let matches = App::new("setfl").args_from_usage(
-        "<descr> 'id of the descriptor'").get_matches();
+    let matches = App::new("setfl")
+        .args_from_usage("<descr> 'id of the descriptor'")
+        .get_matches();
     let fd = value_t!(matches.value_of("descr"), i32).unwrap_or_else(|e| e.exit());
     unsafe {
         set_fl(fd, O_NONBLOCK);

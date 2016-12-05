@@ -20,19 +20,20 @@ extern crate apue;
 extern crate clap;
 
 use libc::{F_GETFL, O_ACCMODE, O_APPEND, O_NONBLOCK, O_SYNC, O_RDONLY, O_WRONLY, O_RDWR, fcntl};
-use clap::{App};
+use clap::App;
 use apue::LibcResult;
 
 fn main() {
     unsafe {
-        let matches = App::new("fcntl").args_from_usage("<descr> id of the descriptor").get_matches();
+        let matches =
+            App::new("fcntl").args_from_usage("<descr> id of the descriptor").get_matches();
         let desc = value_t!(matches.value_of("descr"), u8).unwrap_or_else(|e| e.exit());
         if let Some(val) = fcntl(desc as _, F_GETFL, 0).to_option() {
             let mode = match val & O_ACCMODE {
                 O_RDONLY => "read only",
                 O_WRONLY => "write only",
                 O_RDWR => "read write",
-                _ => "unknown access mode"
+                _ => "unknown access mode",
             };
             print!("{}", mode);
             if val & O_APPEND > 0 {
