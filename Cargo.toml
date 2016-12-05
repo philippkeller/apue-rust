@@ -209,3 +209,7 @@ path = "src/bin/06-system-data-files/f11-strftime.rs"
 [[bin]]
 name="f01-main"
 path = "src/bin/07-process-env/f01-main.rs"
+
+[[bin]]
+name="f03-atexit"
+path = "src/bin/07-process-env/f03-atexit.rs"
