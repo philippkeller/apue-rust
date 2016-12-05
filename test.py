@@ -22,7 +22,7 @@ def run(cmd):
     except subprocess.CalledProcessError as e:
         a = e.output + "ERROR: return code {}".format(e.returncode)
 
-    return a.rstrip()
+    return a.rstrip().replace(" \n", "\n")
 
 class CommentStateMachine:
     def __init__(self, file_path):

@@ -7,11 +7,12 @@
 /// is the glibc bug that causes fflush to reset the file pointer position
 ///
 /// linux only:
-/// $ initial buffer contents:
+/// $ f15-fmemopen
+/// initial buffer contents:
 /// before flush:
-/// after fflush: hello, world
-/// len of string in buf = 12
-/// after  fseek: bbbbbbbbbbbbhello, world
+/// after fflush:
+/// len of string in buf = 0
+/// after fseek: bbbbbbbbbbbbhello, world
 /// len of string in buf = 24
 /// after fclose: hello, worldcccccccccccccccccccccccccccccccccc
 /// len of string in buf = 46
@@ -54,7 +55,6 @@ fn main() {
             panic!("fmemopen failed");
         }
         printf(cstr!("initial buffer contents: %s\n"), buf.as_muti8());
-        fprintf(fp, cstr!("hello, world"));
         printf(cstr!("before flush: %s\n"), buf.as_muti8());
         fflush(fp);
         // fflush resets the position of the fp, that's a bug:
@@ -70,7 +70,7 @@ fn main() {
         fprintf(fp, cstr!("hello, world"));
         fseek(fp, 0, SEEK_SET);
 
-        printf(cstr!("after  fseek: %s\n"), buf.as_muti8());
+        printf(cstr!("after fseek: %s\n"), buf.as_muti8());
         printf(cstr!("len of string in buf = %ld\n"),
                strlen(buf.as_muti8()));
 
