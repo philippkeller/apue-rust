@@ -1,5 +1,4 @@
 extern crate libc;
-extern crate itertools;
 extern crate errno;
 
 use libc::{c_int, c_char, dev_t, utsname, exit, PATH_MAX};

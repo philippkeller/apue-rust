@@ -17,7 +17,6 @@
 /// len of string in buf = 46
 
 extern crate libc;
-extern crate itertools;
 #[macro_use(cstr)]
 extern crate apue;
 

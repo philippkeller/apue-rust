@@ -1,40 +1,31 @@
 /// Exercise 6.3: Write a program that calls uname and prints all the fields
 /// in the utsname structure.
 /// Compare the output to the output from the uname(1) command.
-///
-/// Takeaway: couldn't find a method in CStr or CString to convert the &[i8:265]
-///           nul terminated byte array into a string. This came close:
-///           https://gist.github.com/philippkeller/89a8a0b47362e86570958dc7a14e84d7
-///           but produced Err(FromBytesWithNulError { _a: () })
 
 extern crate libc;
-extern crate itertools;
+extern crate apue;
 
 use libc::{utsname, uname};
-use itertools::Itertools;
-
-fn array_to_string(slice: &[i8]) -> String {
-    slice.iter().take_while(|&x| *x != 0).map(|&a| a as u8 as char).join("")
-}
+use apue::array_to_string;
 
 #[derive(Debug)]
 struct UtsName {
-    sysname: String,
+    sysname:  String,
     nodename: String,
-    release: String,
-    version: String,
-    machine: String,
+    release:  String,
+    version:  String,
+    machine:  String,
 }
 
-fn my_uname() -> Option<UtsName> {
-    let mut uc: utsname = unsafe { std::mem::uninitialized() };
-    if unsafe { uname(&mut uc) } == 0 {
+unsafe fn my_uname() -> Option<UtsName> {
+    let mut uc: utsname = std::mem::uninitialized();
+    if uname(&mut uc) == 0 {
         return Some(UtsName {
-            sysname: array_to_string(&uc.sysname),
-            nodename: array_to_string(&uc.nodename),
-            release: array_to_string(&uc.release),
-            version: array_to_string(&uc.version),
-            machine: array_to_string(&uc.machine),
+            sysname: array_to_string(&uc.sysname).to_owned(),
+            nodename: array_to_string(&uc.nodename).to_owned(),
+            release: array_to_string(&uc.release).to_owned(),
+            version: array_to_string(&uc.version).to_owned(),
+            machine: array_to_string(&uc.machine).to_owned(),
         });
     }
     None
@@ -42,7 +33,7 @@ fn my_uname() -> Option<UtsName> {
 
 
 fn main() {
-    println!("{:?}", my_uname().unwrap());
+    println!("{:?}", unsafe { my_uname().unwrap() } );
 }
 
 // Result:
