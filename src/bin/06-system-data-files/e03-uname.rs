@@ -10,11 +10,11 @@ use apue::array_to_string;
 
 #[derive(Debug)]
 struct UtsName {
-    sysname:  String,
+    sysname: String,
     nodename: String,
-    release:  String,
-    version:  String,
-    machine:  String,
+    release: String,
+    version: String,
+    machine: String,
 }
 
 unsafe fn my_uname() -> Option<UtsName> {
@@ -33,7 +33,7 @@ unsafe fn my_uname() -> Option<UtsName> {
 
 
 fn main() {
-    println!("{:?}", unsafe { my_uname().unwrap() } );
+    println!("{:?}", unsafe { my_uname().unwrap() });
 }
 
 // Result:

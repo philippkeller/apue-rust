@@ -20,7 +20,7 @@ extern crate libc;
 use libc::printf;
 
 #[no_mangle] // ensure that this symbol is called `main` in the output
-pub extern fn main(_argc: i32, _argv: *const *const u8) {
+pub extern "C" fn main(_argc: i32, _argv: *const *const u8) {
     unsafe {
         printf("Hello World!\n\0".as_ptr() as *const i8);
     }
