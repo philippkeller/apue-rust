@@ -213,3 +213,7 @@ path = "src/bin/07-process-env/f01-main.rs"
 [[bin]]
 name="f03-atexit"
 path = "src/bin/07-process-env/f03-atexit.rs"
+
+[[bin]]
+name="f04-echo"
+path = "src/bin/07-process-env/f04-echo.rs"
