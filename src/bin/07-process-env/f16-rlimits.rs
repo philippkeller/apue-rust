@@ -21,6 +21,20 @@
 /// RLIMIT_RSS      (infinite)  (infinite)
 /// $ ulimit -c unlimited && f16-rlimits | grep CORE
 /// RLIMIT_CORE     (infinite)  (infinite)
+///
+/// linux only:
+/// $ f16-rlimits
+/// RLIMIT_AS       (infinite)  (infinite)
+/// RLIMIT_CORE              0  (infinite)
+/// RLIMIT_CPU      (infinite)  (infinite)
+/// RLIMIT_DATA     (infinite)  (infinite)
+/// RLIMIT_FSIZE    (infinite)  (infinite)
+/// RLIMIT_MEMLOCK       65536       65536
+/// RLIMIT_MSGQUEUE     819200      819200
+/// RLIMIT_NICE              0           0
+/// RLIMIT_NOFILE         1024       65536
+/// RLIMIT_NPROC         41690       41690
+/// RLIMIT_RSS      (infinite)  (infinite)
 
 extern crate libc;
 extern crate apue;
