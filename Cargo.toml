@@ -217,3 +217,7 @@ path = "src/bin/07-process-env/f03-atexit.rs"
 [[bin]]
 name="f04-echo"
 path = "src/bin/07-process-env/f04-echo.rs"
+
+[[bin]]
+name="f16-rlimits"
+path = "src/bin/07-process-env/f16-rlimits.rs"

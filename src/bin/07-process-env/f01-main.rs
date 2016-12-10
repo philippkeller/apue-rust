@@ -25,3 +25,9 @@ pub extern "C" fn main(_argc: i32, _argv: *const *const u8) {
         printf("Hello World!\n\0".as_ptr() as *const i8);
     }
 }
+
+// This is needed for Linux but not for Mac
+#[lang = "eh_unwind_resume"]
+#[no_mangle]
+pub extern fn rust_eh_unwind_resume() {
+}
