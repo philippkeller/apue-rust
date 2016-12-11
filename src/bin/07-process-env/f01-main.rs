@@ -11,6 +11,8 @@
 /// I didn't need all the options, e.g. I didn't need to specify default-features = false
 /// for libc
 ///
+/// fyi: Exit code 13 comes from the return code of printf (see answer to Exercise 7.1)
+///
 /// $ f01-main
 /// Hello World!
 /// ERROR: return code 13
