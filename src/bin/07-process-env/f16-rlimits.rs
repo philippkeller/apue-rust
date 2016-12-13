@@ -40,7 +40,7 @@ extern crate libc;
 extern crate apue;
 
 use libc::{RLIM_INFINITY, RLIMIT_AS, RLIMIT_CORE, RLIMIT_CPU, RLIMIT_DATA, RLIMIT_FSIZE,
-    RLIMIT_MEMLOCK, RLIMIT_NOFILE, RLIMIT_NPROC, RLIMIT_RSS};
+           RLIMIT_MEMLOCK, RLIMIT_NOFILE, RLIMIT_NPROC, RLIMIT_RSS};
 
 #[cfg(target_os = "linux")]
 use libc::{RLIMIT_MSGQUEUE, RLIMIT_NICE};
@@ -55,16 +55,16 @@ macro_rules! doit {
 }
 
 unsafe fn pr_limits(name: &str, resource: i32) {
-    let mut limit:rlimit = std::mem::uninitialized();
+    let mut limit: rlimit = std::mem::uninitialized();
     getrlimit(resource, &mut limit).to_option().expect(&format!("getrlimit error for {}", name));
     print!("{:16}", name);
     match limit.rlim_cur {
         RLIM_INFINITY => print!("(infinite)  "),
-        _ => print!("{:10}  ", limit.rlim_cur)
+        _ => print!("{:10}  ", limit.rlim_cur),
     };
     match limit.rlim_max {
         RLIM_INFINITY => print!("(infinite)"),
-        _ => print!("{:10}", limit.rlim_max)
+        _ => print!("{:10}", limit.rlim_max),
     };
     println!("");
 }

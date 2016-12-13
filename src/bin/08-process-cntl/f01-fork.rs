@@ -18,7 +18,7 @@ use apue::{err_sys, LibcResult};
 // though shall not use static mutable..
 // used here only to reflect the global var in the C source
 // which is an external variable in initialized data
-static mut GLOBVAR:i64 = 6;
+static mut GLOBVAR: i64 = 6;
 
 fn main() {
     unsafe {
@@ -42,7 +42,10 @@ fn main() {
                     usleep(10);
                 }
             }
-            printf(cstr!("pid = %ld, glob = %d, var = %d\n"), getpid(), GLOBVAR, var as c_int);
+            printf(cstr!("pid = %ld, glob = %d, var = %d\n"),
+                   getpid(),
+                   GLOBVAR,
+                   var as c_int);
         } else {
             err_sys("fork error");
         }

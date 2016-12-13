@@ -18,7 +18,7 @@ extern "C" {
     pub fn vfork() -> libc::pid_t;
 }
 
-static mut GLOBVAR:i64 = 6;
+static mut GLOBVAR: i64 = 6;
 
 fn main() {
     unsafe {
@@ -33,7 +33,10 @@ fn main() {
                     _exit(0);
                 }
                 _ => {
-                    printf(cstr!("pid = %ld, glob = %d, var = %d\n"), getpid(), GLOBVAR, var as c_int);
+                    printf(cstr!("pid = %ld, glob = %d, var = %d\n"),
+                           getpid(),
+                           GLOBVAR,
+                           var as c_int);
                 }
             }
         } else {
