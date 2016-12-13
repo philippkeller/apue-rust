@@ -9,12 +9,10 @@ extern crate errno;
 use apue::LibcResult;
 use libc::{atexit, printf};
 
-type Exitfunc = extern fn();
+type Exitfunc = extern "C" fn();
 
-fn my_atexit(f:Exitfunc) -> Option<i32> {
-    unsafe {
-        atexit(f).to_option()
-    }
+fn my_atexit(f: Exitfunc) -> Option<i32> {
+    unsafe { atexit(f).to_option() }
 }
 
 extern "C" fn my_exit1() {
