@@ -41,7 +41,6 @@ fn handle_panic(e: &panic::PanicInfo) {
             unsafe { raise(SIGFPE) };
         }
         _ => {
-            // unknown error
             panic!("unknown error occurred");
         },
     }
