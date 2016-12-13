@@ -229,3 +229,7 @@ path = "src/bin/07-process-env/e05-atexit-type.rs"
 [[bin]]
 name="f01-fork"
 path = "src/bin/08-process-cntl/f01-fork.rs"
+
+[[bin]]
+name="f03-vfork"
+path = "src/bin/08-process-cntl/f03-vfork.rs"
