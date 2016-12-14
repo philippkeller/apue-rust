@@ -14,7 +14,8 @@
 extern crate libc;
 extern crate apue;
 
-use libc::{c_int, WIFEXITED, WEXITSTATUS, WIFSIGNALED, WTERMSIG, WCOREDUMP, WIFSTOPPED, WSTOPSIG, SIGFPE};
+use libc::{c_int, WIFEXITED, WEXITSTATUS, WIFSIGNALED, WTERMSIG, WCOREDUMP, WIFSTOPPED, WSTOPSIG,
+           SIGFPE};
 use libc::{exit, wait, fork, abort, raise};
 use apue::{LibcResult, err_sys};
 use std::panic;
@@ -42,7 +43,7 @@ fn handle_panic(e: &panic::PanicInfo) {
         }
         _ => {
             panic!("unknown error occurred");
-        },
+        }
     }
 }
 
