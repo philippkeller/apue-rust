@@ -237,3 +237,7 @@ path = "src/bin/08-process-cntl/f03-vfork.rs"
 [[bin]]
 name="f06-exit-status"
 path = "src/bin/08-process-cntl/f06-exit-status.rs"
+
+[[bin]]
+name="f08-avoid-zombie"
+path = "src/bin/08-process-cntl/f08-avoid-zombie.rs"
