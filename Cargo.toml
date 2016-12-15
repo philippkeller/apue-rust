@@ -241,3 +241,7 @@ path = "src/bin/08-process-cntl/f06-exit-status.rs"
 [[bin]]
 name="f08-avoid-zombie"
 path = "src/bin/08-process-cntl/f08-avoid-zombie.rs"
+
+[[bin]]
+name="f12-race-condition"
+path = "src/bin/08-process-cntl/f12-race-condition.rs"
