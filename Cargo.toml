@@ -21,6 +21,8 @@ libc = "*"
 errno = "*"
 clap = "2.1"
 regex = "*"
+chan = "0.1.18"
+chan-signal = "0.1.7"
 
 [[bin]]
 name="f03-list-files"
@@ -245,3 +247,7 @@ path = "src/bin/08-process-cntl/f08-avoid-zombie.rs"
 [[bin]]
 name="f12-race-condition"
 path = "src/bin/08-process-cntl/f12-race-condition.rs"
+
+[[bin]]
+name="f17-echo-all"
+path = "src/bin/08-process-cntl/f17-echo-all.rs"
