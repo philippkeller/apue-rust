@@ -249,5 +249,9 @@ name="f12-race-condition"
 path = "src/bin/08-process-cntl/f12-race-condition.rs"
 
 [[bin]]
+name="f16-exec"
+path = "src/bin/08-process-cntl/f16-exec.rs"
+
+[[bin]]
 name="f17-echo-all"
 path = "src/bin/08-process-cntl/f17-echo-all.rs"
