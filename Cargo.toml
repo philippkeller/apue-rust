@@ -255,3 +255,7 @@ path = "src/bin/08-process-cntl/f16-exec.rs"
 [[bin]]
 name="f17-echo-all"
 path = "src/bin/08-process-cntl/f17-echo-all.rs"
+
+[[bin]]
+name="f20-exec-interpreter"
+path = "src/bin/08-process-cntl/f20-exec-interpreter.rs"
