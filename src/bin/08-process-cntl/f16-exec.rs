@@ -38,11 +38,7 @@ fn main() {
                        cstr!("myarg1"),
                        cstr!("MY ARG2"),
                        0 as *const c_char,
-                       [
-                           cstr!("USER=unkown"),
-                           cstr!("PATH=/tmp"),
-                           0 as *const c_char
-                       ].as_ptr())
+                       [cstr!("USER=unkown"), cstr!("PATH=/tmp"), 0 as *const c_char].as_ptr())
                     .to_option()
                     .expect(&format!("execle error: {}", errno::errno()));
             }
@@ -53,8 +49,12 @@ fn main() {
 
         let pid = fork().to_option().expect(&format!("fork error: {}", errno::errno()));
         if pid == 0 {
-                execlp(cstr!("f17-echo-all"), cstr!("echoall"), cstr!("only 1 arg"),
-                0 as *const c_char).to_option().expect(&format!("execlp error: {}", errno::errno()));
+            execlp(cstr!("f17-echo-all"),
+                   cstr!("echoall"),
+                   cstr!("only 1 arg"),
+                   0 as *const c_char)
+                .to_option()
+                .expect(&format!("execlp error: {}", errno::errno()));
         }
     }
 }
