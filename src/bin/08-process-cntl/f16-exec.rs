@@ -16,13 +16,9 @@ extern crate libc;
 extern crate apue;
 extern crate errno;
 
-use libc::{fork, waitpid, c_char, c_int};
+use libc::{fork, waitpid, c_char};
 use apue::LibcResult;
-
-extern "C" {
-    pub fn execle(__path: *const c_char, __arg0: *const c_char, ...) -> c_int;
-    pub fn execlp(__file: *const c_char, __arg0: *const c_char, ...) -> c_int;
-}
+use apue::my_libc::{execle, execlp};
 
 fn main() {
     unsafe {

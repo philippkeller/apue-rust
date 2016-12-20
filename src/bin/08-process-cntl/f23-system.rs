@@ -12,29 +12,9 @@ extern crate libc;
 extern crate apue;
 extern crate errno;
 
-use libc::{fork, c_char, c_int, _exit, waitpid, EINTR, WSTOPSIG, WEXITSTATUS, WIFSTOPPED,
-           WCOREDUMP, WTERMSIG, WIFSIGNALED, WIFEXITED};
-use apue::{LibcResult, err_sys};
-
-extern "C" {
-    pub fn execl(__path: *const c_char, __arg0: *const c_char, ...) -> c_int;
-}
-
-unsafe fn pr_exit(status: c_int) {
-    if WIFEXITED(status) {
-        println!("normal termination, exit status = {}", WEXITSTATUS(status));
-    } else if WIFSIGNALED(status) {
-        println!("abnormal termination, signal number = {} {}",
-                 WTERMSIG(status),
-                 if WCOREDUMP(status) {
-                     " (core file generated)"
-                 } else {
-                     ""
-                 });
-    } else if WIFSTOPPED(status) {
-        println!("child stopped, signal number = {}", WSTOPSIG(status));
-    }
-}
+use libc::{fork, c_char, _exit, waitpid, EINTR};
+use apue::{LibcResult, err_sys, pr_exit};
+use apue::my_libc::execl;
 
 unsafe fn system(cmdstring: &str) -> Option<i32> {
     if let Some(pid) = fork().to_option() {
@@ -67,7 +47,7 @@ unsafe fn system(cmdstring: &str) -> Option<i32> {
 fn main() {
     for cmd in ["date", "nosuchcommand", "who; exit 44"].into_iter() {
         if let Some(status) = unsafe { system(cmd) } {
-            unsafe { pr_exit(status) };
+            pr_exit(status);
         } else {
             err_sys(&format!("{} error", cmd));
         }

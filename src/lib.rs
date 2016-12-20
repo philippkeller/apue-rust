@@ -2,6 +2,7 @@ extern crate libc;
 extern crate errno;
 
 use libc::{c_int, c_char, dev_t, utsname, exit, PATH_MAX};
+use libc::{WSTOPSIG, WEXITSTATUS, WIFSTOPPED, WCOREDUMP, WTERMSIG, WIFSIGNALED, WIFEXITED};
 use std::io::Write;
 use std::ffi::CStr;
 
@@ -122,8 +123,26 @@ pub fn minor(x: dev_t) -> dev_t {
     x & 0xffffff
 }
 
+pub fn pr_exit(status: c_int) {
+    unsafe {
+        if WIFEXITED(status) {
+            println!("normal termination, exit status = {}", WEXITSTATUS(status));
+        } else if WIFSIGNALED(status) {
+            println!("abnormal termination, signal number = {} {}",
+                     WTERMSIG(status),
+                     if WCOREDUMP(status) {
+                         " (core file generated)"
+                     } else {
+                         ""
+                     });
+        } else if WIFSTOPPED(status) {
+            println!("child stopped, signal number = {}", WSTOPSIG(status));
+        }
+    }
+}
+
 pub mod my_libc {
-    use libc::{dirent, DIR};
+    use libc::{dirent, DIR, c_int, c_char};
     extern "C" {
         #[cfg(target_os = "macos")]
         #[link_name = "readdir$INODE64"]
@@ -132,5 +151,8 @@ pub mod my_libc {
         #[cfg(not(target_os = "macos"))]
         pub fn readdir(arg1: *mut DIR) -> *mut dirent;
 
+        pub fn execl(__path: *const c_char, __arg0: *const c_char, ...) -> c_int;
+        pub fn execle(__path: *const c_char, __arg0: *const c_char, ...) -> c_int;
+        pub fn execlp(__file: *const c_char, __arg0: *const c_char, ...) -> c_int;
     }
 }

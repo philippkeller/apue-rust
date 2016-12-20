@@ -20,13 +20,9 @@ use std::io::prelude::*;
 use std::fs::OpenOptions;
 use std::os::unix::fs::OpenOptionsExt;
 
-use libc::{fork, waitpid, c_char, c_int};
+use libc::{fork, waitpid, c_char};
 use apue::LibcResult;
-
-extern "C" {
-    pub fn execl(__path: *const c_char, __arg0: *const c_char, ...) -> c_int;
-}
-
+use apue::my_libc::execl;
 
 fn main() {
     let curexe = std::env::current_exe().unwrap();
