@@ -8,34 +8,13 @@
 /// - user needs to be root, checking for root with getuid
 /// - first tried with iterating via getspent, then saw getspnam which is a lot easier of course
 extern crate libc;
+extern crate apue;
 
 #[cfg(target_os = "linux")]
 mod shadow {
 
     use std::ffi::{CStr, CString};
-    use libc::{c_char, c_long, c_ulong};
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    #[derive(Debug)]
-    pub struct spwd {
-        pub sp_namp: *mut c_char,
-        pub sp_pwdp: *mut c_char,
-        pub sp_lstchg: c_long,
-        pub sp_min: c_long,
-        pub sp_max: c_long,
-        pub sp_warn: c_long,
-        pub sp_inact: c_long,
-        pub sp_expire: c_long,
-        pub sp_flag: c_ulong,
-    }
-
-    extern "C" {
-        pub fn setspent();
-        pub fn endspent();
-        pub fn getspent() -> *mut spwd;
-        pub fn getspnam(__name: *const ::std::os::raw::c_char) -> *mut spwd;
-    }
+    use apue::my_libc::{setspent, getspnam, endspent, getspent};
 
     #[derive(Debug)]
     pub struct PasswdOwned {

@@ -18,6 +18,10 @@ extern crate libc;
 
 use libc::printf;
 
+#[allow(dead_code)]
+fn spare() { panic!("{}", 0); } //adding this (doesn't have to be named "spare") makes the compilation work.
+// you don't even need to add this function signature where you're using these functions.
+
 #[no_mangle] // ensure that this symbol is called `main` in the output
 pub extern "C" fn main(_argc: i32, _argv: *const *const u8) {
     unsafe {

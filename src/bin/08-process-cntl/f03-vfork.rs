@@ -10,16 +10,11 @@ extern crate apue;
 
 use libc::{printf, _exit, getpid, c_int};
 use apue::{LibcResult, err_sys};
-
-
-// vfork is not implemented in libc, and that's probably good so
-// as vfork is somehow deprecated
-extern "C" {
-    pub fn vfork() -> libc::pid_t;
-}
+use apue::my_libc::vfork;
 
 static mut GLOBVAR: i64 = 6;
 
+#[allow(unused_assignments)]
 fn main() {
     unsafe {
         let mut var: i8 = 88;

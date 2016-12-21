@@ -11,7 +11,7 @@
 /// mac only:
 /// $ f16-rlimits
 /// RLIMIT_AS       (infinite)  (infinite)
-/// RLIMIT_CORE     (infinite)  (infinite)
+/// RLIMIT_CORE              0  (infinite)
 /// RLIMIT_CPU      (infinite)  (infinite)
 /// RLIMIT_DATA     (infinite)  (infinite)
 /// RLIMIT_FSIZE    (infinite)  (infinite)

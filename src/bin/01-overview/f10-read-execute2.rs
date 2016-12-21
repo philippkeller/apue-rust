@@ -13,10 +13,7 @@ extern crate apue;
 use libc::{STDIN_FILENO, SIGINT, SIG_ERR, c_char, c_int, printf, strlen, fgets, fdopen, fork,
            waitpid, signal};
 use apue::{array_to_string, LibcResult};
-
-extern "C" {
-    pub fn execlp(file: *const c_char, arg0: *const c_char, ...) -> c_int;
-}
+use apue::my_libc::execlp;
 
 extern "C" fn sig_int(_: c_int) {
     unsafe {

@@ -21,11 +21,7 @@ extern crate apue;
 #[allow(non_camel_case_types)]
 mod buffered {
     extern crate libc;
-
-    // can be called from libc::getchar once https://github.com/rust-lang/libc/pull/372 is released
-    extern "C" {
-        pub fn getchar() -> libc::c_int;
-    }
+    use self::libc::{fputs, getchar, fgetc, fopen, FILE};
 
     // bindgen generaged code starts...
     extern "C" {
@@ -89,7 +85,7 @@ mod buffered {
     }
     // ... bindgen generated code ends
 
-    unsafe fn pr_stdio(name: &str, fp: *mut libc::FILE) {
+    unsafe fn pr_stdio(name: &str, fp: *mut FILE) {
         let fp = &mut *(fp as *mut MY_FILE);
         let buffer_type = if (fp._flags & libc::_IONBF as i16) != 0 {
             "unbuffered"
@@ -108,14 +104,14 @@ mod buffered {
 
     pub fn runit() {
         unsafe {
-            let stdin = __stdinp as *mut libc::FILE;
-            let stdout = __stdoutp as *mut libc::FILE;
-            let stderr = __stderrp as *mut libc::FILE;
-            let passwd = libc::fopen(cstr!("/etc/passwd"), cstr!("r"));
-            libc::fputs(cstr!("enter any character\n"), stderr);
+            let stdin = __stdinp as *mut FILE;
+            let stdout = __stdoutp as *mut FILE;
+            let stderr = __stderrp as *mut FILE;
+            let passwd = fopen(cstr!("/etc/passwd"), cstr!("r"));
+            fputs(cstr!("enter any character\n"), stderr);
             getchar();
-            libc::fputs(cstr!("one line to stderr\n"), stderr);
-            libc::fgetc(passwd);
+            fputs(cstr!("one line to stderr\n"), stderr);
+            fgetc(passwd);
             pr_stdio("stdin", stdin);
             pr_stdio("stdout", stdout);
             pr_stdio("stderr", stderr);

@@ -28,6 +28,10 @@ pub extern "C" fn main(_argc: i32, _argv: *const *const u8) {
     }
 }
 
+#[allow(dead_code)]
+fn spare() { panic!("{}", 0); } //adding this (doesn't have to be named "spare") makes the compilation work.
+// you don't even need to add this function signature where you're using these functions.
+
 // This is needed for Linux but not for Mac
 #[lang = "eh_unwind_resume"]
 #[no_mangle]

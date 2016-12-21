@@ -6,13 +6,10 @@
 extern crate libc;
 extern crate apue;
 
-use libc::{c_int, c_char, FILE, STDIN_FILENO, STDOUT_FILENO, fdopen, ferror};
+use libc::{c_char, STDIN_FILENO, STDOUT_FILENO, fdopen, ferror};
 use apue::LibcResult;
+use apue::my_libc::{putc, getc};
 
-extern "C" {
-    pub fn putc(arg1: c_int, arg2: *mut FILE) -> c_int;
-    pub fn getc(arg1: *mut FILE) -> c_int;
-}
 
 fn main() {
     unsafe {

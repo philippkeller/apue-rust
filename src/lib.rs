@@ -142,7 +142,23 @@ pub fn pr_exit(status: c_int) {
 }
 
 pub mod my_libc {
-    use libc::{dirent, DIR, c_int, c_char};
+    use libc::{dirent, DIR, c_int, c_char, c_long, c_ulong, pid_t, FILE};
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    #[derive(Debug)]
+    pub struct spwd {
+        pub sp_namp: *mut c_char,
+        pub sp_pwdp: *mut c_char,
+        pub sp_lstchg: c_long,
+        pub sp_min: c_long,
+        pub sp_max: c_long,
+        pub sp_warn: c_long,
+        pub sp_inact: c_long,
+        pub sp_expire: c_long,
+        pub sp_flag: c_ulong,
+    }
+
     extern "C" {
         #[cfg(target_os = "macos")]
         #[link_name = "readdir$INODE64"]
@@ -150,6 +166,21 @@ pub mod my_libc {
 
         #[cfg(not(target_os = "macos"))]
         pub fn readdir(arg1: *mut DIR) -> *mut dirent;
+
+        pub fn tmpnam(ptr: *mut c_char) -> *mut c_char;
+
+        pub fn getc(arg1: *mut FILE) -> c_int;
+        pub fn putc(arg1: c_int, arg2: *mut FILE) -> c_int;
+        pub fn getchar() -> c_int;
+
+        pub fn setspent();
+        pub fn endspent();
+        pub fn getspent() -> *mut spwd;
+        pub fn getspnam(__name: *const c_char) -> *mut spwd;
+
+        // vfork is not implemented in libc, and that's probably good so
+        // as vfork is somehow deprecated
+        pub fn vfork() -> pid_t;
 
         pub fn execl(__path: *const c_char, __arg0: *const c_char, ...) -> c_int;
         pub fn execle(__path: *const c_char, __arg0: *const c_char, ...) -> c_int;

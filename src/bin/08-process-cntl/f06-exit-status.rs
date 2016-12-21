@@ -14,27 +14,11 @@
 extern crate libc;
 extern crate apue;
 
-use libc::{c_int, WIFEXITED, WEXITSTATUS, WIFSIGNALED, WTERMSIG, WCOREDUMP, WIFSTOPPED, WSTOPSIG,
-           SIGFPE};
+use libc::{c_int, SIGFPE};
 use libc::{exit, wait, fork, abort, raise};
-use apue::{LibcResult, err_sys};
+use apue::{LibcResult, err_sys, pr_exit};
 use std::panic;
 
-unsafe fn pr_exit(status: c_int) {
-    if WIFEXITED(status) {
-        println!("normal termination, exit status = {}", WEXITSTATUS(status));
-    } else if WIFSIGNALED(status) {
-        println!("abnormal termination, signal number = {} {}",
-                 WTERMSIG(status),
-                 if WCOREDUMP(status) {
-                     " (core file generated)"
-                 } else {
-                     ""
-                 });
-    } else if WIFSTOPPED(status) {
-        println!("child stopped, signal number = {}", WSTOPSIG(status));
-    }
-}
 
 fn handle_panic(e: &panic::PanicInfo) {
     match e.payload().downcast_ref::<String>() {
@@ -76,7 +60,8 @@ fn main() {
         pid = fork().to_option().expect("fork error");
         if pid == 0 {
             // child
-            status /= 0; // divide by 0 generates SIGFPE
+            let z = 0;
+            status /= z; // divide by 0 generates SIGFPE
         }
 
         if wait(&mut status) != pid {

@@ -9,12 +9,10 @@
 extern crate libc;
 extern crate apue;
 
-use libc::{c_int, c_char, FILE, STDOUT_FILENO, fork, setbuf, fdopen, usleep};
+use libc::{c_char, FILE, STDOUT_FILENO, fork, setbuf, fdopen, usleep};
 use apue::LibcResult;
+use apue::my_libc::putc;
 
-extern "C" {
-    pub fn putc(arg1: c_int, arg2: *mut FILE) -> c_int;
-}
 
 unsafe fn charatatime(out: *mut FILE, s: &str) {
     for c in s.chars() {

@@ -17,12 +17,9 @@ extern crate libc;
 #[macro_use(cstr, as_char)]
 extern crate apue;
 
-use libc::{STDIN_FILENO, c_char, c_int, printf, strlen, fgets, fdopen, fork, waitpid};
+use libc::{STDIN_FILENO, c_char, printf, strlen, fgets, fdopen, fork, waitpid};
 use apue::{array_to_string, LibcResult};
-
-extern "C" {
-    pub fn execlp(file: *const c_char, arg0: *const c_char, ...) -> c_int;
-}
+use apue::my_libc::execlp;
 
 const MAXLINE: usize = 100;
 
