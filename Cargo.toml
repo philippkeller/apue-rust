@@ -270,3 +270,6 @@ path = "src/bin/08-process-cntl/f24-userid-system.rs"
 name="f28-accounting"
 path = "src/bin/08-process-cntl/f28-accounting.rs"
 
+[[bin]]
+name="f29-acdata"
+path = "src/bin/08-process-cntl/f29-acdata.rs"
