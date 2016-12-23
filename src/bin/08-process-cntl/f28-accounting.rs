@@ -1,11 +1,10 @@
 /// Figure 2.28: Program to generate accounting data
-
 #[macro_use(cstr)]
 extern crate apue;
 extern crate libc;
 
 use libc::{usleep, fork, exit, abort, c_char, kill, getpid, SIGKILL};
-use apue::{LibcResult};
+use apue::LibcResult;
 use apue::my_libc::execl;
 
 unsafe fn _fork() -> i32 {
@@ -28,10 +27,10 @@ fn main() {
         // 2nd child
         if _fork() > 0 {
             execl(cstr!("/bin/dd"),
-                cstr!("dd"),
-                cstr!("if=/etc/passwd"),
-                cstr!("of=/dev/null"),
-                0 as *const c_char);
+                  cstr!("dd"),
+                  cstr!("if=/etc/passwd"),
+                  cstr!("of=/dev/null"),
+                  0 as *const c_char);
             exit(7);
         }
         // 3rd child

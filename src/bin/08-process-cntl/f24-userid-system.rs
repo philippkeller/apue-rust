@@ -23,6 +23,7 @@ fn main() {
         unsafe { exit(1) };
     }
     args.next(); // skip exe-name
-    let status = unsafe { system(cstr!(args.next().unwrap())).to_option().expect("system() error") };
+    let status =
+        unsafe { system(cstr!(args.next().unwrap())).to_option().expect("system() error") };
     pr_exit(status);
 }

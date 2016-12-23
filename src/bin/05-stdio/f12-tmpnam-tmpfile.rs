@@ -27,8 +27,7 @@ fn main() {
 
     // method 2: create buffer ourselves, make tmpnam fill this buffer
     let tmp = unsafe {
-        let name = CString::from_vec_unchecked(Vec::with_capacity(L_tmpnam as usize))
-            .into_raw();
+        let name = CString::from_vec_unchecked(Vec::with_capacity(L_tmpnam as usize)).into_raw();
         tmpnam(name);
         CStr::from_ptr(name).to_owned().into_string().unwrap()
     };
