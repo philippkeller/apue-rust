@@ -3,7 +3,7 @@
 extern crate apue;
 extern crate libc;
 
-use libc::{usleep, fork, exit, abort, c_char, kill, getpid, SIGKILL};
+use libc::{sleep, fork, exit, abort, c_char, kill, getpid, SIGKILL};
 use apue::LibcResult;
 use apue::my_libc::execl;
 
@@ -15,13 +15,13 @@ fn main() {
     unsafe {
         // parent
         if _fork() > 0 {
-            usleep(20);
+            sleep(2);
             exit(2);
         }
         // 1st child
         if _fork() > 0 {
             // first child
-            usleep(40);
+            sleep(4);
             abort(); // terminate with core dump
         }
         // 2nd child
@@ -29,17 +29,17 @@ fn main() {
             execl(cstr!("/bin/dd"),
                   cstr!("dd"),
                   cstr!("if=/etc/passwd"),
-                  cstr!("of=/dev/null"),
-                  0 as *const c_char);
+                  cstr!("of=/dev/stdout"),
+                  0 as *const c_char).to_option().expect("execl error");
             exit(7);
         }
         // 3rd child
         if _fork() > 0 {
-            usleep(80);
+            sleep(8);
             exit(0);
         }
         // 4th child
-        usleep(60);
+        sleep(6);
         kill(getpid(), SIGKILL);
         exit(6);
     }

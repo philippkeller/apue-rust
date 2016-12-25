@@ -1,7 +1,11 @@
 /// Figure 8.29 Print selected fields from system’s accounting file
 ///
-/// Takeaway: on linux I first took acct instead of acct_v3, which had
-/// "funny" results
+/// Takeaway:
+/// - on linux I first took acct instead of acct_v3, which had
+///   "funny" results
+/// - when doing dd to /dev/null the number of chars is 0, even though
+///   the book says: "Even though the output goes to the null device, the
+///   bytes are still accounted for", both on Linux as on MacOS
 ///
 /// Things which could be improved in this code:
 ///
@@ -18,6 +22,7 @@
 // $ f29-acdata /var/log/account/pacct
 //
 // on mac:
+// $ sudo touch /var/account/acct
 // $ sudo accton /var/account/acct
 // .. do a few commands
 // $ f29-acdata /var/account/acct
