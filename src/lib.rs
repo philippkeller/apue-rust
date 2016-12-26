@@ -185,5 +185,12 @@ pub mod my_libc {
         pub fn execl(__path: *const c_char, __arg0: *const c_char, ...) -> c_int;
         pub fn execle(__path: *const c_char, __arg0: *const c_char, ...) -> c_int;
         pub fn execlp(__file: *const c_char, __arg0: *const c_char, ...) -> c_int;
+
+        #[cfg(target_os = "macos")]
+        #[link_name = "__stdoutp"]
+        pub static mut stdout: *mut FILE;
+
+        #[cfg(not(target_os = "macos"))]
+        pub static mut stdout: *mut FILE;
     }
 }

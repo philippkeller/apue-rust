@@ -273,3 +273,7 @@ path = "src/bin/08-process-cntl/f28-accounting.rs"
 [[bin]]
 name="f29-acdata"
 path = "src/bin/08-process-cntl/f29-acdata.rs"
+
+[[bin]]
+name="f30-nice"
+path = "src/bin/08-process-cntl/f30-nice.rs"
