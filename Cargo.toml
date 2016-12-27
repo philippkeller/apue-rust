@@ -277,3 +277,7 @@ path = "src/bin/08-process-cntl/f29-acdata.rs"
 [[bin]]
 name="f30-nice"
 path = "src/bin/08-process-cntl/f30-nice.rs"
+
+[[bin]]
+name="f31-times"
+path = "src/bin/08-process-cntl/f31-times.rs"

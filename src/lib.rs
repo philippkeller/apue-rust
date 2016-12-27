@@ -142,7 +142,7 @@ pub fn pr_exit(status: c_int) {
 }
 
 pub mod my_libc {
-    use libc::{dirent, DIR, c_int, c_char, c_long, c_ulong, pid_t, FILE};
+    use libc::{dirent, DIR, c_int, c_char, c_long, c_ulong, pid_t, clock_t, FILE};
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -157,6 +157,16 @@ pub mod my_libc {
         pub sp_inact: c_long,
         pub sp_expire: c_long,
         pub sp_flag: c_ulong,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    #[derive(Debug)]
+    pub struct tms {
+        pub tms_utime: clock_t,
+        pub tms_stime: clock_t,
+        pub tms_cutime: clock_t,
+        pub tms_cstime: clock_t,
     }
 
     extern "C" {
@@ -192,5 +202,7 @@ pub mod my_libc {
 
         #[cfg(not(target_os = "macos"))]
         pub static mut stdout: *mut FILE;
+
+        pub fn times(arg1: *mut tms) -> clock_t;
     }
 }
