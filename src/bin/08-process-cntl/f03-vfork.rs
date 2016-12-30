@@ -8,7 +8,7 @@ extern crate libc;
 #[macro_use(cstr)]
 extern crate apue;
 
-use libc::{printf, _exit, getpid, c_int};
+use libc::{printf, exit, getpid, c_int};
 use apue::{LibcResult, err_sys};
 use apue::my_libc::vfork;
 
@@ -25,7 +25,7 @@ fn main() {
                     // child
                     GLOBVAR += 1;
                     var += 1;
-                    _exit(0);
+                    exit(0);
                 }
                 _ => {
                     printf(cstr!("pid = %ld, glob = %d, var = %d\n"),

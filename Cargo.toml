@@ -281,3 +281,7 @@ path = "src/bin/08-process-cntl/f30-nice.rs"
 [[bin]]
 name="f31-times"
 path = "src/bin/08-process-cntl/f31-times.rs"
+
+[[bin]]
+name="e02-vfork-stack"
+path = "src/bin/08-process-cntl/e02-vfork-stack.rs"
