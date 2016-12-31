@@ -285,3 +285,7 @@ path = "src/bin/08-process-cntl/f31-times.rs"
 [[bin]]
 name="e02-vfork-stack"
 path = "src/bin/08-process-cntl/e02-vfork-stack.rs"
+
+[[bin]]
+name="e03-waitid"
+path = "src/bin/08-process-cntl/e03-waitid.rs"

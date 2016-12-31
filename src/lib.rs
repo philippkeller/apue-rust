@@ -141,8 +141,9 @@ pub fn pr_exit(status: c_int) {
     }
 }
 
+#[allow(non_camel_case_types)]
 pub mod my_libc {
-    use libc::{dirent, DIR, c_int, c_char, c_long, c_ulong, pid_t, clock_t, FILE};
+    use libc::{dirent, DIR, c_int, c_char, c_long, c_ulong, pid_t, clock_t, siginfo_t, id_t, FILE};
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -168,6 +169,24 @@ pub mod my_libc {
         pub tms_cutime: clock_t,
         pub tms_cstime: clock_t,
     }
+
+    #[derive(Copy, Clone)]
+    #[repr(u32)]
+    #[derive(Debug)]
+    pub enum idtype_t { P_ALL = 0, P_PID = 1, P_PGID = 2, }
+
+    pub const WEXITED:c_int     = 0x00000004;  // [XSI] Processes which have exitted
+    pub const WSTOPPED:c_int    = 0x00000008;  // [XSI] Any child stopped by signal
+    pub const WCONTINUED:c_int  = 0x00000010;  // [XSI] Any child stopped then continued
+    pub const WNOWAIT:c_int     = 0x00000020;  // [XSI] Leave process returned waitable
+
+    pub const CLD_NOOP:c_int        = 0;       // if only I knew...
+    pub const CLD_EXITED:c_int      = 1;       // [XSI] child has exited
+    pub const CLD_KILLED:c_int      = 2;       // [XSI] terminated abnormally, no core file
+    pub const CLD_DUMPED:c_int      = 3;       // [XSI] terminated abnormally, core file
+    pub const CLD_TRAPPED:c_int     = 4;       // [XSI] traced child has trapped
+    pub const CLD_STOPPED:c_int     = 5;       // [XSI] child has stopped
+    pub const CLD_CONTINUED:c_int   = 6;       // [XSI] stopped child has continued
 
     extern "C" {
         #[cfg(target_os = "macos")]
@@ -195,6 +214,8 @@ pub mod my_libc {
         pub fn execl(__path: *const c_char, __arg0: *const c_char, ...) -> c_int;
         pub fn execle(__path: *const c_char, __arg0: *const c_char, ...) -> c_int;
         pub fn execlp(__file: *const c_char, __arg0: *const c_char, ...) -> c_int;
+
+        pub fn waitid(arg1: idtype_t, arg2: id_t, arg3: *mut siginfo_t, arg4: c_int) -> c_int;
 
         #[cfg(target_os = "macos")]
         #[link_name = "__stdoutp"]
