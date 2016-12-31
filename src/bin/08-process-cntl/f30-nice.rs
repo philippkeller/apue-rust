@@ -29,7 +29,7 @@ use std::ptr::null_mut as null;
 use errno::{errno, Errno, set_errno};
 
 unsafe fn checktime(end: timeval, str: &str, count: u64) {
-    let mut tv:timeval = std::mem::uninitialized();
+    let mut tv: timeval = std::mem::uninitialized();
     gettimeofday(&mut tv, null());
     if tv.tv_sec >= end.tv_sec && tv.tv_usec >= end.tv_usec {
         println!("{} count = {}", str, count);
@@ -48,23 +48,25 @@ fn main() {
         } else {
             0
         };
-        let mut end:timeval = std::mem::uninitialized();
+        let mut end: timeval = std::mem::uninitialized();
         gettimeofday(&mut end, null());
         end.tv_sec += 10;
         let pid = fork().to_option().expect("fork error");
         let str = if pid == 0 {
-            println!("current nice value in child is {}, adjusting by {}", nice(0)+nzero, adj);
+            println!("current nice value in child is {}, adjusting by {}",
+                     nice(0) + nzero,
+                     adj);
             set_errno(Errno(0));
             if nice(adj) == -1 && errno().0 != 0 {
                 err_sys("child set scheduling priority");
             }
-            println!("now child nice value is {}", nice(0)+nzero);
+            println!("now child nice value is {}", nice(0) + nzero);
             "child"
         } else {
-            println!("current nice value in parent is {}", nice(0)+nzero);
+            println!("current nice value in parent is {}", nice(0) + nzero);
             "parent"
         };
-        let mut count:u64 = 0;
+        let mut count: u64 = 0;
         loop {
             count += 1; // panics when overflowing in debug mode
             checktime(end, str, count);

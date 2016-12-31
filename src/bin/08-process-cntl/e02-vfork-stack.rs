@@ -24,7 +24,7 @@ fn callme() {
     match pid {
         0 => {
             // child immediately returns
-        },
+        }
         _ => {
             // parent waits a second and tries to access stack var b
             unsafe { sleep(1) };

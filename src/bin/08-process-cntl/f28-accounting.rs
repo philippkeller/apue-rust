@@ -30,7 +30,9 @@ fn main() {
                   cstr!("dd"),
                   cstr!("if=/etc/passwd"),
                   cstr!("of=/dev/stdout"),
-                  0 as *const c_char).to_option().expect("execl error");
+                  0 as *const c_char)
+                .to_option()
+                .expect("execl error");
             exit(7);
         }
         // 3rd child

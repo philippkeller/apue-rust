@@ -173,20 +173,24 @@ pub mod my_libc {
     #[derive(Copy, Clone)]
     #[repr(u32)]
     #[derive(Debug)]
-    pub enum idtype_t { P_ALL = 0, P_PID = 1, P_PGID = 2, }
+    pub enum idtype_t {
+        P_ALL = 0,
+        P_PID = 1,
+        P_PGID = 2,
+    }
 
-    pub const WEXITED:c_int     = 0x00000004;  // [XSI] Processes which have exitted
-    pub const WSTOPPED:c_int    = 0x00000008;  // [XSI] Any child stopped by signal
-    pub const WCONTINUED:c_int  = 0x00000010;  // [XSI] Any child stopped then continued
-    pub const WNOWAIT:c_int     = 0x00000020;  // [XSI] Leave process returned waitable
+    pub const WEXITED: c_int = 0x00000004;  // [XSI] Processes which have exitted
+    pub const WSTOPPED: c_int = 0x00000008;  // [XSI] Any child stopped by signal
+    pub const WCONTINUED: c_int = 0x00000010;  // [XSI] Any child stopped then continued
+    pub const WNOWAIT: c_int = 0x00000020;  // [XSI] Leave process returned waitable
 
-    pub const CLD_NOOP:c_int        = 0;       // if only I knew...
-    pub const CLD_EXITED:c_int      = 1;       // [XSI] child has exited
-    pub const CLD_KILLED:c_int      = 2;       // [XSI] terminated abnormally, no core file
-    pub const CLD_DUMPED:c_int      = 3;       // [XSI] terminated abnormally, core file
-    pub const CLD_TRAPPED:c_int     = 4;       // [XSI] traced child has trapped
-    pub const CLD_STOPPED:c_int     = 5;       // [XSI] child has stopped
-    pub const CLD_CONTINUED:c_int   = 6;       // [XSI] stopped child has continued
+    pub const CLD_NOOP: c_int = 0;       // if only I knew...
+    pub const CLD_EXITED: c_int = 1;       // [XSI] child has exited
+    pub const CLD_KILLED: c_int = 2;       // [XSI] terminated abnormally, no core file
+    pub const CLD_DUMPED: c_int = 3;       // [XSI] terminated abnormally, core file
+    pub const CLD_TRAPPED: c_int = 4;       // [XSI] traced child has trapped
+    pub const CLD_STOPPED: c_int = 5;       // [XSI] child has stopped
+    pub const CLD_CONTINUED: c_int = 6;       // [XSI] stopped child has continued
 
     extern "C" {
         #[cfg(target_os = "macos")]

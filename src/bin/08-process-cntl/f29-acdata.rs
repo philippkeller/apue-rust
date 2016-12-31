@@ -42,9 +42,9 @@ const ACORE: u8 = 0x08; // dumped core
 const AXSIG: u8 = 0x10; // killed by a signal
 
 #[cfg(target_os = "macos")]
-const COMM_LEN:usize = 10;
+const COMM_LEN: usize = 10;
 #[cfg(target_os = "linux")]
-const COMM_LEN:usize = 16;
+const COMM_LEN: usize = 16;
 
 // taken via bindgen from /usr/include/sys/acct.h
 #[repr(C)]

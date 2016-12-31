@@ -13,7 +13,7 @@ extern crate apue;
 
 use libc::{exit, fork, abort, raise, siginfo_t, SIGFPE};
 use apue::my_libc::{waitid, idtype_t, WEXITED, CLD_DUMPED, CLD_EXITED, CLD_STOPPED};
-use apue::{LibcResult};
+use apue::LibcResult;
 use std::panic;
 
 fn handle_panic(e: &panic::PanicInfo) {
@@ -28,7 +28,7 @@ fn handle_panic(e: &panic::PanicInfo) {
 }
 
 #[cfg(target_os = "macos")]
-fn pr_exit(i:siginfo_t) {
+fn pr_exit(i: siginfo_t) {
     let sigcode = i.si_code;
     let status = i.si_status;
     match sigcode {
@@ -45,7 +45,7 @@ fn pr_exit(i:siginfo_t) {
 
 /// si_status is missing in Linux in libc, no wonder: header files is a mess there
 #[cfg(target_os = "linux")]
-fn pr_exit(i:siginfo_t) {
+fn pr_exit(i: siginfo_t) {
     let sigcode = i.si_code;
     match sigcode {
         CLD_EXITED => println!("normal termination"),
@@ -62,7 +62,7 @@ fn pr_exit(i:siginfo_t) {
 fn main() {
     panic::set_hook(Box::new(handle_panic));
     unsafe {
-        let mut siginfo:siginfo_t = std::mem::uninitialized();
+        let mut siginfo: siginfo_t = std::mem::uninitialized();
         let mut pid = fork().to_option().expect("fork error");
         if pid == 0 {
             // child
