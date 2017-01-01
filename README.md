@@ -37,3 +37,6 @@ they copy data (e.g. buffers) even when unneeded.
   https://users.rust-lang.org/t/force-cleanup-before-longjmp/3376
 - Figure 7.14: That's exactly why you take Rust over C because Rust will complain at compile time that you cannot
   return a stack variable from a function.
+- Figure 8.13: avoid race condition: the synchronization features in Rust don't allow syncing of forks (only available
+  for threads, see e.g. https://github.com/BurntSushi/chan-signal/issues/13), so I skipped this Figure, maybe
+  coming back to this later (when signals are discussed in later chapters)
