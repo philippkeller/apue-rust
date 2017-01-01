@@ -6,9 +6,11 @@
 /// Takeaway:
 /// - I could not catch the exit signals 6 and 8 (the second and third fork)
 ///   it *should* have worked, the struct definition seems to match the headers in /usr/include..
+/// - the same program in C (e.g. http://bit.ly/2iSLMid) yields the same results. On Linux
+///   it works though, but on MacOs it prints signal number = 0 also for the 2nd and 3rd line
 /// - on Linux the field `si_status` is missing in libc, since the headers on Linux are a mess..
 
-extern crate libc;
+
 extern crate apue;
 
 use libc::{exit, fork, abort, raise, siginfo_t, SIGFPE};
