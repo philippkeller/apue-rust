@@ -10,7 +10,7 @@
 ///   it works though, but on MacOs it prints signal number = 0 also for the 2nd and 3rd line
 /// - on Linux the field `si_status` is missing in libc, since the headers on Linux are a mess..
 
-
+extern crate libc;
 extern crate apue;
 
 use libc::{exit, fork, abort, raise, siginfo_t, SIGFPE};
