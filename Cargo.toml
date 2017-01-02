@@ -293,3 +293,7 @@ path = "src/bin/08-process-cntl/e03-waitid.rs"
 [[bin]]
 name="e06-zombie"
 path = "src/bin/08-process-cntl/e06-zombie.rs"
+
+[[bin]]
+name="e07-exec-opendir"
+path = "src/bin/08-process-cntl/e07-exec-opendir.rs"

@@ -200,6 +200,8 @@ pub mod my_libc {
         #[cfg(not(target_os = "macos"))]
         pub fn readdir(arg1: *mut DIR) -> *mut dirent;
 
+        pub fn dirfd(dirp: *mut DIR) -> ::c_int;
+
         pub fn tmpnam(ptr: *mut c_char) -> *mut c_char;
 
         pub fn getc(arg1: *mut FILE) -> c_int;
