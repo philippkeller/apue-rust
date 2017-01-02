@@ -3,6 +3,7 @@
 ///
 /// Takeaway: does only work on Linux, on MacOs the child process is somehow
 /// reaped automatically, at least ps doesn't show it
+/// More details here: http://stackoverflow.com/questions/41427982
 
 extern crate libc;
 #[macro_use(cstr)]
@@ -17,7 +18,7 @@ fn main() {
         if pid == 0 {
             exit(0);
         }
-        sleep(1);
-        system(cstr!("ps -o pid,ppid,state,tty,command"));
+        sleep(99);
+        system(cstr!("ps -fo pid,ppid,state,tty,command"));
     }
 }
