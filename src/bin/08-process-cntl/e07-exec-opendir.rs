@@ -17,10 +17,10 @@ extern crate libc;
 extern crate apue;
 
 use libc::{opendir, fcntl, open, close, closedir, F_GETFD, FD_CLOEXEC, O_RDONLY};
-use apue::{LibcResult};
+use apue::LibcResult;
 use apue::my_libc::{readdir, dirfd};
 
-unsafe fn pr_flags(fd:i32) {
+unsafe fn pr_flags(fd: i32) {
     let flags = fcntl(fd, F_GETFD);
     if flags & FD_CLOEXEC > 0 {
         println!("close-on-exec is set");
