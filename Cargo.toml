@@ -297,3 +297,7 @@ path = "src/bin/08-process-cntl/e06-zombie.rs"
 [[bin]]
 name="e07-exec-opendir"
 path = "src/bin/08-process-cntl/e07-exec-opendir.rs"
+
+[[bin]]
+name="f12-orphan-process-grp"
+path = "src/bin/09-process-relations/f12-orphan-process-grp.rs"
