@@ -1,15 +1,27 @@
 /// Figure 9.12: Creating an orphaned process group
 ///
-/// Status: compiles and runs, might be still incorrect though.
+/// Takeaway: On OSX it only works when run in parallel OR when output is redirected
+/// to a file. I don't understand this beheviour, as running the C source code
+/// runs just fine
+///
+/// Also, the wiring of test.py does not set up a proper tty (yet),
+/// therefore only // as commenter of the following example:
+///
+// $ f12-orphan-process-grp > /tmp/f12-orph.txt
+// $ cat /tmp/f12-orph.txt | sed "s/[0-9]//g"
+// parent: pid = , ppid = , pgrp = , tpgrp =
+// child: pid = , ppid = , pgrp = , tpgrp =
+// child: pid = , ppid = , pgrp = , tpgrp =
+// read error Input/output error on controlling TTY
+// SIGHUP received, pid=
 
 extern crate libc;
 #[macro_use(cstr)]
 extern crate apue;
 extern crate errno;
 
-use libc::{STDIN_FILENO, SIGHUP, SIGTSTP, c_int, c_void};
-use libc::{printf, getpid, getppid, getpgrp, tcgetpgrp, fflush, fork, sleep, signal, kill, read};
-use apue::my_libc::stdout;
+use libc::{STDIN_FILENO, SIG_ERR, SIGHUP, SIGTSTP, c_int, c_void};
+use libc::{printf, getpid, getppid, getpgrp, tcgetpgrp, fork, sleep, signal, kill, read};
 use apue::LibcResult;
 
 extern "C" fn sig_hup(_: c_int) {
@@ -25,7 +37,6 @@ unsafe fn pr_ids(name: &str) {
              getppid(),
              getpgrp(),
              tcgetpgrp(STDIN_FILENO));
-    fflush(stdout);
 }
 
 fn main() {
@@ -37,7 +48,9 @@ fn main() {
             sleep(1);
         } else {
             pr_ids("child");
-            signal(SIGHUP, sig_hup as usize);
+            if signal(SIGHUP, sig_hup as usize) == SIG_ERR {
+                panic!("signal error");
+            }
             kill(getpid(), SIGTSTP);
             pr_ids("child");
             let s = "0";
