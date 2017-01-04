@@ -1,10 +1,11 @@
 /// Figure 9.12: Creating an orphaned process group
 ///
-/// Takeaway: On OSX it only works when run in parallel OR when output is redirected
-/// to a file. I don't understand this beheviour, as running the C source code
-/// runs just fine
+/// Takeaway: First left away fflush (I thought println does that) with
+/// the effect that it worked on Linux, but on OSX it only worked when run
+/// in parallel OR when output is redirected to a file (because it is not
+/// buffered I understand).
 ///
-/// Also, the wiring of test.py does not set up a proper tty (yet),
+/// The wiring of test.py does not set up a proper tty (yet),
 /// therefore only // as commenter of the following example:
 ///
 // $ f12-orphan-process-grp > /tmp/f12-orph.txt
@@ -21,12 +22,14 @@ extern crate apue;
 extern crate errno;
 
 use libc::{STDIN_FILENO, SIG_ERR, SIGHUP, SIGTSTP, c_int, c_void};
-use libc::{printf, getpid, getppid, getpgrp, tcgetpgrp, fork, sleep, signal, kill, read};
+use libc::{printf, getpid, getppid, getpgrp, tcgetpgrp, fflush, fork, sleep, signal, kill, read};
 use apue::LibcResult;
+use apue::my_libc::stdout;
 
 extern "C" fn sig_hup(_: c_int) {
     unsafe {
         printf(cstr!("SIGHUP received, pid=%ld\n"), getpid());
+        fflush(stdout);
     }
 }
 
