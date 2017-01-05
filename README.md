@@ -12,7 +12,8 @@ Beware: this is my first Rust project. This code is far from beautiful and might
 - [x] Chapter 6: System Data Files and Information
 - [x] Chapter 7: Process Environment
 - [x] Chapter 8: Process Control
-- [ ] Chapter 9: Process Relationships
+- [x] Chapter 9: Process Relationships
+- [ ] Chapter 10: Signals
 
 ## Using this code
 

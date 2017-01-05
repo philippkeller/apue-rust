@@ -10,7 +10,7 @@ extern crate libc;
 extern crate apue;
 
 use libc::{STDIN_FILENO, fork, getpid, setsid, tcgetpgrp};
-use apue::{LibcResult};
+use apue::LibcResult;
 
 fn main() {
     unsafe {
