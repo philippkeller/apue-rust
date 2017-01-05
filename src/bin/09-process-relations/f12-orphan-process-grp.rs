@@ -1,9 +1,14 @@
 /// Figure 9.12: Creating an orphaned process group
 ///
-/// Takeaway: First left away fflush (I thought println does that) with
-/// the effect that it worked on Linux, but on OSX it only worked when run
-/// in parallel OR when output is redirected to a file (because it is not
-/// buffered I understand).
+/// This is quite a fun program actually: The child commits suicide,
+/// the parent dies as well in a corratoral damage way, but the child,
+/// wearing a bullet proof vest survives.
+///
+/// Takeaway: First I left away fflush (I thought println does that) with
+/// the effect that it worked on Linux, but on OSX only the first
+/// two lines were printed, the remaining three were only printed when this
+/// program was run in parallel or when output is redirected to a file
+/// (because it is not buffered).
 ///
 /// The wiring of test.py does not set up a proper tty (yet),
 /// therefore only // as commenter of the following example:
