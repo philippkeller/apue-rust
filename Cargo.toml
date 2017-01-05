@@ -301,3 +301,7 @@ path = "src/bin/08-process-cntl/e07-exec-opendir.rs"
 [[bin]]
 name="f12-orphan-process-grp"
 path = "src/bin/09-process-relations/f12-orphan-process-grp.rs"
+
+[[bin]]
+name="e02-child-session"
+path = "src/bin/09-process-relations/e02-child-session.rs"

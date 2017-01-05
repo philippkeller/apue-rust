@@ -14,12 +14,13 @@
 /// therefore only // as commenter of the following example:
 ///
 // $ f12-orphan-process-grp > /tmp/f12-orph.txt
-// $ cat /tmp/f12-orph.txt | sed "s/[0-9]//g"
+// $ cat /tmp/f12-orph.txt | sed -E 's/[0-9]{2,}//g'
 // parent: pid = , ppid = , pgrp = , tpgrp =
 // child: pid = , ppid = , pgrp = , tpgrp =
-// child: pid = , ppid = , pgrp = , tpgrp =
+// child: pid = , ppid = 1, pgrp = , tpgrp =
 // read error Input/output error on controlling TTY
 // SIGHUP received, pid=
+// $ rm /tmp/f12-orph.txt
 
 extern crate libc;
 #[macro_use(cstr)]
