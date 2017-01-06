@@ -305,3 +305,7 @@ path = "src/bin/09-process-relations/f12-orphan-process-grp.rs"
 [[bin]]
 name="e02-child-session"
 path = "src/bin/09-process-relations/e02-child-session.rs"
+
+[[bin]]
+name="f02-sigusr"
+path = "src/bin/10-signals/f02-sigusr.rs"
