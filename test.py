@@ -79,7 +79,7 @@ if __name__ == "__main__":
             if limit and f.find(limit) < 0:
                 continue
             m = CommentStateMachine(os.path.join(root, f))
-            for line in open(os.path.join(root, f)):
+            for line in open(os.path.join(root, f), encoding="utf-8"):
                 if line.startswith('///'):
                     line = line[4:].rstrip()
                     if line.lower() == 'linux only:':

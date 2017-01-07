@@ -313,3 +313,7 @@ path = "src/bin/10-signals/f02-sigusr.rs"
 [[bin]]
 name="f05-nonreentrant"
 path = "src/bin/10-signals/f05-nonreentrant.rs"
+
+[[bin]]
+name="f06-sigcld-systemv"
+path = "src/bin/10-signals/f06-sigcld-systemv.rs"
