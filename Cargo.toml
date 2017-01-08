@@ -317,3 +317,7 @@ path = "src/bin/10-signals/f05-nonreentrant.rs"
 [[bin]]
 name="f06-sigcld-systemv"
 path = "src/bin/10-signals/f06-sigcld-systemv.rs"
+
+[[bin]]
+name="f07-sleep-impl"
+path = "src/bin/10-signals/f07-sleep-impl.rs"
