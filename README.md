@@ -42,3 +42,4 @@ they copy data (e.g. buffers) even when unneeded.
 - Figure 8.13: avoid race condition: the synchronization features in Rust don't allow syncing of forks (only available
   for threads, see e.g. https://github.com/BurntSushi/chan-signal/issues/13), so I skipped this Figure, maybe
   coming back to this later (when signals are discussed in later chapters)
+- Figure 10.8, 10.9: rust does not have setjmp/longjmp

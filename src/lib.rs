@@ -1,8 +1,9 @@
 extern crate libc;
 extern crate errno;
 
-use libc::{c_int, c_char, dev_t, utsname, exit, PATH_MAX};
+use libc::{c_int, c_char, dev_t, utsname, PATH_MAX, SIGALRM, SA_RESTART, SIG_ERR};
 use libc::{WSTOPSIG, WEXITSTATUS, WIFSTOPPED, WCOREDUMP, WTERMSIG, WIFSIGNALED, WIFEXITED};
+use libc::{exit, sigemptyset, sigaction};
 use std::io::Write;
 use std::ffi::CStr;
 
@@ -140,6 +141,24 @@ pub fn pr_exit(status: c_int) {
         }
     }
 }
+
+// Reliable version of signal(), using POSIX sigaction()
+pub unsafe fn signal(signo:i32, func:fn(c_int)) -> usize {
+    let mut act:sigaction = std::mem::zeroed();
+    let mut oact:sigaction = std::mem::uninitialized();
+    act.sa_sigaction = func as usize;
+    sigemptyset(&mut act.sa_mask);
+    act.sa_flags = 0;
+    if signo != SIGALRM {
+        act.sa_flags |= SA_RESTART;
+    }
+    if sigaction(signo, &act, &mut oact) < 0 {
+        SIG_ERR
+    } else {
+        oact.sa_sigaction as usize
+    }
+}
+
 
 #[allow(non_camel_case_types)]
 pub mod my_libc {

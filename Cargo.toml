@@ -321,3 +321,7 @@ path = "src/bin/10-signals/f06-sigcld-systemv.rs"
 [[bin]]
 name="f07-sleep-impl"
 path = "src/bin/10-signals/f07-sleep-impl.rs"
+
+[[bin]]
+name="f10-read-timeout"
+path = "src/bin/10-signals/f10-read-timeout.rs"
