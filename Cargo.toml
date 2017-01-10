@@ -325,3 +325,7 @@ path = "src/bin/10-signals/f07-sleep-impl.rs"
 [[bin]]
 name="f10-read-timeout"
 path = "src/bin/10-signals/f10-read-timeout.rs"
+
+[[bin]]
+name="f12-sigset-impl"
+path = "src/bin/10-signals/f12-sigset-impl.rs"
