@@ -329,3 +329,7 @@ path = "src/bin/10-signals/f10-read-timeout.rs"
 [[bin]]
 name="f12-sigset-impl"
 path = "src/bin/10-signals/f12-sigset-impl.rs"
+
+[[bin]]
+name="f14-print-signal-mask"
+path = "src/bin/10-signals/f14-print-signal-mask.rs"

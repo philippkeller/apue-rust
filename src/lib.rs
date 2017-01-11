@@ -162,7 +162,8 @@ pub unsafe fn signal(signo:i32, func:fn(c_int)) -> usize {
 
 #[allow(non_camel_case_types)]
 pub mod my_libc {
-    use libc::{dirent, DIR, c_int, c_char, c_long, c_ulong, pid_t, clock_t, siginfo_t, id_t, FILE};
+    use libc::{dirent, c_int, c_char, c_long, c_ulong, pid_t, clock_t, siginfo_t, sigset_t, id_t};
+    use libc::{DIR, FILE};
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -250,5 +251,7 @@ pub mod my_libc {
         pub static mut stdout: *mut FILE;
 
         pub fn times(arg1: *mut tms) -> clock_t;
+
+        pub fn sigprocmask(arg1: c_int, arg2: *const sigset_t, arg3: *mut sigset_t) -> c_int;
     }
 }
