@@ -253,5 +253,6 @@ pub mod my_libc {
         pub fn times(arg1: *mut tms) -> clock_t;
 
         pub fn sigprocmask(arg1: c_int, arg2: *const sigset_t, arg3: *mut sigset_t) -> c_int;
+        pub fn sigpending(arg1: *mut sigset_t) -> c_int;
     }
 }

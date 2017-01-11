@@ -333,3 +333,7 @@ path = "src/bin/10-signals/f12-sigset-impl.rs"
 [[bin]]
 name="f14-print-signal-mask"
 path = "src/bin/10-signals/f14-print-signal-mask.rs"
+
+[[bin]]
+name="f15-sigpending"
+path = "src/bin/10-signals/f15-sigpending.rs"
