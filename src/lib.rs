@@ -6,6 +6,7 @@ use libc::{WSTOPSIG, WEXITSTATUS, WIFSTOPPED, WCOREDUMP, WTERMSIG, WIFSIGNALED, 
 use libc::{exit, sigemptyset, sigaction};
 use std::io::Write;
 use std::ffi::CStr;
+use std::mem::{zeroed, uninitialized};
 
 /// Turns a str into a c string. Warning: the cstring only lives as long the
 /// str lives. Don't e.g. assign the return value to a variable!
@@ -92,7 +93,7 @@ pub unsafe fn array_to_string(sl: &[i8]) -> &str {
 
 /// Return uname -s
 pub fn uname() -> Option<String> {
-    let mut uc: utsname = unsafe { std::mem::uninitialized() };
+    let mut uc: utsname = unsafe { uninitialized() };
     unsafe {
         if libc::uname(&mut uc) == 0 {
             return Some(String::from(array_to_string(&uc.sysname)));
@@ -142,10 +143,10 @@ pub fn pr_exit(status: c_int) {
     }
 }
 
-// Reliable version of signal(), using POSIX sigaction()
+// Figure 10.18: Reliable version of signal(), using POSIX sigaction()
 pub unsafe fn signal(signo: i32, func: fn(c_int)) -> usize {
-    let mut act: sigaction = std::mem::zeroed();
-    let mut oact: sigaction = std::mem::uninitialized();
+    let mut act: sigaction = zeroed();
+    let mut oact: sigaction = uninitialized();
     act.sa_sigaction = func as usize;
     sigemptyset(&mut act.sa_mask);
     act.sa_flags = 0;
@@ -159,6 +160,20 @@ pub unsafe fn signal(signo: i32, func: fn(c_int)) -> usize {
     }
 }
 
+// Figure 10.19: The signal_intr function, same as signal() above
+// with the only difference that no system call is restarted
+pub unsafe fn signal_intr(signo: i32, func: fn(c_int)) -> usize {
+    let mut act: sigaction = zeroed();
+    let mut oact: sigaction = uninitialized();
+    act.sa_sigaction = func as usize;
+    sigemptyset(&mut act.sa_mask);
+    act.sa_flags = 0;
+    if sigaction(signo, &act, &mut oact) < 0 {
+        SIG_ERR
+    } else {
+        oact.sa_sigaction as usize
+    }
+}
 
 #[allow(non_camel_case_types)]
 pub mod my_libc {

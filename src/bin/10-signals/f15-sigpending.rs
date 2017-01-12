@@ -12,9 +12,9 @@ extern crate libc;
 extern crate apue;
 
 use libc::{c_int, SIG_SETMASK, SIG_BLOCK, SIGQUIT, SIG_ERR, SIG_DFL};
-use libc::{sigemptyset, sigaddset, sigismember, sleep, signal};
+use libc::{sigemptyset, sigaddset, sigismember, sleep};
 use apue::my_libc::{sigprocmask, sigpending};
-use apue::LibcResult;
+use apue::{LibcResult, signal};
 use std::mem::uninitialized as uninit;
 
 fn sig_quit(_: c_int) {
@@ -26,7 +26,7 @@ fn sig_quit(_: c_int) {
 
 fn main() {
     unsafe {
-        if signal(SIGQUIT, sig_quit as usize) == SIG_ERR {
+        if signal(SIGQUIT, sig_quit) == SIG_ERR {
             panic!("can't catch SIGQUIT");
         }
         // Block SIGQUIT and save current signal mask.
