@@ -12,7 +12,6 @@
 /// The lock is most likely due to a malloc who is threadsafe through
 /// locking which results in a deadlock. Explanation here:
 /// http://stackoverflow.com/a/3941563/119861
-
 #[macro_use(cstr)]
 extern crate apue;
 extern crate libc;
@@ -22,7 +21,7 @@ use libc::{getpwnam, alarm, signal, printf};
 use apue::LibcResult;
 use std::ffi::CStr;
 
-extern "C" fn my_alarm(_:c_int) {
+extern "C" fn my_alarm(_: c_int) {
     unsafe {
         printf(cstr!("in signal handler\n"));
         getpwnam(cstr!("root")).to_option().expect("getpwnam(root) error");

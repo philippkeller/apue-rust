@@ -19,9 +19,9 @@ use libc::{STDOUT_FILENO, STDIN_FILENO, SIGALRM, SIG_ERR, c_int};
 use libc::{alarm, write, read, exit};
 use apue::signal;
 
-const MAXLINE:usize = 4096;
+const MAXLINE: usize = 4096;
 
-fn sig_alrm(_:c_int) {
+fn sig_alrm(_: c_int) {
     // nothing to do, just return to interrupt the read
 }
 

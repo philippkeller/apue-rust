@@ -15,7 +15,7 @@ mod sigcld {
     use libc::{signal, wait, fork, usleep, _exit, pause};
     use apue::LibcResult;
 
-    const SIGCLD:c_int = SIGCHLD;
+    const SIGCLD: c_int = SIGCHLD;
 
     unsafe fn sig_cld(_: c_int) {
         println!("SIGCLD received");

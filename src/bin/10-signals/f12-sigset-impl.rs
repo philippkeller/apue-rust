@@ -13,28 +13,28 @@ extern crate apue;
 extern crate libc;
 extern crate errno;
 
-use libc::{sigset_t};
+use libc::sigset_t;
 
 #[cfg(target_os = "macos")]
-const NSIG:i8 = 32; // from /usr/include/signal.h
+const NSIG: i8 = 32; // from /usr/include/signal.h
 #[cfg(target_os = "linux")]
-const NSIG:i8 = 64; // from /usr/include/x86_64-linux-gnu/bits/signum.h
+const NSIG: i8 = 64; // from /usr/include/x86_64-linux-gnu/bits/signum.h
 
-fn sigbad(signo:i8) -> bool {
+fn sigbad(signo: i8) -> bool {
     signo <= 0 || signo >= NSIG
 }
 
-fn sigaddset(set:&mut sigset_t, signo:i8) {
+fn sigaddset(set: &mut sigset_t, signo: i8) {
     assert!(!sigbad(signo));
     *set |= 1 << (signo - 1); // turn bit on
 }
 
-fn sigdelset(set:&mut sigset_t, signo:i8) {
+fn sigdelset(set: &mut sigset_t, signo: i8) {
     assert!(!sigbad(signo));
     *set &= !(1 << signo - 1); // turn bit off
 }
 
-fn sigismember(set:&sigset_t, signo:i8) -> bool {
+fn sigismember(set: &sigset_t, signo: i8) -> bool {
     assert!(!sigbad(signo));
     set & (1 << (signo - 1)) != 0
 }

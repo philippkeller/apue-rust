@@ -143,9 +143,9 @@ pub fn pr_exit(status: c_int) {
 }
 
 // Reliable version of signal(), using POSIX sigaction()
-pub unsafe fn signal(signo:i32, func:fn(c_int)) -> usize {
-    let mut act:sigaction = std::mem::zeroed();
-    let mut oact:sigaction = std::mem::uninitialized();
+pub unsafe fn signal(signo: i32, func: fn(c_int)) -> usize {
+    let mut act: sigaction = std::mem::zeroed();
+    let mut oact: sigaction = std::mem::uninitialized();
     act.sa_sigaction = func as usize;
     sigemptyset(&mut act.sa_mask);
     act.sa_flags = 0;

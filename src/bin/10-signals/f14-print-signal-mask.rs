@@ -23,7 +23,7 @@ macro_rules! print_sig {
     }}
 }
 
-fn pr_mask(s:&str) {
+fn pr_mask(s: &str) {
     unsafe {
         let errno_save = errno::errno();
         let mut sigset: sigset_t = std::mem::uninitialized();
@@ -41,7 +41,9 @@ fn main() {
     unsafe {
         let mut sigs: sigset_t = std::mem::uninitialized();
         sigaddset(&mut sigs, SIGINT);
-        sigprocmask(SIG_SETMASK, &sigs, std::ptr::null_mut()).to_option().expect("couldn't set signals");
+        sigprocmask(SIG_SETMASK, &sigs, std::ptr::null_mut())
+            .to_option()
+            .expect("couldn't set signals");
         pr_mask("after setting mask:");
     }
 }

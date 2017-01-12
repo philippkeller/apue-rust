@@ -3,7 +3,7 @@
 /// Finding: on OSX signals seem to be not queued as well. Running f15-sigpending and then
 /// immediately firing ^\ results in only one echo of "caught SIGQUIT"
 ///
-/// $ f15-sigpending 2>&1 & pkill -SIGQUIT f15-sigpending && sleep 2 && pkill -SIGQUIT f15-sigpending && sleep 1
+/// $ f15-sigpending & pkill -SIGQUIT f15-sigpending && sleep 2 && pkill -SIGQUIT f15-sigpending
 /// SIGQUIT pending
 /// caught SIGQUIT
 /// SIGQUIT unblocked
@@ -14,10 +14,10 @@ extern crate apue;
 use libc::{c_int, SIG_SETMASK, SIG_BLOCK, SIGQUIT, SIG_ERR, SIG_DFL};
 use libc::{sigemptyset, sigaddset, sigismember, sleep, signal};
 use apue::my_libc::{sigprocmask, sigpending};
-use apue::{LibcResult};
+use apue::LibcResult;
 use std::mem::uninitialized as uninit;
 
-fn sig_quit(_:c_int) {
+fn sig_quit(_: c_int) {
     println!("caught SIGQUIT");
     if unsafe { libc::signal(SIGQUIT, SIG_DFL) } == SIG_ERR {
         panic!("can't reset SIGQUIT");
@@ -41,7 +41,9 @@ fn main() {
         }
 
         // restore signal mask which unblocks SIGQUIT
-        sigprocmask(SIG_SETMASK, &oldmask, std::ptr::null_mut()).to_option().expect("SIG_SETMASK error");
+        sigprocmask(SIG_SETMASK, &oldmask, std::ptr::null_mut())
+            .to_option()
+            .expect("SIG_SETMASK error");
         println!("SIGQUIT unblocked");
         sleep(2); // <-- SIGQUIT will hit here with core dump
     }
