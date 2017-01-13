@@ -39,7 +39,9 @@ fn main() {
         }
         pr_mask("after return from sigsuspend: ");
         // reset signal mask which unblocks SIGINT
-        sigprocmask(SIG_SETMASK, &oldmask, std::ptr::null_mut()).to_option().expect("SIG_SETMASK error");
+        sigprocmask(SIG_SETMASK, &oldmask, std::ptr::null_mut())
+            .to_option()
+            .expect("SIG_SETMASK error");
         pr_mask("program exit: ");
     }
 }
