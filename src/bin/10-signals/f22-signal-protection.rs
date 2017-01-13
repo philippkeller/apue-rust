@@ -33,7 +33,7 @@ fn main() {
         sigprocmask(SIG_BLOCK, &newmask, &mut oldmask).to_option().expect("SIG_BLOCK error");
         // Critical region of code
         pr_mask("in critical region: ");
-        // PAuse, allowing all signals except SIGUSR1
+        // Pause, allowing all signals except SIGUSR1
         if sigsuspend(&waitmask) != -1 {
             panic!("sigsuspend error");
         }
