@@ -1,9 +1,11 @@
 extern crate libc;
 extern crate errno;
 
-use libc::{c_int, c_char, dev_t, utsname, PATH_MAX, SIGALRM, SA_RESTART, SIG_ERR};
+use libc::{c_int, c_char, dev_t, utsname, sigset_t, PATH_MAX, SA_RESTART};
+use libc::{SIG_ERR, SIGALRM, SIGINT, SIGUSR1, SIGQUIT};
 use libc::{WSTOPSIG, WEXITSTATUS, WIFSTOPPED, WCOREDUMP, WTERMSIG, WIFSIGNALED, WIFEXITED};
-use libc::{exit, sigemptyset, sigaction};
+use libc::{exit, sigemptyset, sigaction, sigismember};
+use my_libc::sigprocmask;
 use std::io::Write;
 use std::ffi::CStr;
 use std::mem::{zeroed, uninitialized};
@@ -143,6 +145,29 @@ pub fn pr_exit(status: c_int) {
     }
 }
 
+macro_rules! print_sig {
+    ($set:expr, $s:expr) => {{
+        if sigismember($set, $s) == 1 {
+            print!(" {}", stringify!($s));
+        }
+    }}
+}
+
+pub fn pr_mask(s: &str) {
+    unsafe {
+        let errno_save = errno::errno();
+        let mut sigset: sigset_t = std::mem::uninitialized();
+        sigprocmask(0, std::ptr::null(), &mut sigset).to_option().expect("sigprocmask error");
+        print!("{}", s);
+        print_sig!(&sigset, SIGINT);
+        print_sig!(&sigset, SIGQUIT);
+        print_sig!(&sigset, SIGUSR1);
+        print_sig!(&sigset, SIGALRM);
+        print!("\n");
+        errno::set_errno(errno_save);
+    }
+}
+
 // Figure 10.18: Reliable version of signal(), using POSIX sigaction()
 pub unsafe fn signal(signo: i32, func: fn(c_int)) -> usize {
     let mut act: sigaction = zeroed();
@@ -269,5 +294,6 @@ pub mod my_libc {
 
         pub fn sigprocmask(arg1: c_int, arg2: *const sigset_t, arg3: *mut sigset_t) -> c_int;
         pub fn sigpending(arg1: *mut sigset_t) -> c_int;
+        pub fn sigsuspend(arg1: *const sigset_t) -> c_int;
     }
 }

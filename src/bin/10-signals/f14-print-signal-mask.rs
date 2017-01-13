@@ -10,32 +10,9 @@ extern crate apue;
 extern crate libc;
 extern crate errno;
 
-use libc::{sigset_t, SIGINT, SIGQUIT, SIGUSR1, SIGALRM, SIG_SETMASK};
-use libc::{sigismember, sigaddset};
-use apue::LibcResult;
+use libc::{sigset_t, SIGINT, SIG_SETMASK, sigaddset};
+use apue::{LibcResult, pr_mask};
 use apue::my_libc::sigprocmask;
-
-macro_rules! print_sig {
-    ($set:expr, $s:expr) => {{
-        if sigismember($set, $s) == 1 {
-            print!(" {}", stringify!($s));
-        }
-    }}
-}
-
-fn pr_mask(s: &str) {
-    unsafe {
-        let errno_save = errno::errno();
-        let mut sigset: sigset_t = std::mem::uninitialized();
-        sigprocmask(0, std::ptr::null(), &mut sigset).to_option().expect("sigprocmask error");
-        print!("{}", s);
-        print_sig!(&sigset, SIGINT);
-        print_sig!(&sigset, SIGQUIT);
-        print_sig!(&sigset, SIGUSR1);
-        print_sig!(&sigset, SIGALRM);
-        errno::set_errno(errno_save);
-    }
-}
 
 fn main() {
     unsafe {
