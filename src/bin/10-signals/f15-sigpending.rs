@@ -15,7 +15,6 @@ use libc::{c_int, SIG_SETMASK, SIG_BLOCK, SIGQUIT, SIG_ERR, SIG_DFL};
 use libc::{sigemptyset, sigaddset, sigismember, sleep};
 use apue::my_libc::{sigprocmask, sigpending};
 use apue::{LibcResult, signal};
-use std::mem::uninitialized as uninit;
 
 fn sig_quit(_: c_int) {
     println!("caught SIGQUIT");
@@ -30,7 +29,7 @@ fn main() {
             panic!("can't catch SIGQUIT");
         }
         // Block SIGQUIT and save current signal mask.
-        let (mut newmask, mut oldmask, mut pendmask) = (uninit(), uninit(), uninit());
+        let (mut newmask, mut oldmask, mut pendmask) = std::mem::uninitialized();
         sigemptyset(&mut newmask);
         sigaddset(&mut newmask, SIGQUIT);
         sigprocmask(SIG_BLOCK, &newmask, &mut oldmask).to_option().expect("SIG_BLOCK error");
