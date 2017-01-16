@@ -343,5 +343,5 @@ name="f22-signal-protection"
 path = "src/bin/10-signals/f22-signal-protection.rs"
 
 [[bin]]
-name="f23-sugsuspend-global"
-path = "src/bin/10-signals/f23-sugsuspend-global.rs"
+name="f23-sigsuspend-global"
+path = "src/bin/10-signals/f23-sigsuspend-global.rs"
