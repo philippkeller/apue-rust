@@ -33,16 +33,16 @@ use apue::LibcResult;
 use std::sync::atomic::{AtomicBool, Ordering, ATOMIC_BOOL_INIT};
 
 // closest I could find for volatile sig_atomic_t in Rust
-static mut QUITFLAG:AtomicBool = ATOMIC_BOOL_INIT;
+static mut QUITFLAG: AtomicBool = ATOMIC_BOOL_INIT;
 
-fn sig_int(signo:c_int) {
+fn sig_int(signo: c_int) {
     unsafe {
         match signo {
             SIGINT => println!("interrupt"),
             SIGQUIT => {
                 println!("quit");
                 QUITFLAG.store(false, Ordering::SeqCst);
-            },
+            }
             _ => panic!("unexpected signal"),
         }
     }
@@ -72,6 +72,8 @@ fn main() {
         while QUITFLAG.fetch_or(true, Ordering::Relaxed) {
             sigsuspend(&zeromask);
         }
-        sigprocmask(SIG_SETMASK, &oldmask, std::ptr::null_mut()).to_option().expect("SIG_SETMASK error");
+        sigprocmask(SIG_SETMASK, &oldmask, std::ptr::null_mut())
+            .to_option()
+            .expect("SIG_SETMASK error");
     }
 }
