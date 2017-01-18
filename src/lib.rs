@@ -1,7 +1,7 @@
 extern crate libc;
 extern crate errno;
 
-use libc::{c_int, c_char, dev_t, utsname, sigset_t, PATH_MAX, SA_RESTART};
+use libc::{c_int, c_char, dev_t, utsname, sigset_t, sighandler_t, PATH_MAX, SA_RESTART};
 use libc::{SIG_ERR, SIGALRM, SIGINT, SIGUSR1, SIGQUIT};
 use libc::{WSTOPSIG, WEXITSTATUS, WIFSTOPPED, WCOREDUMP, WTERMSIG, WIFSIGNALED, WIFEXITED};
 use libc::{exit, sigemptyset, sigaction, sigismember};
@@ -83,6 +83,14 @@ impl LibcResult<isize> for isize {
         if *self <= 0 { None } else { Some(*self) }
     }
 }
+
+impl LibcResult<sighandler_t> for sighandler_t {
+    fn to_option(&self) -> Option<sighandler_t> {
+        if *self == SIG_ERR { None } else { Some(*self) }
+    }
+}
+
+
 impl<T> LibcResult<*mut T> for *mut T {
     fn to_option(&self) -> Option<*mut T> {
         if self.is_null() { None } else { Some(*self) }

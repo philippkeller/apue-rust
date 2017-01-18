@@ -345,3 +345,7 @@ path = "src/bin/10-signals/f22-signal-protection.rs"
 [[bin]]
 name="f23-sigsuspend-global"
 path = "src/bin/10-signals/f23-sigsuspend-global.rs"
+
+[[bin]]
+name="f24-parent-child-sync"
+path = "src/bin/10-signals/f24-parent-child-sync.rs"

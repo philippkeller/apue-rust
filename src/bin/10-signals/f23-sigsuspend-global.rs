@@ -66,7 +66,7 @@ fn main() {
         sigprocmask(SIG_BLOCK, &newmask, &mut oldmask).to_option().expect("SIG_BLOCK error");
 
         // here comes the AtomicBool into play which goes sure that whenever
-        // QUITFLAG becomes true it is immediately set to false again
+        // QUITFLAG becomes false it is immediately set to true again
         // so no other Thread could "catch" it
         QUITFLAG.store(true, Ordering::SeqCst);
         while QUITFLAG.fetch_or(true, Ordering::Relaxed) {
