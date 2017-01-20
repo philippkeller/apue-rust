@@ -349,3 +349,7 @@ path = "src/bin/10-signals/f23-sigsuspend-global.rs"
 [[bin]]
 name="f24-parent-child-sync"
 path = "src/bin/10-signals/f24-parent-child-sync.rs"
+
+[[bin]]
+name="f25-abort"
+path = "src/bin/10-signals/f25-abort.rs"
