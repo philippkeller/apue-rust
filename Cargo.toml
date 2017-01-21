@@ -353,3 +353,7 @@ path = "src/bin/10-signals/f24-parent-child-sync.rs"
 [[bin]]
 name="f25-abort"
 path = "src/bin/10-signals/f25-abort.rs"
+
+[[bin]]
+name="f26-system-ed"
+path = "src/bin/10-signals/f26-system-ed.rs"
