@@ -13,7 +13,7 @@ use apue::my_libc::sigprocmask;
 
 
 unsafe fn abort() {
-    let mut action:sigaction = std::mem::uninitialized();
+    let mut action: sigaction = std::mem::uninitialized();
     // load current signal handler and flags into action
     sigaction(SIGABRT, null(), &mut action);
     if action.sa_sigaction == SIG_IGN {
@@ -39,6 +39,4 @@ unsafe fn abort() {
     exit(1); // now THIS should now never be executed
 }
 
-fn main() {
-
-}
+fn main() {}

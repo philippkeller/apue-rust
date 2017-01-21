@@ -37,7 +37,7 @@ fn tell_wait() {
     }
 }
 
-unsafe fn tell_parent(pid:pid_t) {
+unsafe fn tell_parent(pid: pid_t) {
     kill(pid, SIGUSR2); // tell parent we're done
 }
 
@@ -48,7 +48,7 @@ unsafe fn wait_parent(zeromask: sigset_t) {
     }
 }
 
-unsafe fn tell_child(pid:pid_t) {
+unsafe fn tell_child(pid: pid_t) {
     kill(pid, SIGUSR1);
 }
 
@@ -58,7 +58,9 @@ unsafe fn wait_child(zeromask: sigset_t, oldmask: sigset_t) {
         sigsuspend(&zeromask);
     }
     // Reset signal mask to original value
-    sigprocmask(SIG_SETMASK, &oldmask, std::ptr::null_mut()).to_option().expect("SIG_SETMASK error");
+    sigprocmask(SIG_SETMASK, &oldmask, std::ptr::null_mut())
+        .to_option()
+        .expect("SIG_SETMASK error");
 }
 
 fn main() {}
