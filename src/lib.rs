@@ -1,11 +1,11 @@
 extern crate libc;
 extern crate errno;
 
-use libc::{c_int, c_char, dev_t, utsname, sigset_t, sighandler_t, PATH_MAX, SA_RESTART};
+use libc::{c_int, c_char, dev_t, utsname, sigset_t, sighandler_t, PATH_MAX, SA_RESTART, EINTR};
 use libc::{SIG_ERR, SIGALRM, SIGINT, SIGUSR1, SIGQUIT};
 use libc::{WSTOPSIG, WEXITSTATUS, WIFSTOPPED, WCOREDUMP, WTERMSIG, WIFSIGNALED, WIFEXITED};
-use libc::{exit, sigemptyset, sigaction, sigismember};
-use my_libc::sigprocmask;
+use libc::{exit, _exit, sigemptyset, sigaction, sigismember, fork, waitpid};
+use my_libc::{sigprocmask, execl};
 use std::io::Write;
 use std::ffi::CStr;
 use std::mem::{zeroed, uninitialized};
@@ -192,6 +192,36 @@ pub unsafe fn signal(signo: i32, func: fn(c_int)) -> usize {
         oact.sa_sigaction as usize
     }
 }
+
+// Figure 8.22 The system function, without signal handling
+pub unsafe fn system(cmdstring: &str) -> Option<i32> {
+    if let Some(pid) = fork().to_option() {
+        match pid {
+            0 => {
+                // child
+                execl(cstr!("/bin/sh"),
+                      cstr!("sh"),
+                      cstr!("-c"),
+                      cstr!(cmdstring),
+                      0 as *const c_char);
+                _exit(127);
+            }
+            _ => {
+                // parent
+                let mut status = 0;
+                while waitpid(pid, &mut status, 0) < 0 {
+                    if errno::errno().0 != EINTR {
+                        return None;
+                    }
+                }
+                return Some(status);
+            }
+        }
+    } else {
+        return None;
+    }
+}
+
 
 // Figure 10.19: The signal_intr function, same as signal() above
 // with the only difference that no system call is restarted
