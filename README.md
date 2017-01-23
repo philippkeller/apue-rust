@@ -43,9 +43,3 @@ they copy data (e.g. buffers) even when unneeded.
   for threads, see e.g. https://github.com/BurntSushi/chan-signal/issues/13), so I skipped this Figure, maybe
   coming back to this later (when signals are discussed in later chapters)
 - Figure 10.8, 10.9, 10.11, 10.20: rust does not have setjmp/longjmp
-
-
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
