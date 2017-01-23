@@ -2,9 +2,9 @@ extern crate libc;
 extern crate errno;
 
 use libc::{c_int, c_char, dev_t, utsname, sigset_t, sighandler_t, PATH_MAX, SA_RESTART, EINTR};
-use libc::{SIG_ERR, SIGALRM, SIGINT, SIGUSR1, SIGQUIT};
+use libc::{SIG_ERR, SIG_IGN, SIGALRM, SIGINT, SIGUSR1, SIGQUIT, SIGCHLD};
 use libc::{WSTOPSIG, WEXITSTATUS, WIFSTOPPED, WCOREDUMP, WTERMSIG, WIFSIGNALED, WIFEXITED};
-use libc::{exit, _exit, sigemptyset, sigaction, sigismember, fork, waitpid};
+use libc::{exit, _exit, sigemptyset, sigaddset, sigaction, sigismember, fork, waitpid};
 use my_libc::{sigprocmask, execl};
 use std::io::Write;
 use std::ffi::CStr;
@@ -220,6 +220,28 @@ pub unsafe fn system(cmdstring: &str) -> Option<i32> {
     } else {
         return None;
     }
+}
+
+
+// Figure 10.28 Correct POSIX.1 implementation of system function
+// (with signal handling)
+// Status: only half way done
+pub unsafe fn system2(cmdstring:&str) -> Option<i8> {
+    let mut ignore:sigaction = std::mem::zeroed();
+    let (mut saveintr, mut chldmask) = std::mem::uninitialized();
+    ignore.sa_sigaction = SIG_IGN; // ignore SIGINT and SIGQUIT
+    sigemptyset(&mut ignore.sa_mask);
+    ignore.sa_flags = 0;
+    if sigaction(SIGINT, &ignore, &mut saveintr).to_option().is_none() {
+        return None;
+    }
+    if sigaction(SIGQUIT, &ignore, &mut saveintr).to_option().is_none() {
+        return None;
+    }
+    sigemptyset(&mut chldmask);
+    sigaddset(&mut chldmask, SIGCHLD);
+
+    return Some(0);
 }
 
 
