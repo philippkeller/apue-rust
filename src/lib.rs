@@ -2,13 +2,14 @@ extern crate libc;
 extern crate errno;
 
 use libc::{c_int, c_char, dev_t, utsname, sigset_t, sighandler_t, PATH_MAX, SA_RESTART, EINTR};
-use libc::{SIG_ERR, SIG_IGN, SIGALRM, SIGINT, SIGUSR1, SIGQUIT, SIGCHLD};
+use libc::{SIG_ERR, SIG_BLOCK, SIG_IGN, SIG_SETMASK, SIGALRM, SIGINT, SIGUSR1, SIGQUIT, SIGCHLD};
 use libc::{WSTOPSIG, WEXITSTATUS, WIFSTOPPED, WCOREDUMP, WTERMSIG, WIFSIGNALED, WIFEXITED};
 use libc::{exit, _exit, sigemptyset, sigaddset, sigaction, sigismember, fork, waitpid};
 use my_libc::{sigprocmask, execl};
 use std::io::Write;
 use std::ffi::CStr;
 use std::mem::{zeroed, uninitialized};
+use std::ptr::{null, null_mut};
 
 /// Turns a str into a c string. Warning: the cstring only lives as long the
 /// str lives. Don't e.g. assign the return value to a variable!
@@ -165,7 +166,7 @@ pub fn pr_mask(s: &str) {
     unsafe {
         let errno_save = errno::errno();
         let mut sigset: sigset_t = std::mem::uninitialized();
-        sigprocmask(0, std::ptr::null(), &mut sigset).to_option().expect("sigprocmask error");
+        sigprocmask(0, null(), &mut sigset).to_option().expect("sigprocmask error");
         print!("{}", s);
         print_sig!(&sigset, SIGINT);
         print_sig!(&sigset, SIGQUIT);
@@ -225,23 +226,37 @@ pub unsafe fn system(cmdstring: &str) -> Option<i32> {
 
 // Figure 10.28 Correct POSIX.1 implementation of system function
 // (with signal handling)
-// Status: only half way done
-pub unsafe fn system2(cmdstring:&str) -> Option<i8> {
+pub unsafe fn system2(cmdstring:&str) -> Result<i32, String> {
     let mut ignore:sigaction = std::mem::zeroed();
-    let (mut saveintr, mut chldmask) = std::mem::uninitialized();
+    let (mut saveintr, mut chldmask, mut savemask, mut savequit) = uninitialized();
     ignore.sa_sigaction = SIG_IGN; // ignore SIGINT and SIGQUIT
     sigemptyset(&mut ignore.sa_mask);
     ignore.sa_flags = 0;
-    if sigaction(SIGINT, &ignore, &mut saveintr).to_option().is_none() {
-        return None;
-    }
-    if sigaction(SIGQUIT, &ignore, &mut saveintr).to_option().is_none() {
-        return None;
-    }
+    sigaction(SIGINT, &ignore, &mut saveintr).to_option().ok_or("sigaction error")?;
+    sigaction(SIGQUIT, &ignore, &mut saveintr).to_option().ok_or("sigaction error")?;
     sigemptyset(&mut chldmask);
     sigaddset(&mut chldmask, SIGCHLD);
+    sigprocmask(SIG_BLOCK, &chldmask, &mut savemask).to_option().ok_or("sigprocmask error")?;
 
-    return Some(0);
+    let pid = fork().to_option().ok_or("fork error")?;
+    let mut status = 0;
+    if pid == 0 {
+        sigaction(SIGINT, &mut saveintr, null_mut());
+        sigaction(SIGQUIT, &mut savequit, null_mut());
+        sigprocmask(SIG_SETMASK, &mut savemask, null_mut());
+        execl(cstr!("/bin/sh"), cstr!("sh"), cstr!("-c"), cstr!(cmdstring), 0 as *const c_char);
+        _exit(127); // exec error
+    } else {
+        while waitpid(pid, &mut status, 0) < 0 {
+            if errno::errno().0 != EINTR {
+                return Err(format!("waitpid error, got error {:?}", errno::errno()));
+            }
+        }
+    }
+    sigaction(SIGINT, &saveintr, null_mut()).to_option().ok_or("sigaction error")?;
+    sigaction(SIGQUIT, &savequit, null_mut()).to_option().ok_or("sigaction error")?;
+    sigprocmask(SIG_SETMASK, &savemask, null_mut()).to_option().ok_or("sigprocmask error")?;
+    Ok(status)
 }
 
 

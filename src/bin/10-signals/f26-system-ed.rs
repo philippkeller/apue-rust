@@ -1,4 +1,11 @@
 /// Figure 10.26: Using system to invoke the ed editor
+///
+/// Note that we are using `system` from Figure 8.22
+/// (was not clear to me first, so SIGINT and SIGQUIT
+/// did not cause sig_int and sig_chld to be called)
+/// Also tested with apue::system2 which behaves
+/// the same way as libc::system (blocking SIGINT
+/// and SIGQUIT)
 
 /// Proof that it works:
 
@@ -53,6 +60,6 @@ fn main() {
     unsafe {
         signal(SIGINT, sig_int as usize).to_option().expect("signal(SIGINT) error");
         signal(SIGCHLD, sig_chld as usize).to_option().expect("signal(SIGCHLD) error");
-        system("/bin/ed").expect("system() error");
+        system2("/bin/ed").expect("system() error");
     }
 }
