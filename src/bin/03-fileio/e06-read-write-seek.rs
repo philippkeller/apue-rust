@@ -13,7 +13,6 @@ extern crate libc;
 #[macro_use(cstr)]
 extern crate apue;
 extern crate errno;
-#[macro_use(value_t)]
 extern crate clap;
 
 use libc::{SEEK_SET, fopen, fseek, fputs};

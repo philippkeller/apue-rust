@@ -39,4 +39,6 @@ unsafe fn abort() {
     exit(1); // now THIS should now never be executed
 }
 
-fn main() {}
+fn main() {
+    let _ = abort;
+}

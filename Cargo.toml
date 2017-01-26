@@ -19,7 +19,7 @@ path = "src/lib.rs"
 [dependencies]
 libc = "*"
 errno = "*"
-clap = "2.1"
+clap = "*"
 regex = "*"
 
 [[bin]]

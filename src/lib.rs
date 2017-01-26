@@ -226,14 +226,15 @@ pub unsafe fn system(cmdstring: &str) -> Option<i32> {
 
 // Figure 10.28 Correct POSIX.1 implementation of system function
 // (with signal handling)
-pub unsafe fn system2(cmdstring:&str) -> Result<i32, String> {
-    let mut ignore:sigaction = std::mem::zeroed();
-    let (mut saveintr, mut chldmask, mut savemask, mut savequit) = uninitialized();
+pub unsafe fn system2(cmdstring: &str) -> Result<i32, String> {
+    let mut ignore: sigaction = std::mem::zeroed();
+    let (mut saveintr, mut savemask, mut savequit) = uninitialized();
     ignore.sa_sigaction = SIG_IGN; // ignore SIGINT and SIGQUIT
     sigemptyset(&mut ignore.sa_mask);
     ignore.sa_flags = 0;
     sigaction(SIGINT, &ignore, &mut saveintr).to_option().ok_or("sigaction error")?;
-    sigaction(SIGQUIT, &ignore, &mut saveintr).to_option().ok_or("sigaction error")?;
+    sigaction(SIGQUIT, &ignore, &mut savequit).to_option().ok_or("sigaction error")?;
+    let mut chldmask = uninitialized();
     sigemptyset(&mut chldmask);
     sigaddset(&mut chldmask, SIGCHLD);
     sigprocmask(SIG_BLOCK, &chldmask, &mut savemask).to_option().ok_or("sigprocmask error")?;
@@ -244,7 +245,11 @@ pub unsafe fn system2(cmdstring:&str) -> Result<i32, String> {
         sigaction(SIGINT, &mut saveintr, null_mut());
         sigaction(SIGQUIT, &mut savequit, null_mut());
         sigprocmask(SIG_SETMASK, &mut savemask, null_mut());
-        execl(cstr!("/bin/sh"), cstr!("sh"), cstr!("-c"), cstr!(cmdstring), 0 as *const c_char);
+        execl(cstr!("/bin/sh"),
+              cstr!("sh"),
+              cstr!("-c"),
+              cstr!(cmdstring),
+              0 as *const c_char);
         _exit(127); // exec error
     } else {
         while waitpid(pid, &mut status, 0) < 0 {

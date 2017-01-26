@@ -16,7 +16,6 @@
 /// $ rm /tmp/aaa
 
 extern crate libc;
-#[macro_use(cstr)]
 extern crate apue;
 extern crate errno;
 
