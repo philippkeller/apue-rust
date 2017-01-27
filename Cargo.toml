@@ -357,3 +357,7 @@ path = "src/bin/10-signals/f25-abort.rs"
 [[bin]]
 name="f26-system-ed"
 path = "src/bin/10-signals/f26-system-ed.rs"
+
+[[bin]]
+name="f29-sleep"
+path = "src/bin/10-signals/f29-sleep.rs"
