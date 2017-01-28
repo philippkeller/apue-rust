@@ -361,3 +361,7 @@ path = "src/bin/10-signals/f26-system-ed.rs"
 [[bin]]
 name="f29-sleep"
 path = "src/bin/10-signals/f29-sleep.rs"
+
+[[bin]]
+name="f31-sigtstp-handler"
+path = "src/bin/10-signals/f31-sigtstp-handler.rs"

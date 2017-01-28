@@ -7,7 +7,7 @@ extern crate apue;
 extern crate libc;
 
 use std::mem::uninitialized;
-use libc::{c_int, sigaction, SIGALRM, SIG_SETMASK, SIG_BLOCK};
+use libc::{c_int, sigaction, SIGALRM, SIGINT, SIG_SETMASK, SIG_BLOCK};
 use libc::{sigemptyset, sigaddset, sigdelset, alarm};
 use apue::my_libc::{sigprocmask, sigsuspend};
 
@@ -52,5 +52,7 @@ unsafe fn sleep(seconds: u32) -> u32 {
 }
 
 fn main() {
-    unsafe { sleep(1) };
+    unsafe {
+        println!("{}", sleep(10));
+    };
 }
