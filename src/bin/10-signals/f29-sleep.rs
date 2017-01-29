@@ -7,16 +7,16 @@ extern crate apue;
 extern crate libc;
 
 use std::mem::uninitialized;
-use libc::{c_int, sigaction, SIGALRM, SIGINT, SIG_SETMASK, SIG_BLOCK};
+use libc::{c_int, sigaction, SIGALRM, SIG_SETMASK, SIG_BLOCK};
 use libc::{sigemptyset, sigaddset, sigdelset, alarm};
 use apue::my_libc::{sigprocmask, sigsuspend};
 
-fn sig_alrm(_:c_int) {
+fn sig_alrm(_: c_int) {
     // nothing to do, just returning wakes up sigsuspend()
 }
 
 unsafe fn sleep(seconds: u32) -> u32 {
-    let mut newact:sigaction = uninitialized();
+    let mut newact: sigaction = uninitialized();
 
     // set our handler, save previous information
     newact.sa_sigaction = sig_alrm as usize;

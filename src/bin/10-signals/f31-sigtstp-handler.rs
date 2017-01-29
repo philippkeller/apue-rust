@@ -1,8 +1,7 @@
 /// Figure 10.31 How to handle SIGTSTP
 ///
-/// Status: is complete and compiles, didn't try it out yet
-
-
+/// Added a println to sig_tstp to show that the signal
+/// is really caught
 #[macro_use(as_void)]
 extern crate apue;
 extern crate libc;
@@ -14,11 +13,12 @@ use libc::{sigemptyset, sigaddset, signal, kill, getpid, read, write};
 use apue::my_libc::sigprocmask;
 use apue::{LibcResult, err_sys};
 
-const BUFFSIZE:usize = 1024;
+const BUFFSIZE: usize = 1024;
 
-unsafe fn sig_tstp(_:c_int) {
+unsafe fn sig_tstp(_: c_int) {
     // move cursor to lower left corner, reset tty mode
-    // unblock SIGTSTP, since it's blocked while we're readint it
+    // unblock SIGTSTP, since it's blocked while we're reading it
+    println!("last cleanup before SIGTSTP");
     let mut mask = uninitialized();
     sigemptyset(&mut mask);
     sigaddset(&mut mask, SIGTSTP);
