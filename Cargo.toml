@@ -347,10 +347,6 @@ name="f23-sigsuspend-global"
 path = "src/bin/10-signals/f23-sigsuspend-global.rs"
 
 [[bin]]
-name="f24-parent-child-sync"
-path = "src/bin/10-signals/f24-parent-child-sync.rs"
-
-[[bin]]
 name="f25-abort"
 path = "src/bin/10-signals/f25-abort.rs"
 
@@ -373,3 +369,7 @@ path = "src/bin/10-signals/e02-sig2str.rs"
 [[bin]]
 name="e05-timers"
 path = "src/bin/10-signals/e05-timers.rs"
+
+[[bin]]
+name="e06-sync-parent-child"
+path = "src/bin/10-signals/e06-sync-parent-child.rs"
