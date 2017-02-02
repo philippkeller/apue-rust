@@ -296,6 +296,7 @@ pub mod sync_parent_child {
 
     static mut SIGFLAG: AtomicBool = ATOMIC_BOOL_INIT;
     static mut OLDMASK:sigset_t = 0;
+    static mut ZEROMASK:sigset_t = 0;
 
     pub fn sig_usr(_: c_int) {
         unsafe {
@@ -308,6 +309,7 @@ pub mod sync_parent_child {
             let mut newmask = uninitialized();
             signal(SIGUSR1, sig_usr as usize).to_option().expect("signal(SIGUSR1) error");
             signal(SIGUSR2, sig_usr as usize).to_option().expect("signal(SIGUSR2) error");
+            sigemptyset(&mut ZEROMASK);
             sigemptyset(&mut newmask);
             sigaddset(&mut newmask, SIGUSR1);
             sigaddset(&mut newmask, SIGUSR2);
@@ -322,24 +324,22 @@ pub mod sync_parent_child {
     }
 
     pub unsafe fn wait_parent() {
-        let mut zeromask = uninitialized();
-        sigemptyset(&mut zeromask);
         // run until sigflag becomes true, then set it to false again immediately
-        while !SIGFLAG.fetch_xor(false, Ordering::SeqCst) {
-            sigsuspend(&zeromask);
+        while !SIGFLAG.compare_and_swap(true, false, Ordering::SeqCst) {
+            sigsuspend(&ZEROMASK);
         }
+        // Reset signal mask to original value
+        sigprocmask(SIG_SETMASK, &OLDMASK, null_mut()).to_option().expect("SIG_SETMASK error");
     }
 
     pub unsafe fn tell_child(pid: pid_t) {
-        kill(pid, SIGUSR1);
+        kill(pid, SIGUSR1); // tell child we’re done
     }
 
     pub unsafe fn wait_child() {
-        let mut zeromask = uninitialized();
-        sigemptyset(&mut zeromask);
         // run until sigflag becomes true, then set it to false again immediately
-        while !SIGFLAG.fetch_xor(false, Ordering::SeqCst) {
-            sigsuspend(&zeromask);
+        while !SIGFLAG.compare_and_swap(true, false, Ordering::SeqCst) {
+            sigsuspend(&ZEROMASK);
         }
         // Reset signal mask to original value
         sigprocmask(SIG_SETMASK, &OLDMASK, null_mut())
