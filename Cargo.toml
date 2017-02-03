@@ -373,3 +373,7 @@ path = "src/bin/10-signals/e05-timers.rs"
 [[bin]]
 name="e06-sync-parent-child"
 path = "src/bin/10-signals/e06-sync-parent-child.rs"
+
+[[bin]]
+name="e09-all-signals"
+path = "src/bin/10-signals/e09-all-signals.rs"
