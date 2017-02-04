@@ -18,14 +18,17 @@ extern crate libc;
 extern crate errno;
 
 use libc::{SIG_SETMASK, sigemptyset, sigaddset};
-use apue::{LibcResult};
+use apue::LibcResult;
 use apue::my_libc::sigprocmask;
-use libc::{SIGABRT, SIGALRM, SIGBUS, SIGCHLD, SIGCONT, SIGEMT, SIGFPE, SIGHUP, SIGILL, SIGINFO, SIGINT, SIGIO, SIGKILL, SIGPIPE, SIGPROF, SIGQUIT, SIGSEGV, SIGSTOP, SIGSYS, SIGTERM, SIGTRAP, SIGTSTP, SIGTTIN, SIGTTOU, SIGURG, SIGUSR1, SIGUSR2, SIGVTALRM, SIGWINCH, SIGXCPU, SIGXFSZ};
+use libc::{SIGABRT, SIGALRM, SIGBUS, SIGCHLD, SIGCONT, SIGEMT, SIGFPE, SIGHUP, SIGILL, SIGINFO,
+           SIGINT, SIGIO, SIGKILL, SIGPIPE, SIGPROF, SIGQUIT, SIGSEGV, SIGSTOP, SIGSYS, SIGTERM,
+           SIGTRAP, SIGTSTP, SIGTTIN, SIGTTOU, SIGURG, SIGUSR1, SIGUSR2, SIGVTALRM, SIGWINCH,
+           SIGXCPU, SIGXFSZ};
 use std::collections::HashMap;
 
 use std::mem::uninitialized;
 
-unsafe fn pr_mask(s:&str, m:HashMap<i32, &str>) {
+unsafe fn pr_mask(s: &str, m: HashMap<i32, &str>) {
     let mut sigcur = uninitialized();
     sigprocmask(0, std::ptr::null(), &mut sigcur);
     let mut shift = 1;

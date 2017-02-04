@@ -295,8 +295,8 @@ pub mod sync_parent_child {
     use std::ptr::null_mut;
 
     static mut SIGFLAG: AtomicBool = ATOMIC_BOOL_INIT;
-    static mut OLDMASK:sigset_t = 0;
-    static mut ZEROMASK:sigset_t = 0;
+    static mut OLDMASK: sigset_t = 0;
+    static mut ZEROMASK: sigset_t = 0;
 
     pub fn sig_usr(_: c_int) {
         unsafe {

@@ -24,9 +24,8 @@ use std::io::{Error, SeekFrom};
 use apue::LibcResult;
 use apue::sync_parent_child::*;
 
-fn increase_file_counter() -> Result<(),Error> {
-    let mut f = OpenOptions::new()
-        .read(true)
+fn increase_file_counter() -> Result<(), Error> {
+    let mut f = OpenOptions::new().read(true)
         .write(true)
         .open("/tmp/e06-sync.txt")?;
     let mut s = String::new();

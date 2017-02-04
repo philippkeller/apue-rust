@@ -8,11 +8,11 @@ extern crate libc;
 
 use libc::{SIGINT, c_char};
 
-extern {
+extern "C" {
     static sys_siglist: [*const c_char; 65usize];
 }
 
-fn sig2str(signo:i32) -> &'static str {
+fn sig2str(signo: i32) -> &'static str {
     unsafe {
         std::ffi::CStr::from_ptr(sys_siglist[signo as usize]).to_str().expect("invalid utf8 string")
     }
