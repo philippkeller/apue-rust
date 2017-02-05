@@ -350,7 +350,8 @@ pub mod sync_parent_child {
 
 #[allow(non_camel_case_types)]
 pub mod my_libc {
-    use libc::{dirent, c_int, c_char, c_long, c_ulong, pid_t, clock_t, siginfo_t, sigset_t, id_t};
+    use libc::{dirent, c_int, c_char, c_long, c_ulong, pid_t, clock_t, siginfo_t, sigset_t, id_t,
+               size_t, tm};
     use libc::{DIR, FILE};
 
     #[repr(C)]
@@ -443,5 +444,12 @@ pub mod my_libc {
         pub fn sigprocmask(arg1: c_int, arg2: *const sigset_t, arg3: *mut sigset_t) -> c_int;
         pub fn sigpending(arg1: *mut sigset_t) -> c_int;
         pub fn sigsuspend(arg1: *const sigset_t) -> c_int;
+
+        pub fn strftime(s: *mut c_char,
+                        maxsize: size_t,
+                        format: *const c_char,
+                        timeptr: *const tm)
+                        -> size_t;
+
     }
 }
