@@ -42,7 +42,7 @@ fn main() {
             let mut f = File::create("/tmp/e06-sync.txt").unwrap();
             f.write_all(b"0").unwrap();
         }
-        tell_wait();
+        let oldmask = tell_wait();
         let pid = fork().to_option().expect("fork error");
         if pid == 0 {
             // child
@@ -51,12 +51,12 @@ fn main() {
                 // child goes first
                 increase_file_counter().expect("file read/write error");
                 tell_parent(ppid);
-                wait_parent();
+                wait_parent(oldmask);
             }
         } else {
             // parent
             for _ in 1...100 {
-                wait_child();
+                wait_child(oldmask);
                 increase_file_counter().expect("file read/write error");
                 tell_child(pid);
             }

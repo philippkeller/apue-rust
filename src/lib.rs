@@ -295,8 +295,14 @@ pub mod sync_parent_child {
     use std::ptr::null_mut;
 
     static mut SIGFLAG: AtomicBool = ATOMIC_BOOL_INIT;
-    static mut OLDMASK: sigset_t = 0;
-    static mut ZEROMASK: sigset_t = 0;
+//    #[cfg(target_os = "macos")]
+//    static mut OLDMASK: sigset_t = 0;
+//    #[cfg(target_os = "macos")]
+//    static mut ZEROMASK: sigset_t = 0;
+//    #[cfg(target_os = "linux")]
+//    static mut OLDMASK: sigset_t = sigset_t { __val: [0;16] };
+//    #[cfg(target_os = "linux")]
+//    static mut ZEROMASK: sigset_t = sigset_t { __val: [0;16] };
 
     pub fn sig_usr(_: c_int) {
         unsafe {
@@ -304,18 +310,21 @@ pub mod sync_parent_child {
         }
     }
 
-    pub fn tell_wait() {
+    pub fn tell_wait() -> sigset_t {
         unsafe {
             let mut newmask = uninitialized();
             signal(SIGUSR1, sig_usr as usize).to_option().expect("signal(SIGUSR1) error");
             signal(SIGUSR2, sig_usr as usize).to_option().expect("signal(SIGUSR2) error");
-            sigemptyset(&mut ZEROMASK);
+            let mut zeromask = uninitialized();
+            sigemptyset(&mut zeromask);
             sigemptyset(&mut newmask);
             sigaddset(&mut newmask, SIGUSR1);
             sigaddset(&mut newmask, SIGUSR2);
 
             // Block SIGUSR1 and SIGUSR2 and save current signal mask
-            sigprocmask(SIG_BLOCK, &newmask, &mut OLDMASK).to_option().expect("SIG_BLOCK error");
+            let mut oldmask = uninitialized();
+            sigprocmask(SIG_BLOCK, &newmask, &mut oldmask).to_option().expect("SIG_BLOCK error");
+            oldmask
         }
     }
 
@@ -323,26 +332,30 @@ pub mod sync_parent_child {
         kill(pid, SIGUSR2); // tell parent we're done
     }
 
-    pub unsafe fn wait_parent() {
+    pub unsafe fn wait_parent(oldmask:sigset_t) {
+        let mut zeromask = uninitialized();
+        sigemptyset(&mut zeromask);
         // run until sigflag becomes true, then set it to false again immediately
         while !SIGFLAG.compare_and_swap(true, false, Ordering::SeqCst) {
-            sigsuspend(&ZEROMASK);
+            sigsuspend(&zeromask);
         }
         // Reset signal mask to original value
-        sigprocmask(SIG_SETMASK, &OLDMASK, null_mut()).to_option().expect("SIG_SETMASK error");
+        sigprocmask(SIG_SETMASK, &oldmask, null_mut()).to_option().expect("SIG_SETMASK error");
     }
 
     pub unsafe fn tell_child(pid: pid_t) {
         kill(pid, SIGUSR1); // tell child we’re done
     }
 
-    pub unsafe fn wait_child() {
+    pub unsafe fn wait_child(oldmask: sigset_t) {
+        let mut zeromask = uninitialized();
+        sigemptyset(&mut zeromask);
         // run until sigflag becomes true, then set it to false again immediately
         while !SIGFLAG.compare_and_swap(true, false, Ordering::SeqCst) {
-            sigsuspend(&ZEROMASK);
+            sigsuspend(&zeromask);
         }
         // Reset signal mask to original value
-        sigprocmask(SIG_SETMASK, &OLDMASK, null_mut())
+        sigprocmask(SIG_SETMASK, &oldmask, null_mut())
             .to_option()
             .expect("SIG_SETMASK error");
     }
