@@ -13,6 +13,7 @@
 /// stream = stdout, fully buffered, buffer size = 0, fp = 1
 /// stream = stderr, unbuffered, buffer size = 1, fp = 2
 /// stream = passwd, fully buffered, buffer size = 4096, fp = 3
+#[cfg(any(target_os = "macos"))]
 #[macro_use(cstr)]
 extern crate apue;
 

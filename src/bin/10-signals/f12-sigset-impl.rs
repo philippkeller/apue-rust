@@ -1,5 +1,8 @@
 /// Figure 10.12 An implementation of sigaddset, sigdelset, and sigismember
 ///
+/// Works only in MacOS, as in other architectures sigset_t is a struct and the bit vector
+/// is an internal variable.
+///
 /// This was a bit pointless really (why is a code fragment about bit
 /// masking in a book which teaches Unix?), only converted for completeness.
 ///
@@ -13,34 +16,41 @@ extern crate apue;
 extern crate libc;
 extern crate errno;
 
-use libc::sigset_t;
+#[cfg(target_os = "macos")]
+mod sigset_impl {
+    use libc::{sigset_t};
+    const NSIG: i8 = 32; // from /usr/include/signal.h
+
+    pub fn sigemptyset() -> sigset_t {
+        0 as sigset_t
+    }
+
+    pub fn sigbad(signo: i8) -> bool {
+        signo <= 0 || signo >= NSIG
+    }
+
+    pub fn sigaddset(set: &mut sigset_t, signo: i8) {
+        assert!(!sigbad(signo));
+        *set |= 1 << (signo - 1); // turn bit on
+    }
+
+    pub fn sigdelset(set: &mut sigset_t, signo: i8) {
+        assert!(!sigbad(signo));
+        *set &= !(1 << signo - 1); // turn bit off
+    }
+
+    pub fn sigismember(set: &sigset_t, signo: i8) -> bool {
+        assert!(!sigbad(signo));
+        set & (1 << (signo - 1)) != 0
+    }
+}
 
 #[cfg(target_os = "macos")]
-const NSIG: i8 = 32; // from /usr/include/signal.h
-#[cfg(target_os = "linux")]
-const NSIG: i8 = 64; // from /usr/include/x86_64-linux-gnu/bits/signum.h
+use sigset_impl::*;
 
-fn sigbad(signo: i8) -> bool {
-    signo <= 0 || signo >= NSIG
-}
-
-fn sigaddset(set: &mut sigset_t, signo: i8) {
-    assert!(!sigbad(signo));
-    *set |= 1 << (signo - 1); // turn bit on
-}
-
-fn sigdelset(set: &mut sigset_t, signo: i8) {
-    assert!(!sigbad(signo));
-    *set &= !(1 << signo - 1); // turn bit off
-}
-
-fn sigismember(set: &sigset_t, signo: i8) -> bool {
-    assert!(!sigbad(signo));
-    set & (1 << (signo - 1)) != 0
-}
-
+#[cfg(target_os = "macos")]
 fn main() {
-    let mut sig = 0;
+    let mut sig = sigemptyset();
     sigaddset(&mut sig, 5);
     println!("{:#b}", sig);
     sigdelset(&mut sig, 4);
@@ -50,4 +60,9 @@ fn main() {
     }
     sigdelset(&mut sig, 5);
     println!("{:#b}", sig);
+}
+
+#[cfg(not(target_os = "macos"))]
+fn main() {
+    unimplemented!();
 }
