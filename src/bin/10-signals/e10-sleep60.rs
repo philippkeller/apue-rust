@@ -3,6 +3,15 @@
 /// time of day and print the tm_sec field. Run the program overnight and
 /// explain the results. How would a program such as the cron daemon,
 /// which runs every minute on the minute, handle this situation?
+///
+/// Answer: no effect, even after about 8 hours on a 4 core server.
+/// The effect is probably quite improbable for multicore systems as the chance are high
+/// that one core is idle.
+///
+/// To be really sure the process could
+///
+/// - sleep for 59 seconds and run sleep for the remaining time
+/// - if woken up too late (check with time()) sleep for less then 60 seconds
 
 extern crate libc;
 #[macro_use(cstr)]
