@@ -381,3 +381,7 @@ path = "src/bin/10-signals/e09-all-signals.rs"
 [[bin]]
 name="e10-sleep60"
 path = "src/bin/10-signals/e10-sleep60.rs"
+
+[[bin]]
+name="e11-stdin-stdout-100"
+path = "src/bin/10-signals/e11-stdin-stdout-100.rs"
