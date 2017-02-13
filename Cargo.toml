@@ -389,3 +389,7 @@ path = "src/bin/10-signals/e11-stdin-stdout-100.rs"
 [[bin]]
 name="e12-fwrite-1gb"
 path = "src/bin/10-signals/e12-fwrite-1gb.rs"
+
+[[bin]]
+name="f02-thread-id"
+path = "src/bin/11-threads/f02-thread-id.rs"
