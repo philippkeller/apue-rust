@@ -11,7 +11,7 @@ use libc::{c_void, pthread_t};
 use libc::{pthread_create, getpid, pthread_self, usleep};
 use std::ptr::null_mut;
 
-fn printids(s:&str) {
+fn printids(s: &str) {
     unsafe {
         let pid = getpid();
         let tid = pthread_self();
@@ -19,14 +19,14 @@ fn printids(s:&str) {
     }
 }
 
-extern fn thr_fn(_:*mut c_void) -> *mut c_void {
+extern "C" fn thr_fn(_: *mut c_void) -> *mut c_void {
     printids("new thread:");
     0 as _
 }
 
 fn main() {
     unsafe {
-        let mut ntid:pthread_t = std::mem::zeroed();
+        let mut ntid: pthread_t = std::mem::zeroed();
         let err = pthread_create(&mut ntid, null_mut(), thr_fn as _, null_mut());
         assert_eq!(err, 0, "can't create thread");
         printids("main thread:");

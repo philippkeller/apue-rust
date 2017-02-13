@@ -98,6 +98,21 @@ impl<T> LibcResult<*mut T> for *mut T {
     }
 }
 
+pub trait PthreadExpect {
+    fn expect(&self, msg: &str);
+}
+
+impl PthreadExpect for c_int {
+    fn expect(&self, msg: &str) {
+        if *self != 0 {
+            println!("{}: error {}", msg, *self);
+            unsafe {
+                exit(1);
+            }
+        }
+    }
+}
+
 pub unsafe fn array_to_string(sl: &[i8]) -> &str {
     CStr::from_ptr(sl.as_ptr()).to_str().expect("invalid string")
 }
@@ -295,14 +310,14 @@ pub mod sync_parent_child {
     use std::ptr::null_mut;
 
     static mut SIGFLAG: AtomicBool = ATOMIC_BOOL_INIT;
-//    #[cfg(target_os = "macos")]
-//    static mut OLDMASK: sigset_t = 0;
-//    #[cfg(target_os = "macos")]
-//    static mut ZEROMASK: sigset_t = 0;
-//    #[cfg(target_os = "linux")]
-//    static mut OLDMASK: sigset_t = sigset_t { __val: [0;16] };
-//    #[cfg(target_os = "linux")]
-//    static mut ZEROMASK: sigset_t = sigset_t { __val: [0;16] };
+    //    #[cfg(target_os = "macos")]
+    //    static mut OLDMASK: sigset_t = 0;
+    //    #[cfg(target_os = "macos")]
+    //    static mut ZEROMASK: sigset_t = 0;
+    //    #[cfg(target_os = "linux")]
+    //    static mut OLDMASK: sigset_t = sigset_t { __val: [0;16] };
+    //    #[cfg(target_os = "linux")]
+    //    static mut ZEROMASK: sigset_t = sigset_t { __val: [0;16] };
 
     pub fn sig_usr(_: c_int) {
         unsafe {
@@ -332,7 +347,7 @@ pub mod sync_parent_child {
         kill(pid, SIGUSR2); // tell parent we're done
     }
 
-    pub unsafe fn wait_parent(oldmask:sigset_t) {
+    pub unsafe fn wait_parent(oldmask: sigset_t) {
         let mut zeromask = uninitialized();
         sigemptyset(&mut zeromask);
         // run until sigflag becomes true, then set it to false again immediately

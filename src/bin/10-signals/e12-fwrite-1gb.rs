@@ -12,7 +12,6 @@
 ///   the memory is allocated in the stack and `getrlimit(RLIMIT_STACK)` returned
 ///   a max stack size of 2^23 bytes -> the max size of a buffer in the stack
 ///   is 2^22 because some bytes are needed for the code and the other vars.
-
 #[macro_use(as_void, cstr)]
 extern crate apue;
 extern crate libc;
@@ -21,17 +20,19 @@ extern crate errno;
 use libc::{c_int, SIGALRM, fwrite, fopen, alarm};
 use apue::{LibcResult, signal};
 
-fn sig_alrm(_:c_int) {
+fn sig_alrm(_: c_int) {
     println!("alarm has happened..");
 }
 
-const SIZE:usize = 1 << 32;
+const SIZE: usize = 1 << 32;
 fn main() {
     unsafe {
         signal(SIGALRM, sig_alrm).to_option().expect("couldn't set alarm");
         alarm(1);
-        let buffer:Vec<u8> = Vec::with_capacity(SIZE);
-        let file = fopen(cstr!("/tmp/10_fwrite_1gb.txt"), cstr!("w")).to_option().expect("can't open file");
+        let buffer: Vec<u8> = Vec::with_capacity(SIZE);
+        let file = fopen(cstr!("/tmp/10_fwrite_1gb.txt"), cstr!("w"))
+            .to_option()
+            .expect("can't open file");
         fwrite(as_void!(buffer), 1, SIZE, file).to_option().expect("can't write to file");
     }
 }

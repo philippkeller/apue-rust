@@ -22,10 +22,10 @@ mod e09_allsignals {
     use libc::{SIG_SETMASK, sigemptyset, sigaddset};
     use apue::LibcResult;
     use apue::my_libc::sigprocmask;
-    use libc::{SIGABRT, SIGALRM, SIGBUS, SIGCHLD, SIGCONT, SIGEMT, SIGFPE, SIGHUP, SIGILL, SIGINFO,
-        SIGINT, SIGIO, SIGKILL, SIGPIPE, SIGPROF, SIGQUIT, SIGSEGV, SIGSTOP, SIGSYS, SIGTERM,
-        SIGTRAP, SIGTSTP, SIGTTIN, SIGTTOU, SIGURG, SIGUSR1, SIGUSR2, SIGVTALRM, SIGWINCH,
-        SIGXCPU, SIGXFSZ};
+    use libc::{SIGABRT, SIGALRM, SIGBUS, SIGCHLD, SIGCONT, SIGEMT, SIGFPE, SIGHUP, SIGILL,
+               SIGINFO, SIGINT, SIGIO, SIGKILL, SIGPIPE, SIGPROF, SIGQUIT, SIGSEGV, SIGSTOP,
+               SIGSYS, SIGTERM, SIGTRAP, SIGTSTP, SIGTTIN, SIGTTOU, SIGURG, SIGUSR1, SIGUSR2,
+               SIGVTALRM, SIGWINCH, SIGXCPU, SIGXFSZ};
     use std::collections::HashMap;
     use std::ptr::{null, null_mut};
     use std::mem::uninitialized;

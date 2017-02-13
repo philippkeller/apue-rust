@@ -18,7 +18,7 @@ extern crate errno;
 
 #[cfg(target_os = "macos")]
 mod sigset_impl {
-    use libc::{sigset_t};
+    use libc::sigset_t;
     const NSIG: i8 = 32; // from /usr/include/signal.h
 
     pub fn sigemptyset() -> sigset_t {
