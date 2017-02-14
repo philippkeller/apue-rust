@@ -15,14 +15,14 @@ use apue::PthreadExpect;
 use apue::my_libc::pthread_exit;
 
 extern "C" fn thr_fn1(_: *mut c_void) -> *mut c_void {
-    unsafe {usleep(100)};
+    unsafe { usleep(100) };
     println!("thread 1 returning");
     1 as _
 }
 
 extern "C" fn thr_fn2(_: *mut c_void) -> *mut c_void {
     println!("thread 2 returning");
-    unsafe {pthread_exit(2 as _)};
+    unsafe { pthread_exit(2 as _) };
     99 as _
 }
 
