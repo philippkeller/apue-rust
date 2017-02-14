@@ -10,6 +10,7 @@ extern crate apue;
 use libc::{c_void, pthread_t};
 use libc::{pthread_create, getpid, pthread_self, usleep};
 use std::ptr::null_mut;
+use apue::PthreadExpect;
 
 fn printids(s: &str) {
     unsafe {
@@ -27,8 +28,7 @@ extern "C" fn thr_fn(_: *mut c_void) -> *mut c_void {
 fn main() {
     unsafe {
         let mut ntid: pthread_t = std::mem::zeroed();
-        let err = pthread_create(&mut ntid, null_mut(), thr_fn as _, null_mut());
-        assert_eq!(err, 0, "can't create thread");
+        pthread_create(&mut ntid, null_mut(), thr_fn as _, null_mut()).expect("can't create thread");
         printids("main thread:");
         usleep(100);
     }

@@ -12,6 +12,7 @@ use libc::{c_void, c_int};
 use libc::{pthread_create, pthread_join, usleep};
 use std::ptr::null_mut;
 use apue::PthreadExpect;
+use apue::my_libc::pthread_exit;
 
 extern "C" fn thr_fn1(_: *mut c_void) -> *mut c_void {
     unsafe {usleep(100)};
@@ -21,7 +22,8 @@ extern "C" fn thr_fn1(_: *mut c_void) -> *mut c_void {
 
 extern "C" fn thr_fn2(_: *mut c_void) -> *mut c_void {
     println!("thread 2 returning");
-    2 as _
+    unsafe {pthread_exit(2 as _)};
+    99 as _
 }
 
 fn main() {

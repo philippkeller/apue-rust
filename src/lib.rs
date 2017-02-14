@@ -378,8 +378,8 @@ pub mod sync_parent_child {
 
 #[allow(non_camel_case_types)]
 pub mod my_libc {
-    use libc::{dirent, c_int, c_char, c_long, c_ulong, pid_t, clock_t, siginfo_t, sigset_t, id_t,
-               size_t, tm};
+    use libc::{dirent, c_void, c_int, c_char, c_long, c_ulong, pid_t, clock_t, siginfo_t,
+               sigset_t, id_t, size_t, tm};
     use libc::{DIR, FILE};
 
     #[repr(C)]
@@ -479,5 +479,6 @@ pub mod my_libc {
                         timeptr: *const tm)
                         -> size_t;
 
+        pub fn pthread_exit(arg1: *mut c_void);
     }
 }
