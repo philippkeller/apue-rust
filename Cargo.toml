@@ -397,3 +397,7 @@ path = "src/bin/11-threads/f02-thread-id.rs"
 [[bin]]
 name="f03-thread-exit"
 path = "src/bin/11-threads/f03-thread-exit.rs"
+
+[[bin]]
+name="f04-bogus-pthread-exit"
+path = "src/bin/11-threads/f04-bogus-pthread-exit.rs"
