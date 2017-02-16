@@ -7,9 +7,9 @@ homepage = "https://github.com/philippkeller/apue-rust"
 repository = "https://github.com/philippkeller/apue-rust"
 keywords = [
   "unix",
-  "book"
+  "book",
+  "libc"
 ]
-
 include = ["src/bin/*/*.rs"]
 
 [lib]
@@ -401,3 +401,7 @@ path = "src/bin/11-threads/f03-thread-exit.rs"
 [[bin]]
 name="f04-bogus-pthread-exit"
 path = "src/bin/11-threads/f04-bogus-pthread-exit.rs"
+
+[[bin]]
+name="f05-thread-cleanup"
+path = "src/bin/11-threads/f05-thread-cleanup.rs"

@@ -63,5 +63,6 @@ fn main() {
         pthread_create(&mut tid2, null_mut(), thr_fn2, null_mut()).expect("can't create thread 2");
         usleep(100);
         printfoo("parent:", fp.as_ref());
+
     }
 }
