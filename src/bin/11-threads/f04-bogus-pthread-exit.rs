@@ -15,8 +15,8 @@
 extern crate libc;
 extern crate apue;
 use libc::{c_void};
-use libc::{pthread_self, pthread_create, pthread_join, usleep};
-use apue::my_libc::pthread_exit;
+use libc::{pthread_self, pthread_join, usleep};
+use apue::my_libc::{pthread_exit, pthread_create};
 use apue::PthreadExpect;
 use std::ptr::null_mut;
 

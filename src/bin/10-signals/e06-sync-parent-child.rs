@@ -1,5 +1,3 @@
-#![feature(inclusive_range_syntax)]
-
 /// Exercise 10.6: Write the following program to test the parent–child
 /// synchronization functions in Figure 10.24. The process creates a
 /// file and writes the integer 0 to the file. The process then calls fork,
@@ -47,7 +45,7 @@ fn main() {
         if pid == 0 {
             // child
             let ppid = getppid();
-            for _ in 1...100 {
+            for _ in 1..101 {
                 // child goes first
                 increase_file_counter().expect("file read/write error");
                 tell_parent(ppid);
@@ -55,7 +53,7 @@ fn main() {
             }
         } else {
             // parent
-            for _ in 1...100 {
+            for _ in 1..101 {
                 wait_child(oldmask);
                 increase_file_counter().expect("file read/write error");
                 tell_child(pid);

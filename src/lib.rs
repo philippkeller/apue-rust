@@ -379,7 +379,7 @@ pub mod sync_parent_child {
 #[allow(non_camel_case_types)]
 pub mod my_libc {
     use libc::{dirent, c_void, c_int, c_char, c_long, c_ulong, pid_t, clock_t, siginfo_t,
-               sigset_t, id_t, size_t, tm};
+               sigset_t, id_t, size_t, tm, pthread_attr_t, pthread_t};
     use libc::{DIR, FILE};
 
     #[repr(C)]
@@ -480,5 +480,9 @@ pub mod my_libc {
                         -> size_t;
 
         pub fn pthread_exit(arg1: *mut c_void);
+        pub fn pthread_create(arg1: *mut pthread_t,
+                              arg2: *const pthread_attr_t,
+                              arg3: unsafe extern "C" fn(arg1: *mut c_void) -> *mut c_void,
+                              arg4: *mut c_void) -> c_int;
     }
 }

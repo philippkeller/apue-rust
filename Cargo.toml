@@ -10,7 +10,7 @@ keywords = [
   "book",
   "libc"
 ]
-include = ["src/bin/*/*.rs"]
+build = "my_build.rs"
 
 [lib]
 name = "apue"
@@ -21,6 +21,9 @@ libc = "*"
 errno = "*"
 clap = "*"
 regex = "*"
+
+[build-dependencies]
+gcc = { version = "0.3", features = ["parallel"] }
 
 [[bin]]
 name="f03-list-files"
