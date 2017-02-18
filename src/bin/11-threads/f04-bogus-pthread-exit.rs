@@ -14,7 +14,7 @@
 
 extern crate libc;
 extern crate apue;
-use libc::{c_void};
+use libc::c_void;
 use libc::{pthread_self, pthread_join, usleep};
 use apue::my_libc::{pthread_exit, pthread_create};
 use apue::PthreadExpect;
@@ -25,17 +25,22 @@ struct Foo {
     a: i32,
     b: i32,
     c: i32,
-    d: i32
+    d: i32,
 }
 
-extern fn thr_fn1(_:*mut c_void) -> *mut c_void {
-    let foo = Foo{a: 1, b: 2, c: 3, d: 4};
+extern "C" fn thr_fn1(_: *mut c_void) -> *mut c_void {
+    let foo = Foo {
+        a: 1,
+        b: 2,
+        c: 3,
+        d: 4,
+    };
     printfoo("thread 1:", &foo);
-    unsafe{pthread_exit(&foo as *const Foo as _)};
+    unsafe { pthread_exit(&foo as *const Foo as _) };
     0 as _
 }
 
-extern fn thr_fn2(_:*mut c_void) -> *mut c_void {
+extern "C" fn thr_fn2(_: *mut c_void) -> *mut c_void {
     unsafe {
         println!("thread 2: ID is {}", pthread_self());
         pthread_exit(0 as _);

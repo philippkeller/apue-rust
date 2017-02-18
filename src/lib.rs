@@ -483,6 +483,7 @@ pub mod my_libc {
         pub fn pthread_create(arg1: *mut pthread_t,
                               arg2: *const pthread_attr_t,
                               arg3: unsafe extern "C" fn(arg1: *mut c_void) -> *mut c_void,
-                              arg4: *mut c_void) -> c_int;
+                              arg4: *mut c_void)
+                              -> c_int;
     }
 }
