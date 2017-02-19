@@ -412,3 +412,7 @@ path = "src/bin/11-threads/f05-thread-cleanup.rs"
 [[bin]]
 name="f10-mutex"
 path = "src/bin/11-threads/f10-mutex.rs"
+
+[[bin]]
+name="f11-two-mutexes"
+path = "src/bin/11-threads/f11-two-mutexes.rs"
