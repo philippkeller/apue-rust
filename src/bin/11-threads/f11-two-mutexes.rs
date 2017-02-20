@@ -19,20 +19,27 @@ macro_rules! HASH {
     }}
 }
 
-#[derive(Clone)]
-struct Foo {
+struct Foo<'a> {
     f_count: i64,
     f_lock: pthread_mutex_t,
     f_id: i64,
-    f_next: Option<Box<Foo>>,
+    f_next: Option<Box<&'a Foo<'a>>>,
 }
 
-struct Hashmap {
-    fh:[Foo;NHASH],
+struct Hashmap<'a> {
+    fh:Vec<Foo<'a>>,
     hashlock:pthread_mutex_t,
 }
 
-impl Hashmap {
+impl <'a>Hashmap<'a> {
+    fn new() -> Hashmap<'a> {
+        let mut fh = Vec::with_capacity(NHASH);
+        for i in 0..NHASH {
+            fh[i] = Foo {f_count: 1, f_lock: PTHREAD_MUTEX_INITIALIZER, f_id: -1, f_next: None};
+        }
+        Hashmap{fh:fh, hashlock: PTHREAD_MUTEX_INITIALIZER}
+    }
+
     fn foo_alloc(&mut self, id: i64) -> Option<Foo> {
         // allocate the object
         unsafe {
@@ -43,7 +50,7 @@ impl Hashmap {
             }
             let idx = HASH!(id);
             pthread_mutex_lock(&mut self.hashlock);
-            foo.f_next = Some(Box::new(self.fh[idx as usize]));
+            foo.f_next = Some(Box::new(&self.fh[idx as usize]));
         }
         None
     }
