@@ -9,8 +9,9 @@
 
 extern crate libc;
 use libc::{pthread_mutex_t, PTHREAD_MUTEX_INITIALIZER};
-use libc::{pthread_mutex_init, pthread_mutex_lock};
+use libc::{pthread_mutex_init, pthread_mutex_lock, pthread_mutex_unlock};
 use std::ptr::null;
+use std::collections::LinkedList;
 
 const NHASH:usize = 29;
 macro_rules! HASH {
@@ -19,40 +20,44 @@ macro_rules! HASH {
     }}
 }
 
-struct Foo<'a> {
+struct Foo {
     f_count: i64,
     f_lock: pthread_mutex_t,
     f_id: i64,
-    f_next: Option<Box<&'a Foo<'a>>>,
 }
 
-struct Hashmap<'a> {
-    fh:Vec<Foo<'a>>,
+struct Hashmap {
+    fh:Vec<LinkedList<Foo>>,
     hashlock:pthread_mutex_t,
 }
 
-impl <'a>Hashmap<'a> {
-    fn new() -> Hashmap<'a> {
+impl Hashmap {
+    fn new() -> Hashmap {
         let mut fh = Vec::with_capacity(NHASH);
         for i in 0..NHASH {
-            fh[i] = Foo {f_count: 1, f_lock: PTHREAD_MUTEX_INITIALIZER, f_id: -1, f_next: None};
+            fh[i] = LinkedList::new();
         }
         Hashmap{fh:fh, hashlock: PTHREAD_MUTEX_INITIALIZER}
     }
 
-    fn foo_alloc(&mut self, id: i64) -> Option<Foo> {
+    fn foo_alloc(&mut self, id: i64) -> Option<&Foo> {
         // allocate the object
         unsafe {
-            let mut foo = Foo { f_count: 1, f_lock: std::mem::zeroed(), f_id: id, f_next: None };
+            let mut foo = Foo { f_count: 1, f_lock: std::mem::zeroed(), f_id: id};
             if pthread_mutex_init(&mut foo.f_lock, null()) != 0 {
                 // does not need free as foo is dropped upon return
                 return None
             }
             let idx = HASH!(id);
             pthread_mutex_lock(&mut self.hashlock);
-            foo.f_next = Some(Box::new(&self.fh[idx as usize]));
+            let mut ll = &mut self.fh[idx as usize];
+            ll.push_back(foo);
+            pthread_mutex_lock(&mut ll.front_mut().unwrap().f_lock);
+            pthread_mutex_unlock(&mut self.hashlock);
+            // continue initialization
+            pthread_mutex_unlock(&mut ll.front_mut().unwrap().f_lock);
+            Some(&foo)
         }
-        None
     }
 }
 
