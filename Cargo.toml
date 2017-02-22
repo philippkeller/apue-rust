@@ -416,3 +416,7 @@ path = "src/bin/11-threads/f10-mutex.rs"
 [[bin]]
 name="f11-two-mutexes"
 path = "src/bin/11-threads/f11-two-mutexes.rs"
+
+[[bin]]
+name="f12-simplified-locking"
+path = "src/bin/11-threads/f12-simplified-locking.rs"
