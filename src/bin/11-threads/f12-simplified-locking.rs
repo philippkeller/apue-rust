@@ -9,7 +9,7 @@ use libc::{pthread_mutex_init, pthread_mutex_lock, pthread_mutex_unlock, pthread
 use std::ptr::null;
 use std::collections::LinkedList;
 
-const NHASH:i64 = 29;
+const NHASH: i64 = 29;
 macro_rules! HASH {
     ($i:expr) => {{
         ($i % NHASH) as usize
@@ -23,8 +23,8 @@ struct Foo {
 }
 
 struct Hashmap {
-    fh:Vec<LinkedList<Foo>>,
-    hashlock:pthread_mutex_t,
+    fh: Vec<LinkedList<Foo>>,
+    hashlock: pthread_mutex_t,
 }
 
 impl Hashmap {
@@ -33,15 +33,22 @@ impl Hashmap {
         for i in 0..fh.len() {
             fh[i] = LinkedList::new();
         }
-        Hashmap{fh:fh, hashlock: PTHREAD_MUTEX_INITIALIZER}
+        Hashmap {
+            fh: fh,
+            hashlock: PTHREAD_MUTEX_INITIALIZER,
+        }
     }
 
     fn foo_alloc(&mut self, id: i64) -> Option<&mut Foo> {
         unsafe {
-            let mut foo = Foo { f_count: 1, f_lock: std::mem::zeroed(), f_id: id};
+            let mut foo = Foo {
+                f_count: 1,
+                f_lock: std::mem::zeroed(),
+                f_id: id,
+            };
             if pthread_mutex_init(&mut foo.f_lock, null()) != 0 {
                 // does not need free as foo is dropped upon return
-                return None
+                return None;
             }
             pthread_mutex_lock(&mut self.hashlock);
             let mut ll = &mut self.fh[HASH!(id)];
@@ -54,7 +61,7 @@ impl Hashmap {
         }
     }
 
-    fn foo_hold(&mut self, foo:&mut Foo) {
+    fn foo_hold(&mut self, foo: &mut Foo) {
         unsafe {
             pthread_mutex_lock(&mut self.hashlock);
             foo.f_count += 1;
@@ -76,7 +83,7 @@ impl Hashmap {
         }
     }
 
-    fn foo_rele(&mut self, foo:&mut Foo) {
+    fn foo_rele(&mut self, foo: &mut Foo) {
         unsafe {
             pthread_mutex_lock(&mut self.hashlock);
             foo.f_count -= 1;
@@ -95,6 +102,4 @@ impl Hashmap {
     }
 }
 
-fn main() {
-
-}
+fn main() {}

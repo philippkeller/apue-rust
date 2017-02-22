@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 /// Figure 11.10 Using a mutex to protect a data structure
 ///
 /// Of course Rust offers `Arc` and `Mutex` which would offer
@@ -14,7 +15,7 @@
 
 extern crate libc;
 
-use libc::{pthread_mutex_t};
+use libc::pthread_mutex_t;
 use libc::{pthread_mutex_init, pthread_mutex_lock, pthread_mutex_unlock, pthread_mutex_destroy};
 use std::mem::zeroed;
 use std::ptr::null;
@@ -27,9 +28,13 @@ struct Foo {
 
 fn foo_alloc(id: i64) -> Option<Foo> {
     unsafe {
-        let mut fp = Foo { f_count: 1, f_lock: zeroed(), f_id: id };
+        let mut fp = Foo {
+            f_count: 1,
+            f_lock: zeroed(),
+            f_id: id,
+        };
         if pthread_mutex_init(&mut fp.f_lock, null()) != 0 {
-            return None
+            return None;
         }
         Some(fp);
     }
@@ -58,5 +63,4 @@ fn foo_rele(fp: &mut Foo) {
     }
 }
 
-fn main() {
-}
+fn main() {}
