@@ -5,9 +5,9 @@ use libc::{c_int, c_char, dev_t, utsname, sigset_t, sighandler_t, PATH_MAX, SA_R
 use libc::{SIG_ERR, SIG_BLOCK, SIG_IGN, SIG_SETMASK, SIGALRM, SIGINT, SIGUSR1, SIGQUIT, SIGCHLD};
 use libc::{WSTOPSIG, WEXITSTATUS, WIFSTOPPED, WCOREDUMP, WTERMSIG, WIFSIGNALED, WIFEXITED};
 use libc::{exit, _exit, sigemptyset, sigaddset, sigaction, sigismember, fork, waitpid};
-use my_libc::{sigprocmask, execl};
+use my_libc::{sigprocmask, execl, sys_nerr, sys_errlist};
 use std::io::Write;
-use std::ffi::CStr;
+use std::ffi::{CStr, CString};
 use std::mem::{zeroed, uninitialized};
 use std::ptr::{null, null_mut};
 
@@ -132,6 +132,17 @@ pub fn err_sys(msg: &str) {
     std::io::stderr().write(format!("{}{}", msg, "\n").as_bytes()).unwrap();
     unsafe {
         exit(1);
+    }
+}
+
+pub fn strerror(error: i32) -> String {
+    unsafe {
+        println!("sys_nerr={}", sys_nerr);
+        if error >= 0 && error <= sys_nerr {
+            CStr::from_ptr(*sys_errlist.offset(error as isize)).to_owned().into_string().expect("not valid string")
+        } else {
+            format!("Unknown error {}", error)
+        }
     }
 }
 
@@ -379,7 +390,7 @@ pub mod sync_parent_child {
 #[allow(non_camel_case_types)]
 pub mod my_libc {
     use libc::{dirent, c_void, c_int, c_char, c_long, c_ulong, pid_t, clock_t, siginfo_t,
-               sigset_t, id_t, size_t, tm, pthread_attr_t, pthread_t};
+               sigset_t, id_t, size_t, tm, pthread_attr_t, pthread_t, timespec};
     use libc::{DIR, FILE};
 
     #[repr(C)]
@@ -485,5 +496,7 @@ pub mod my_libc {
                               arg3: unsafe extern "C" fn(arg1: *mut c_void) -> *mut c_void,
                               arg4: *mut c_void)
                               -> c_int;
+        pub static mut sys_errlist: *const *const c_char;
+        pub static sys_nerr:c_int;
     }
 }
