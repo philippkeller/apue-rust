@@ -7,7 +7,7 @@ use libc::{WSTOPSIG, WEXITSTATUS, WIFSTOPPED, WCOREDUMP, WTERMSIG, WIFSIGNALED, 
 use libc::{exit, _exit, sigemptyset, sigaddset, sigaction, sigismember, fork, waitpid};
 use my_libc::{sigprocmask, execl, sys_nerr, sys_errlist};
 use std::io::Write;
-use std::ffi::{CStr, CString};
+use std::ffi::CStr;
 use std::mem::{zeroed, uninitialized};
 use std::ptr::{null, null_mut};
 
@@ -137,9 +137,13 @@ pub fn err_sys(msg: &str) {
 
 pub fn strerror(error: i32) -> String {
     unsafe {
-        println!("sys_nerr={}", sys_nerr);
         if error >= 0 && error <= sys_nerr {
-            CStr::from_ptr(*sys_errlist.offset(error as isize)).to_owned().into_string().expect("not valid string")
+            // avoiding rusts array bound checking (sys_errlist has length 0usize as the length
+            // is not known at compile time)
+            CStr::from_ptr(*sys_errlist.as_ptr().offset(error as _) as _)
+                .to_owned()
+                .into_string()
+                .expect("not valid string")
         } else {
             format!("Unknown error {}", error)
         }
@@ -390,7 +394,7 @@ pub mod sync_parent_child {
 #[allow(non_camel_case_types)]
 pub mod my_libc {
     use libc::{dirent, c_void, c_int, c_char, c_long, c_ulong, pid_t, clock_t, siginfo_t,
-               sigset_t, id_t, size_t, tm, pthread_attr_t, pthread_t, timespec};
+               sigset_t, id_t, size_t, tm, pthread_attr_t, pthread_t};
     use libc::{DIR, FILE};
 
     #[repr(C)]
@@ -496,7 +500,7 @@ pub mod my_libc {
                               arg3: unsafe extern "C" fn(arg1: *mut c_void) -> *mut c_void,
                               arg4: *mut c_void)
                               -> c_int;
-        pub static mut sys_errlist: *const *const c_char;
-        pub static sys_nerr:c_int;
+        pub static mut sys_errlist: [*const c_char; 0usize];
+        pub static sys_nerr: c_int;
     }
 }

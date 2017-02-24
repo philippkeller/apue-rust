@@ -4,12 +4,13 @@ extern crate apue;
 
 #[cfg(target_os = "linux")]
 mod timedlock {
+
     use std::mem::uninitialized;
     use libc::{timespec, c_char, PTHREAD_MUTEX_INITIALIZER, CLOCK_REALTIME};
     use libc::{localtime, pthread_mutex_lock, pthread_mutex_timedlock, clock_gettime};
 
     use apue::{strerror, array_to_string};
-    use apue::my_libc::{strftime};
+    use apue::my_libc::strftime;
 
     const BUFLEN: usize = 64;
 
@@ -36,7 +37,6 @@ mod timedlock {
             println!("mutex locked again!");
         } else {
             println!("can't lock mutex again: {}", strerror(err));
-            println!("nachher..");
         }
     }
 }
@@ -50,6 +50,5 @@ fn main() {
 
 #[cfg(target_os = "macos")]
 fn main() {
-    use apue::strerror;
-    println!("{}", strerror(100));
+    unimplemented!();
 }
