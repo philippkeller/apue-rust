@@ -1,3 +1,10 @@
+/// Figure 11.13 Using pthread_mutex_timedlock
+///
+/// After finding out that OSX does not support pthread_mutex_timedlock
+/// (it would have helped if this info was printed in the book *before* the code example..)
+/// the code was quite straightforward, *except* the code for `strerror` which needed to
+/// avoid Rusts array bound checking.
+
 extern crate libc;
 #[macro_use(as_char, cstr)]
 extern crate apue;
