@@ -424,3 +424,7 @@ path = "src/bin/11-threads/f12-simplified-locking.rs"
 [[bin]]
 name="f13-timedlock"
 path = "src/bin/11-threads/f13-timedlock.rs"
+
+[[bin]]
+name="f14-reader-writer-lock"
+path = "src/bin/11-threads/f14-reader-writer-lock.rs"
