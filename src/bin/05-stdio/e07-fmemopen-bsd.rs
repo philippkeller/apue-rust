@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 /// Exercise: BSD-based systems provide a function called funopen that
 /// allows us to intercept read, write, seek, and close calls
 /// on a stream. Use this function to implement fmemopen
@@ -28,11 +29,13 @@
 /// buffer = aaaaaaaaaaaaaaaaaaaaaaaaaaaa
 /// mem buffer = lorem ipsum doloraaaaaaaaaaa
 /// mem buffer = lorem ipsuhansaplast!aaaaaaa
+
+extern crate libc;
+#[macro_use(cstr)]
+extern crate apue;
+
 #[cfg(any(target_os = "macos", target_os= "bsd"))]
 mod fmemopen {
-    extern crate libc;
-    #[macro_use(cstr)]
-    extern crate apue;
     use libc::{c_void, c_char, c_int, off_t, FILE, SEEK_SET, memset, memcpy, fgets, fputs, printf,
                fseek};
     use std::option::Option;

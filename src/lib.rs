@@ -394,7 +394,7 @@ pub mod sync_parent_child {
 #[allow(non_camel_case_types)]
 pub mod my_libc {
     use libc::{dirent, c_void, c_int, c_char, c_long, c_ulong, pid_t, clock_t, siginfo_t,
-               sigset_t, id_t, size_t, tm, pthread_attr_t, pthread_t};
+               sigset_t, id_t, size_t, tm, pthread_attr_t, pthread_t, pthread_rwlock_t};
     use libc::{DIR, FILE};
 
     #[repr(C)]
@@ -429,6 +429,14 @@ pub mod my_libc {
         P_ALL = 0,
         P_PID = 1,
         P_PGID = 2,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    #[derive(Debug)]
+    pub struct pthread_rwlockattr_t {
+        pub __sig: ::std::os::raw::c_long,
+        pub __opaque: [::std::os::raw::c_char; 16usize],
     }
 
     pub const WEXITED: c_int = 0x00000004;  // [XSI] Processes which have exitted
@@ -500,6 +508,9 @@ pub mod my_libc {
                               arg3: unsafe extern "C" fn(arg1: *mut c_void) -> *mut c_void,
                               arg4: *mut c_void)
                               -> c_int;
+        pub fn pthread_rwlock_init(arg1: *mut pthread_rwlock_t,
+                                   arg2: *const pthread_rwlockattr_t) -> c_int;
+
         pub static mut sys_errlist: [*const c_char; 0usize];
         pub static sys_nerr: c_int;
     }
