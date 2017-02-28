@@ -4,15 +4,10 @@
 ///
 /// - VecDeque resembles the doubled linked list best which also needs
 ///   a removal in the middle
-/// - interesting that you *need* to consume the output of pthread_rwlock_init
-///   otherwise execution blocks
-/// - there's also still something wrong because if I remove the println!
-///   then the execution hangs
 ///
-/// $ f14-reader-writer-lock
-/// kurt
-/// kurt
-/// kurt
+/// Status: main() hangs on OSX, works on Linux. Couldn't find out why
+/// there's something wrong with the _init function, upon first lock attempt (a1)
+/// it always blocks as if the init funciton would already lock the resource.
 
 extern crate libc;
 extern crate apue;
@@ -45,11 +40,13 @@ impl Queue {
     // queue_init
     fn new() -> Queue {
         let mut q = Queue{q: VecDeque::new(), lock: PTHREAD_RWLOCK_INITIALIZER};
+        println!("n1");
         unsafe{
             if pthread_rwlock_init(&mut q.lock, null()) != 0 {
                 println!("fail!");
             }
         };
+        println!("n2");
         q
     }
 
@@ -60,12 +57,12 @@ impl Queue {
     }
 
     fn job_append(&mut self, job:Job) {
+        println!("a1");
         unsafe{pthread_rwlock_wrlock(&mut self.lock)};
-        println!("kurt");
+        println!("a2");
         self.q.push_back(job);
-        println!("kurt");
         unsafe{pthread_rwlock_unlock(&mut self.lock)};
-        println!("kurt");
+        println!("a3");
     }
 
     fn job_remove(&mut self, job:&Job) {
@@ -80,9 +77,11 @@ impl Queue {
     }
 
     fn job_find(&mut self, id:pthread_t) -> Option<&Job> {
+        println!("f1");
         if unsafe{pthread_rwlock_rdlock(&mut self.lock)} != 0 {
             return None;
         }
+        println!("f2");
         let res = if let Some(pos) = self.q.iter().position(|ref x| x.thread_id == id) {
             self.q.get(pos)
         } else {

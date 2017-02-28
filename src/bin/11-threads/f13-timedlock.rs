@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 /// Figure 11.13 Using pthread_mutex_timedlock
 ///
 /// After finding out that OSX does not support pthread_mutex_timedlock

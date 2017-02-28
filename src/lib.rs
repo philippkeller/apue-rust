@@ -434,9 +434,18 @@ pub mod my_libc {
     #[repr(C)]
     #[derive(Copy, Clone)]
     #[derive(Debug)]
+    #[cfg(target_os = "macos")]
     pub struct pthread_rwlockattr_t {
         pub __sig: ::std::os::raw::c_long,
         pub __opaque: [::std::os::raw::c_char; 16usize],
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    #[derive(Debug)]
+    #[cfg(target_os = "linux")]
+    pub struct pthread_rwlockattr_t {
+        pub _bindgen_data_: [u64; 1usize],
     }
 
     pub const WEXITED: c_int = 0x00000004;  // [XSI] Processes which have exitted
