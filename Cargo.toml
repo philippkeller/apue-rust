@@ -428,3 +428,7 @@ path = "src/bin/11-threads/f13-timedlock.rs"
 [[bin]]
 name="f14-reader-writer-lock"
 path = "src/bin/11-threads/f14-reader-writer-lock.rs"
+
+[[bin]]
+name="f15-conditional-var"
+path = "src/bin/11-threads/f15-conditional-var.rs"
