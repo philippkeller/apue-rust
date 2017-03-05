@@ -522,5 +522,9 @@ pub mod my_libc {
 
         pub static mut sys_errlist: [*const c_char; 0usize];
         pub static sys_nerr: c_int;
+
+        pub fn heapsort(__base: *mut c_void, __nel: size_t, __width: size_t,
+                        __comp: unsafe extern "C" fn(a1: *const c_void, a2: *const c_void) -> c_int)
+                        -> c_int;
     }
 }

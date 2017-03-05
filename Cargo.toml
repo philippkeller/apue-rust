@@ -21,6 +21,7 @@ libc = "*"
 errno = "*"
 clap = "*"
 regex = "*"
+rand = "*"
 
 [build-dependencies]
 gcc = { version = "0.3", features = ["parallel"] }
@@ -432,3 +433,7 @@ path = "src/bin/11-threads/f14-reader-writer-lock.rs"
 [[bin]]
 name="f15-conditional-var"
 path = "src/bin/11-threads/f15-conditional-var.rs"
+
+[[bin]]
+name="f16-barrier"
+path = "src/bin/11-threads/f16-barrier.rs"
