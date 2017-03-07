@@ -393,7 +393,7 @@ pub mod sync_parent_child {
 
 #[allow(non_camel_case_types)]
 pub mod my_libc {
-    use libc::{dirent, c_void, c_int, c_char, c_long, c_ulong, pid_t, clock_t, siginfo_t,
+    use libc::{dirent, c_void, c_int, c_char, c_long, c_ulong, c_uint, pid_t, clock_t, siginfo_t,
                sigset_t, id_t, size_t, tm, pthread_attr_t, pthread_t, pthread_rwlock_t};
     use libc::{DIR, FILE};
 
@@ -523,8 +523,14 @@ pub mod my_libc {
         pub static mut sys_errlist: [*const c_char; 0usize];
         pub static sys_nerr: c_int;
 
-        pub fn heapsort(__base: *mut c_void, __nel: size_t, __width: size_t,
+        pub fn qsort(__base: *mut c_void, __nel: size_t, __width: size_t,
                         __comp: unsafe extern "C" fn(a1: *const c_void, a2: *const c_void) -> c_int)
                         -> c_int;
+        #[cfg(target_os = "macos")]
+        pub fn heapsort(__base: *mut c_void, __nel: size_t, __width: size_t,
+                     __comp: unsafe extern "C" fn(a1: *const c_void, a2: *const c_void) -> c_int)
+                     -> c_int;
+        pub fn random() -> c_long;
+        pub fn srandom(arg1: c_uint);
     }
 }
