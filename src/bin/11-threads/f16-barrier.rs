@@ -3,9 +3,20 @@
 
 /// Figure 11.16: Using a barrier
 ///
-/// - 8 threads are really faster than 1 thread. However, it took
-///   3s with 8 threads on my Macbook pro, whereas the book claims that the
-///   C program runs in
+/// Finding about runtime speed:
+///
+/// - 8 threads are really faster than 1 thread
+/// - building without --release is ten times slower than when using --release
+///   see my question on stackoverflow: http://stackoverflow.com/questions/42688721
+/// - XorShiftRng is about 2x as fast as random() from libc
+///
+/// On my 4 core computer (hyperthreaded so it's 8 logical cores):
+///
+///            1 Thread   4 Threads   8 Threads
+/// Debug      3.19s      2.63s       2.86s
+/// Release    1.25s      0.41s       0.35s
+///
+/// Other findings:
 /// - this time the book did not say at all that OSX does not implement
 ///   pthread_barrier_*, needed to take a C implementation I found on the
 ///   web
@@ -13,9 +24,9 @@
 ///   a struct to thr_fn..
 /// - merge() is really hard to understand, I guess that's typical C
 ///   code. Performant but hard to grasp..
-/// - random() from stdlib.h is still *way* faster than even rand::XorShiftRng
-///   which is the fastest though unsecure random generator..
 ///
+/// $ f16-barrier | sed 's/[\.0-9]*//g'
+/// sort took  seconds
 
 extern crate libc;
 extern crate rand;
@@ -26,8 +37,9 @@ use libc::{c_long, c_void, c_int, c_uint, pthread_mutex_t, pthread_cond_t, PTHRE
 use libc::{gettimeofday};
 use std::ptr::{null, null_mut};
 use std::mem::{uninitialized, size_of};
+use rand::Rng;
 
-const NTHR:usize = 8;
+const NTHR:usize = 4;
 const NUMNUM:usize = 8_000_000;
 const TNUM:usize = NUMNUM / NTHR;
 
@@ -60,7 +72,6 @@ unsafe extern fn thr_fn(arg:*mut c_void) -> *mut c_void {
     let idx:c_long = arg as c_long;
     qsort(NUMS.as_mut_ptr().offset(idx as isize) as _, TNUM, size_of::<c_long>(), cmp);
     pthread_barrier_wait(&mut B);
-    println!("thread {} done", idx / TNUM as i64);
     0 as *mut c_void
 }
 
@@ -95,18 +106,15 @@ unsafe fn merge() -> Vec<c_long> {
 
 fn main() {
     unsafe {
-        println!("1");
         let (mut tid, mut start, mut end) = uninitialized();
 
-        srandom(1);
+        let mut rng = rand::XorShiftRng::new_unseeded();
         for i in 0..NUMNUM - 1 {
-            NUMS[i] = random();
+            NUMS[i] = rng.gen();
         }
-        println!("2");
         // create 8 threads to sort the numbers
         gettimeofday(&mut start, null_mut());
         // barrier count = num worker threads + 1 because main thread counts as 1 waiter
-        println!("3");
         pthread_barrier_init(&mut B, null(), (NTHR + 1) as _);
         for i in 0..NTHR {
             let err = pthread_create(&mut tid, null_mut(), thr_fn, (i*TNUM) as *mut c_void);
@@ -114,7 +122,6 @@ fn main() {
                 panic!("can't create thread, error: {}", err)
             }
         }
-        println!("4");
         pthread_barrier_wait(&mut B);
         let res = merge();
         gettimeofday(&mut end, null_mut());
