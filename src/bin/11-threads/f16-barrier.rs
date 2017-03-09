@@ -13,8 +13,11 @@
 /// On my 4 core computer (hyperthreaded so it's 8 logical cores):
 ///
 ///            1 Thread   4 Threads   8 Threads
-/// Debug      3.19s      2.63s       2.86s
+/// Debug      3.19s      2.45s       3.48s
 /// Release    1.25s      0.41s       0.35s
+///
+/// Strange is that the debug version takes considerably longer
+/// with 8 threads than with 4 threads.
 ///
 /// Other findings:
 /// - this time the book did not say at all that OSX does not implement
@@ -32,14 +35,14 @@ extern crate libc;
 extern crate rand;
 extern crate apue;
 
-use apue::my_libc::{qsort, pthread_create, random, srandom};
+use apue::my_libc::{qsort, pthread_create};
 use libc::{c_long, c_void, c_int, c_uint, pthread_mutex_t, pthread_cond_t, PTHREAD_MUTEX_INITIALIZER, PTHREAD_COND_INITIALIZER};
 use libc::{gettimeofday};
 use std::ptr::{null, null_mut};
 use std::mem::{uninitialized, size_of};
 use rand::Rng;
 
-const NTHR:usize = 4;
+const NTHR:usize = 8;
 const NUMNUM:usize = 8_000_000;
 const TNUM:usize = NUMNUM / NTHR;
 
