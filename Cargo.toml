@@ -437,3 +437,7 @@ path = "src/bin/11-threads/f15-conditional-var.rs"
 [[bin]]
 name="f16-barrier"
 path = "src/bin/11-threads/f16-barrier.rs"
+
+[[bin]]
+name="e01-pass-struct"
+path = "src/bin/11-threads/e01-pass-struct.rs"
