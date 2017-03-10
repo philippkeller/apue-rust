@@ -4,7 +4,9 @@
 /// The cleanest solution is - I think - if the main thread is responsible
 /// for both mallocing and freeing the memory, thus we don't need
 /// the return value (or pthread_exit), but store the changes in to the arg
-/// variable directly
+/// variable directly.
+///
+/// The solution in the book works as well of course, but leaks memory.
 ///
 /// $ e01-pass-struct
 /// Foo { a: 55, b: 66, c: 3, d: 4 }
