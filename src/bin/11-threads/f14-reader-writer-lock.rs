@@ -74,6 +74,7 @@ impl Queue {
         } else {
             self.q.retain(|ref x| *x != job);
         }
+        unsafe{pthread_rwlock_unlock(&mut self.lock)};
     }
 
     fn job_find(&mut self, id:pthread_t) -> Option<&Job> {
