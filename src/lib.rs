@@ -518,18 +518,23 @@ pub mod my_libc {
                               arg4: *mut c_void)
                               -> c_int;
         pub fn pthread_rwlock_init(arg1: *mut pthread_rwlock_t,
-                                   arg2: *const pthread_rwlockattr_t) -> c_int;
+                                   arg2: *const pthread_rwlockattr_t)
+                                   -> c_int;
 
         pub static mut sys_errlist: [*const c_char; 0usize];
         pub static sys_nerr: c_int;
 
-        pub fn qsort(__base: *mut c_void, __nel: size_t, __width: size_t,
-                        __comp: unsafe extern "C" fn(a1: *const c_void, a2: *const c_void) -> c_int)
-                        -> c_int;
-        #[cfg(target_os = "macos")]
-        pub fn heapsort(__base: *mut c_void, __nel: size_t, __width: size_t,
+        pub fn qsort(__base: *mut c_void,
+                     __nel: size_t,
+                     __width: size_t,
                      __comp: unsafe extern "C" fn(a1: *const c_void, a2: *const c_void) -> c_int)
                      -> c_int;
+        #[cfg(target_os = "macos")]
+        pub fn heapsort(__base: *mut c_void,
+                        __nel: size_t,
+                        __width: size_t,
+                        __comp: unsafe extern "C" fn(a1: *const c_void, a2: *const c_void) -> c_int)
+                        -> c_int;
         pub fn random() -> c_long;
         pub fn srandom(arg1: c_uint);
     }

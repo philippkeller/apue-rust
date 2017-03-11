@@ -36,12 +36,18 @@ unsafe extern "C" fn thr_fn1(foo_ptr: *mut c_void) -> *mut c_void {
 
 fn main() {
     unsafe {
-        let foo = Box::new(Foo{a:1,b:2,c:3,d:4});
+        let foo = Box::new(Foo {
+            a: 1,
+            b: 2,
+            c: 3,
+            d: 4,
+        });
         let mut tid1 = std::mem::uninitialized();
         let foo_ptr = Box::into_raw(foo);
-        pthread_create(&mut tid1, null_mut(), thr_fn1, foo_ptr as *mut c_void).expect("can't create thread 1");
+        pthread_create(&mut tid1, null_mut(), thr_fn1, foo_ptr as *mut c_void)
+            .expect("can't create thread 1");
         libc::pthread_join(tid1, null_mut());
-        let foo:Box<Foo> = Box::from_raw(foo_ptr);
+        let foo: Box<Foo> = Box::from_raw(foo_ptr);
         usleep(100);
         println!("{:?}", foo);
     }

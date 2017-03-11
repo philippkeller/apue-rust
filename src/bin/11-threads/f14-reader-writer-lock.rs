@@ -14,7 +14,7 @@ extern crate apue;
 extern crate errno;
 
 use libc::{pthread_rwlock_t, pthread_t, PTHREAD_RWLOCK_INITIALIZER};
-use apue::my_libc::{pthread_rwlock_init};
+use apue::my_libc::pthread_rwlock_init;
 use libc::{pthread_rwlock_wrlock, pthread_rwlock_unlock, pthread_rwlock_rdlock};
 
 use std::collections::VecDeque;
@@ -39,9 +39,12 @@ impl PartialEq for Job {
 impl Queue {
     // queue_init
     fn new() -> Queue {
-        let mut q = Queue{q: VecDeque::new(), lock: PTHREAD_RWLOCK_INITIALIZER};
+        let mut q = Queue {
+            q: VecDeque::new(),
+            lock: PTHREAD_RWLOCK_INITIALIZER,
+        };
         println!("n1");
-        unsafe{
+        unsafe {
             if pthread_rwlock_init(&mut q.lock, null()) != 0 {
                 println!("fail!");
             }
@@ -50,23 +53,23 @@ impl Queue {
         q
     }
 
-    fn job_insert(&mut self, job:Job) {
-        unsafe{pthread_rwlock_wrlock(&mut self.lock)};
+    fn job_insert(&mut self, job: Job) {
+        unsafe { pthread_rwlock_wrlock(&mut self.lock) };
         self.q.push_front(job);
-        unsafe{pthread_rwlock_unlock(&mut self.lock)};
+        unsafe { pthread_rwlock_unlock(&mut self.lock) };
     }
 
-    fn job_append(&mut self, job:Job) {
+    fn job_append(&mut self, job: Job) {
         println!("a1");
-        unsafe{pthread_rwlock_wrlock(&mut self.lock)};
+        unsafe { pthread_rwlock_wrlock(&mut self.lock) };
         println!("a2");
         self.q.push_back(job);
-        unsafe{pthread_rwlock_unlock(&mut self.lock)};
+        unsafe { pthread_rwlock_unlock(&mut self.lock) };
         println!("a3");
     }
 
-    fn job_remove(&mut self, job:&Job) {
-        unsafe{pthread_rwlock_wrlock(&mut self.lock)};
+    fn job_remove(&mut self, job: &Job) {
+        unsafe { pthread_rwlock_wrlock(&mut self.lock) };
         if Some(job) == self.q.front() {
             self.q.pop_front();
         } else if Some(job) == self.q.back() {
@@ -74,12 +77,12 @@ impl Queue {
         } else {
             self.q.retain(|ref x| *x != job);
         }
-        unsafe{pthread_rwlock_unlock(&mut self.lock)};
+        unsafe { pthread_rwlock_unlock(&mut self.lock) };
     }
 
-    fn job_find(&mut self, id:pthread_t) -> Option<&Job> {
+    fn job_find(&mut self, id: pthread_t) -> Option<&Job> {
         println!("f1");
-        if unsafe{pthread_rwlock_rdlock(&mut self.lock)} != 0 {
+        if unsafe { pthread_rwlock_rdlock(&mut self.lock) } != 0 {
             return None;
         }
         println!("f2");
@@ -88,13 +91,13 @@ impl Queue {
         } else {
             None
         };
-        unsafe{pthread_rwlock_unlock(&mut self.lock)};
+        unsafe { pthread_rwlock_unlock(&mut self.lock) };
         res
     }
 }
 
 fn main() {
     let mut q = Queue::new();
-    q.job_append(Job{thread_id:1});
+    q.job_append(Job { thread_id: 1 });
     assert!(q.job_find(1).expect("expected to find 1").thread_id == 1);
 }

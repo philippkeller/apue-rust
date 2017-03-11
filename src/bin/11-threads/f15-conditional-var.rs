@@ -20,7 +20,7 @@ struct Messages {
 
 impl Messages {
     fn new() -> Messages {
-        Messages{
+        Messages {
             messages: VecDeque::new(),
             qready: PTHREAD_COND_INITIALIZER,
             qlock: PTHREAD_MUTEX_INITIALIZER,
@@ -41,7 +41,7 @@ impl Messages {
         }
     }
 
-    fn enqueue_msg(&mut self, mp:Msg) {
+    fn enqueue_msg(&mut self, mp: Msg) {
         unsafe {
             pthread_mutex_lock(&mut self.qlock);
             self.messages.push_front(mp);
@@ -52,6 +52,4 @@ impl Messages {
     }
 }
 
-fn main() {
-
-}
+fn main() {}

@@ -36,15 +36,16 @@ extern crate rand;
 extern crate apue;
 
 use apue::my_libc::{qsort, pthread_create};
-use libc::{c_long, c_void, c_int, c_uint, pthread_mutex_t, pthread_cond_t, PTHREAD_MUTEX_INITIALIZER, PTHREAD_COND_INITIALIZER};
-use libc::{gettimeofday};
+use libc::{c_long, c_void, c_int, c_uint, pthread_mutex_t, pthread_cond_t,
+           PTHREAD_MUTEX_INITIALIZER, PTHREAD_COND_INITIALIZER};
+use libc::gettimeofday;
 use std::ptr::{null, null_mut};
 use std::mem::{uninitialized, size_of};
 use rand::Rng;
 
-const NTHR:usize = 8;
-const NUMNUM:usize = 8_000_000;
-const TNUM:usize = NUMNUM / NTHR;
+const NTHR: usize = 8;
+const NUMNUM: usize = 8_000_000;
+const TNUM: usize = NUMNUM / NTHR;
 
 pub type pthread_barrierattr_t = c_int;
 #[repr(C)]
@@ -55,39 +56,49 @@ pub struct pthread_barrier_t {
     pub tripCount: c_int,
 }
 
-static mut B:pthread_barrier_t = pthread_barrier_t {
+static mut B: pthread_barrier_t = pthread_barrier_t {
     mutex: PTHREAD_MUTEX_INITIALIZER,
     cond: PTHREAD_COND_INITIALIZER,
     count: 0,
     tripCount: 0,
 };
-static mut NUMS: [c_long; NUMNUM] = [0;NUMNUM];
+static mut NUMS: [c_long; NUMNUM] = [0; NUMNUM];
 
 extern "C" {
     pub fn pthread_barrier_init(barrier: *mut pthread_barrier_t,
                                 attr: *const pthread_barrierattr_t,
-                                count: c_uint) -> c_int;
+                                count: c_uint)
+                                -> c_int;
     pub fn pthread_barrier_destroy(barrier: *mut pthread_barrier_t) -> c_int;
     pub fn pthread_barrier_wait(barrier: *mut pthread_barrier_t) -> c_int;
 }
 
-unsafe extern fn thr_fn(arg:*mut c_void) -> *mut c_void {
-    let idx:c_long = arg as c_long;
-    qsort(NUMS.as_mut_ptr().offset(idx as isize) as _, TNUM, size_of::<c_long>(), cmp);
+unsafe extern "C" fn thr_fn(arg: *mut c_void) -> *mut c_void {
+    let idx: c_long = arg as c_long;
+    qsort(NUMS.as_mut_ptr().offset(idx as isize) as _,
+          TNUM,
+          size_of::<c_long>(),
+          cmp);
     pthread_barrier_wait(&mut B);
     0 as *mut c_void
 }
 
-extern fn cmp(val1: *const c_void, val2: *const c_void) -> c_int {
+extern "C" fn cmp(val1: *const c_void, val2: *const c_void) -> c_int {
     unsafe {
         let val1 = val1 as *const c_long;
         let val2 = val2 as *const c_long;
-        if *val1 == *val2 { 0 } else if *val1 < *val2 { -1 } else { 1 }
+        if *val1 == *val2 {
+            0
+        } else if *val1 < *val2 {
+            -1
+        } else {
+            1
+        }
     }
 }
 
 unsafe fn merge() -> Vec<c_long> {
-    let mut idx = [0usize;NTHR];
+    let mut idx = [0usize; NTHR];
     let mut snums = Vec::with_capacity(NUMNUM);
     for i in 0..NTHR {
         idx[i] = i * TNUM;
@@ -96,13 +107,13 @@ unsafe fn merge() -> Vec<c_long> {
         let mut num = c_long::max_value();
         let mut minidx = 0;
         for i in 0..NTHR {
-            if idx[i] < (i+1)*TNUM && NUMS[idx[i]] < num {
+            if idx[i] < (i + 1) * TNUM && NUMS[idx[i]] < num {
                 num = NUMS[idx[i]];
                 minidx = i;
             }
         }
         snums.push(NUMS[idx[minidx]]);
-        idx[minidx]+=1;
+        idx[minidx] += 1;
     }
     snums
 }
@@ -120,7 +131,7 @@ fn main() {
         // barrier count = num worker threads + 1 because main thread counts as 1 waiter
         pthread_barrier_init(&mut B, null(), (NTHR + 1) as _);
         for i in 0..NTHR {
-            let err = pthread_create(&mut tid, null_mut(), thr_fn, (i*TNUM) as *mut c_void);
+            let err = pthread_create(&mut tid, null_mut(), thr_fn, (i * TNUM) as *mut c_void);
             if err != 0 {
                 panic!("can't create thread, error: {}", err)
             }
