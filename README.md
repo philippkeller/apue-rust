@@ -13,7 +13,9 @@ Beware: this is my first Rust project. This code is far from beautiful and might
 - [x] Chapter 7: Process Environment
 - [x] Chapter 8: Process Control
 - [x] Chapter 9: Process Relationships
-- [ ] Chapter 10: Signals
+- [x] Chapter 10: Signals
+- [x] Chapter 11: Threads
+- [ ] Chapter 12: Thread control
 
 ## Using this code
 
