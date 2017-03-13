@@ -441,3 +441,7 @@ path = "src/bin/11-threads/f16-barrier.rs"
 [[bin]]
 name="e01-pass-struct"
 path = "src/bin/11-threads/e01-pass-struct.rs"
+
+[[bin]]
+name="f04-detached-thread"
+path = "src/bin/12-thread-control/f04-detached-thread.rs"
