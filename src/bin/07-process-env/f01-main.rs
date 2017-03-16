@@ -12,10 +12,11 @@
 /// for libc
 ///
 /// fyi: Exit code 13 comes from the return code of printf (see answer to Exercise 7.1)
+/// update: before the exit code seemed stable, now it is somehow random. Got 10 on OSX
+/// and 126 on Linux
 ///
-/// $ f01-main
+/// $ f01-main | cat # cat is needed so it "swallows" the exit code from f01-main
 /// Hello World!
-/// ERROR: return code 13
 
 extern crate libc;
 
@@ -28,14 +29,6 @@ pub extern "C" fn main(_argc: i32, _argv: *const *const u8) {
     }
 }
 
-#[lang = "panic_fmt"]
-#[no_mangle]
-pub extern "C" fn rust_begin_panic(_msg: core::fmt::Arguments,
-                                   _file: &'static str,
-                                   _line: u32)
-                                   -> ! {
-    loop {}
-}
 
 // This is needed for Linux but not for Mac
 #[lang = "eh_unwind_resume"]

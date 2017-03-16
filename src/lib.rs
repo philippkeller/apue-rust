@@ -10,6 +10,7 @@ use std::io::Write;
 use std::ffi::CStr;
 use std::mem::{zeroed, uninitialized};
 use std::ptr::{null, null_mut};
+use std::io::{Result, Error};
 
 /// Turns a str into a c string. Warning: the cstring only lives as long the
 /// str lives. Don't e.g. assign the return value to a variable!
@@ -64,17 +65,25 @@ pub trait LibcResult<T> {
     /// } else {
     ///     panic!("{}", io::Error::last_os_error());
     /// }
+    #[deprecated(since="0.0.2", note="please use `check_*` instead")]
     fn to_option(&self) -> Option<T>;
+    fn check_not_negative(&self) -> Result<T>;
 }
 
 impl LibcResult<c_int> for c_int {
     fn to_option(&self) -> Option<c_int> {
         if *self < 0 { None } else { Some(*self) }
     }
+    fn check_not_negative(&self) -> Result<c_int> {
+        if *self < 0 { Err(Error::last_os_error()) } else { Ok(*self) }
+    }
 }
 impl LibcResult<i64> for i64 {
     fn to_option(&self) -> Option<i64> {
         if *self < 0 { None } else { Some(*self) }
+    }
+    fn check_not_negative(&self) -> Result<i64> {
+        if *self < 0 { Err(Error::last_os_error()) } else { Ok(*self) }
     }
 }
 
@@ -83,11 +92,17 @@ impl LibcResult<isize> for isize {
     fn to_option(&self) -> Option<isize> {
         if *self <= 0 { None } else { Some(*self) }
     }
+    fn check_not_negative(&self) -> Result<isize> {
+        if *self < 0 { Err(Error::last_os_error()) } else { Ok(*self) }
+    }
 }
 
 impl LibcResult<sighandler_t> for sighandler_t {
     fn to_option(&self) -> Option<sighandler_t> {
         if *self == SIG_ERR { None } else { Some(*self) }
+    }
+    fn check_not_negative(&self) -> Result<sighandler_t> {
+        if *self < 0 { Err(Error::last_os_error()) } else { Ok(*self) }
     }
 }
 
@@ -95,6 +110,9 @@ impl LibcResult<sighandler_t> for sighandler_t {
 impl<T> LibcResult<*mut T> for *mut T {
     fn to_option(&self) -> Option<*mut T> {
         if self.is_null() { None } else { Some(*self) }
+    }
+    fn check_not_negative(&self) -> Result<*mut T> {
+        unimplemented!()
     }
 }
 
@@ -196,7 +214,7 @@ pub fn pr_mask(s: &str) {
     unsafe {
         let errno_save = errno::errno();
         let mut sigset: sigset_t = std::mem::uninitialized();
-        sigprocmask(0, null(), &mut sigset).to_option().expect("sigprocmask error");
+        sigprocmask(0, null(), &mut sigset).check_not_negative().expect("sigprocmask error");
         print!("{}", s);
         print_sig!(&sigset, SIGINT);
         print_sig!(&sigset, SIGQUIT);
@@ -256,7 +274,7 @@ pub unsafe fn system(cmdstring: &str) -> Option<i32> {
 
 // Figure 10.28 Correct POSIX.1 implementation of system function
 // (with signal handling)
-pub unsafe fn system2(cmdstring: &str) -> Result<i32, String> {
+pub unsafe fn system2(cmdstring: &str) -> std::result::Result<i32, String> {
     let mut ignore: sigaction = std::mem::zeroed();
     let (mut saveintr, mut savemask, mut savequit) = uninitialized();
     ignore.sa_sigaction = SIG_IGN; // ignore SIGINT and SIGQUIT

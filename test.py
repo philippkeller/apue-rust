@@ -66,10 +66,12 @@ if __name__ == "__main__":
     cur_path = os.path.dirname(os.path.realpath(__file__))
     if os.environ.get('CARGO_TARGET_DIR'):
         d = os.environ.get('CARGO_TARGET_DIR')
-        build_dir = os.path.join(cur_path, d, 'debug')
+        debug_dir = os.path.join(cur_path, d, 'debug')
+        release_dir = os.path.join(cur_path, d, 'release')
     else:
-        build_dir = os.path.join(cur_path, 'target', 'debug')
-    os.environ["PATH"] += os.pathsep + build_dir
+        debug_dir = os.path.join(cur_path, 'target', 'debug')
+        release_dir = os.path.join(cur_path, 'target', 'release')
+    os.environ["PATH"] += os.pathsep + release_dir + os.pathsep + debug_dir
 
     src_dir = os.path.join(cur_path, 'src', 'bin')
 

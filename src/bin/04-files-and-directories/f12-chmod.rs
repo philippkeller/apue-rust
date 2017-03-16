@@ -1,5 +1,12 @@
 /// Figure 4.12: Example of chmod function
 ///
+/// Findings:
+///
+/// - setgid in /tmp/ does not work under OSX for whatever reason. With sudo it works
+///   and in another directory and on Linux it all works. Cost me like 2h to track
+///   it down (of course first tried to find the bug in the code)
+///   full post: http://stackoverflow.com/questions/42811165
+///
 /// $ rm -f /tmp/{foo,bar}
 /// $ touch /tmp/{foo,bar}
 /// $ chmod g+x /tmp/foo
@@ -13,14 +20,14 @@
 /// mac only:
 /// $ f12-chmod
 /// $ stat -f "%Sp" /tmp/{foo,bar}
-/// -rw-r-Sr--
+/// -rwSr-xr--
 /// -rw-r--r--
 
 extern crate libc;
 #[macro_use(cstr)]
 extern crate apue;
 
-use libc::{mode_t, S_IXGRP, S_ISGID, S_IROTH, S_IRGRP, S_IWUSR, S_IRUSR, stat, chmod};
+use libc::{mode_t, S_IXUSR, S_ISUID, S_IROTH, S_IRGRP, S_IWUSR, S_IRUSR, stat, chmod};
 use apue::{LibcResult, err_sys};
 
 fn main() {
@@ -32,7 +39,7 @@ fn main() {
 
         // turn on set-group-ID and turn off group-execute
         if let None = chmod(cstr!("/tmp/foo"),
-                            (statbuf.st_mode & !S_IXGRP) | S_ISGID as mode_t)
+                            (statbuf.st_mode & !S_IXUSR) | S_ISUID as mode_t)
             .to_option() {
             err_sys("chmod error for foo");
         }

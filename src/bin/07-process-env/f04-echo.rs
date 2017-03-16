@@ -8,7 +8,7 @@
 /// Of course you would never do it this "raw" way (but rather with env::args())
 /// but it was a nice exercise of dereferencing C pointers
 ///
-/// $ f04-echo arg1 TEST foo
+/// $ f04-echo arg1 TEST foo | cat
 /// argv[0]: f04-echo
 /// argv[1]: arg1
 /// argv[2]: TEST
@@ -18,14 +18,6 @@ extern crate libc;
 
 use libc::printf;
 
-#[lang = "panic_fmt"]
-#[no_mangle]
-pub extern "C" fn rust_begin_panic(_msg: core::fmt::Arguments,
-                                   _file: &'static str,
-                                   _line: u32)
-                                   -> ! {
-    loop {}
-}
 
 #[no_mangle] // ensure that this symbol is called `main` in the output
 pub extern "C" fn main(_argc: i32, _argv: *const *const u8) {
