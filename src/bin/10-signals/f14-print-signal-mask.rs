@@ -10,13 +10,14 @@ extern crate apue;
 extern crate libc;
 extern crate errno;
 
-use libc::{sigset_t, SIGINT, SIG_SETMASK, sigaddset};
+use libc::{sigset_t, SIGINT, SIG_SETMASK, sigaddset, sigemptyset};
 use apue::{LibcResult, pr_mask};
 use apue::my_libc::sigprocmask;
 
 fn main() {
     unsafe {
         let mut sigs: sigset_t = std::mem::uninitialized();
+        sigemptyset(&mut sigs);
         sigaddset(&mut sigs, SIGINT);
         sigprocmask(SIG_SETMASK, &sigs, std::ptr::null_mut())
             .to_option()
