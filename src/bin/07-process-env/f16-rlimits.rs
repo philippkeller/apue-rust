@@ -16,7 +16,7 @@
 /// RLIMIT_DATA     (infinite)  (infinite)
 /// RLIMIT_FSIZE    (infinite)  (infinite)
 /// RLIMIT_MEMLOCK  (infinite)  (infinite)
-/// RLIMIT_NOFILE        10240  (infinite)
+/// RLIMIT_NOFILE         2560  (infinite)
 /// RLIMIT_NPROC           709        1064
 /// RLIMIT_RSS      (infinite)  (infinite)
 /// $ ulimit -c unlimited && f16-rlimits | grep CORE

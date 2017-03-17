@@ -9,7 +9,7 @@
 /// right. I initially tried with fetch_xor until I learned that it *always*
 /// returns the previous value.
 ///
-/// $ rm /tmp/e06-sync.txt && e06-sync-parent-child && cat /tmp/e06-sync.txt
+/// $ rm -f /tmp/e06-sync.txt && e06-sync-parent-child && cat /tmp/e06-sync.txt
 /// 200
 
 extern crate apue;

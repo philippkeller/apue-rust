@@ -3,10 +3,13 @@
 /// Finding: on OSX signals seem to be not queued as well. Running f15-sigpending and then
 /// immediately firing ^\ results in only one echo of "caught SIGQUIT"
 ///
-/// $ f15-sigpending & pkill -SIGQUIT f15-sigpending && sleep 2 && pkill -SIGQUIT f15-sigpending
-/// SIGQUIT pending
-/// caught SIGQUIT
-/// SIGQUIT unblocked
+/// test.py doesn't handle the following lines correctly (yet), -> only in // and not in ///:
+//
+// $ f15-sigpending &
+// $ pkill -SIGQUIT f15-sigpending && sleep 2 && pkill -SIGQUIT f15-sigpending
+// SIGQUIT pending
+// caught SIGQUIT
+// SIGQUIT unblocked
 
 extern crate libc;
 extern crate apue;

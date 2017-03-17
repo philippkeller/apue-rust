@@ -10,6 +10,12 @@
 ///
 /// What happens if path is /dev/fd/1?
 ///
+/// mac only:
+/// $ e17-unlink-fd1
+/// Permission denied (os error 13)
+/// new fd: 3
+///
+/// linux only:
 /// $ e17-unlink-fd1
 /// Operation not permitted (os error 1)
 /// new fd: 3

@@ -3,13 +3,12 @@
 /// Takeaway: the OpenOption module is quite nice! Took me a while to get the right arguments
 /// though
 ///
-/// $ f20-exec-interpreter | head -5
-/// argv[0] = /Users/philipp/oss/apue/target/debug/f17-echo-all
+/// $ f20-exec-interpreter | head -5 | sed -E 's/[^ ]+(f17|testinterp)//g'
+/// argv[0] = -echo-all
 /// argv[1] = foo
-/// argv[2] = /Users/philipp/oss/apue/target/debug/testinterp
+/// argv[2] =
 /// argv[3] = myarg1
 /// argv[4] = MY ARG2
-
 
 extern crate libc;
 #[macro_use(cstr)]
