@@ -10,6 +10,8 @@
 ///   project, opened https://github.com/rust-lang/cargo/issues/3724 and added
 ///   `cargo:rerun-if-changed=` into my_build.rs which now causes only a project rebuild if
 ///   my_build.rs is changed or `thread_cleanup.c`
+/// - when leaving `if (arg) return((void *)1)` in the C code the program would run into a
+///   "bus error", I guess because the macros are unbalanced..?
 ///
 /// The program behaves as described in the book:
 ///
@@ -19,10 +21,10 @@
 /// thread 1 push complete
 /// thread 2 start
 /// thread 2 push complete
-/// cleanup: "thread 1 second handler"
 /// cleanup: "thread 2 second handler"
 /// cleanup: "thread 2 first handler"
-/// ERROR: return code 139
+/// thread 1 exit code: 0x1
+/// thread 2 exit code: 0x2
 ///
 /// linux only:
 /// $ f05-thread-cleanup 2>&1
@@ -66,8 +68,9 @@ fn main() {
         let (mut tid1, mut tid2) = std::mem::zeroed();
         let mut tret = std::mem::uninitialized();
         pthread_create(&mut tid1, null_mut(), thr_fn1, 1 as _).expect("can't create thread 1");
-        usleep(10);
+        usleep(100);
         pthread_create(&mut tid2, null_mut(), thr_fn2, 1 as _).expect("can't create thread 2");
+        usleep(100);
         pthread_join(tid1, &mut tret).expect("can’t join with thread 1");
         println!("thread 1 exit code: {:?}", tret);
         pthread_join(tid2, &mut tret).expect("can’t join with thread 2");

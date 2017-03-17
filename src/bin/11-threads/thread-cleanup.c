@@ -10,8 +10,8 @@ void * thr_fn1(void *arg) {
     pthread_cleanup_push(cleanup, "thread 1 second handler");
     printf("thread 1 push complete\n");
     fflush(stdout);
-    if (arg)
-        return((void *)1);
+//    if (arg)
+//        return((void *)1);
     pthread_cleanup_pop(0);
     pthread_cleanup_pop(0);
     return((void *)1);
