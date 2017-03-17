@@ -271,6 +271,10 @@ name="f24-userid-system"
 path = "src/bin/08-process-cntl/f24-userid-system.rs"
 
 [[bin]]
+name="f25-userid-print"
+path = "src/bin/08-process-cntl/f25-userid-print.rs"
+
+[[bin]]
 name="f28-accounting"
 path = "src/bin/08-process-cntl/f28-accounting.rs"
 
