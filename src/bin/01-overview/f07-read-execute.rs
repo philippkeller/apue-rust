@@ -8,10 +8,9 @@
 ///   than the C counterpart. also the parent/child distinction
 ///   in the original C program should have been an if/else block
 ///
-/// $ echo man | f07-read-execute 2>&1
-/// What manual page do you want?
+/// $ echo tty | f07-read-execute 2>&1
+/// not a tty
 /// % %
-
 
 extern crate libc;
 #[macro_use(cstr, as_char)]
