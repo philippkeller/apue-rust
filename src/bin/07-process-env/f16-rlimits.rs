@@ -33,7 +33,7 @@
 /// RLIMIT_MSGQUEUE     819200      819200
 /// RLIMIT_NICE              0           0
 /// RLIMIT_NOFILE         1024       65536
-/// RLIMIT_NPROC         41690       41690
+/// RLIMIT_NPROC         47643       47643
 /// RLIMIT_RSS      (infinite)  (infinite)
 
 extern crate libc;
