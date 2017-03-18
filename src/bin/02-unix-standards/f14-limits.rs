@@ -113,7 +113,8 @@ fn parse_header(hfile: &str) {
 fn main() {
     match uname().unwrap().as_str() {
         "Linux" => {
-            parse_header("/usr/include/bits/confname.h");
+            println!("linux!");
+            parse_header("/usr/include/x86_64-linux-gnu/bits/confname.h");
         }
         "Darwin" => {
             parse_header("/usr/include/sys/unistd.h"); // for _PC_*
