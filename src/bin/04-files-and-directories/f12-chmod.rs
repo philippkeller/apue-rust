@@ -14,7 +14,7 @@
 /// linux only:
 /// $ f12-chmod
 /// $ stat -c %A /tmp/{foo,bar}
-/// -rw-rwSr--
+/// -rwSrwxr--
 /// -rw-r--r--
 ///
 /// mac only:
