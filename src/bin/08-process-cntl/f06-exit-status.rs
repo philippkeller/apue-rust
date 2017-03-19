@@ -6,10 +6,17 @@
 /// by our own (at least that's what the guys on IRC suggested). Sadly in order to
 /// go sure that it was *really* a division by zero we need to do a string comparison..
 ///
+/// mac only:
 /// $ f06-exit-status
 /// normal termination, exit status = 7
 /// abnormal termination, signal number = 6
 /// abnormal termination, signal number = 8
+///
+/// linux only:
+/// $ f06-exit-status
+/// normal termination, exit status = 7
+/// abnormal termination, signal number = 6  (core file generated)
+/// abnormal termination, signal number = 8  (core file generated)
 
 extern crate libc;
 extern crate apue;
