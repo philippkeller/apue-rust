@@ -3,8 +3,8 @@
 /// Takeaway: on OSX it needed at least usleep(20) in order
 /// to experience the race condition
 ///
-/// $ f12-race-condition | wc -l
-///        2
+/// $ f12-race-condition | awk 'END{print NR}'
+/// 2
 
 extern crate libc;
 extern crate apue;

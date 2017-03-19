@@ -10,6 +10,7 @@
 /// the internals of signals, on the other hand you mustn't loop over all
 /// possible signals, so then you *need* to somehow access the internals)
 ///
+/// mac only:
 /// $ e09-all-signals
 /// after setting mask: SIGILL, SIGTRAP, SIGIO,
 
