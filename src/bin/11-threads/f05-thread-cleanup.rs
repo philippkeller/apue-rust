@@ -15,7 +15,6 @@
 ///
 /// The program behaves as described in the book:
 ///
-/// mac only:
 /// $ f05-thread-cleanup 2>&1
 /// thread 1 start
 /// thread 1 push complete
@@ -24,17 +23,6 @@
 /// cleanup: "thread 2 second handler"
 /// cleanup: "thread 2 first handler"
 /// thread 1 exit code: 0x1
-/// thread 2 exit code: 0x2
-///
-/// linux only:
-/// $ f05-thread-cleanup 2>&1
-/// thread 1 start
-/// thread 1 push complete
-/// thread 2 start
-/// thread 2 push complete
-/// thread 1 exit code: 0x1
-/// cleanup: "thread 2 second handler"
-/// cleanup: "thread 2 first handler"
 /// thread 2 exit code: 0x2
 
 extern crate libc;
@@ -68,11 +56,12 @@ fn main() {
         let (mut tid1, mut tid2) = std::mem::zeroed();
         let mut tret = std::mem::uninitialized();
         pthread_create(&mut tid1, null_mut(), thr_fn1, 1 as _).expect("can't create thread 1");
-        usleep(100);
+        usleep(1000);
         pthread_create(&mut tid2, null_mut(), thr_fn2, 1 as _).expect("can't create thread 2");
-        usleep(100);
+        usleep(1000);
         pthread_join(tid1, &mut tret).expect("can’t join with thread 1");
         println!("thread 1 exit code: {:?}", tret);
+        usleep(1000);
         pthread_join(tid2, &mut tret).expect("can’t join with thread 2");
         println!("thread 2 exit code: {:?}", tret);
     }

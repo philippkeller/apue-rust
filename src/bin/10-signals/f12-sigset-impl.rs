@@ -6,6 +6,7 @@
 /// This was a bit pointless really (why is a code fragment about bit
 /// masking in a book which teaches Unix?), only converted for completeness.
 ///
+/// mac only:
 /// $ f12-sigset-impl
 /// 0b10000
 /// 0b10000
