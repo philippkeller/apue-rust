@@ -70,6 +70,10 @@ pub trait LibcResult<T> {
     fn check_not_negative(&self) -> Result<T>;
 }
 
+pub trait LibcPtrResult<T> {
+    fn check_not_null(&self) -> Result<T>;
+}
+
 impl LibcResult<c_int> for c_int {
     fn to_option(&self) -> Option<c_int> {
         if *self < 0 { None } else { Some(*self) }
@@ -113,6 +117,12 @@ impl<T> LibcResult<*mut T> for *mut T {
     }
     fn check_not_negative(&self) -> Result<*mut T> {
         unimplemented!()
+    }
+}
+
+impl<T> LibcPtrResult<*mut T> for *mut T {
+    fn check_not_null(&self) -> Result<*mut T> {
+        if self.is_null() { Err(Error::last_os_error()) } else { Ok(*self) }
     }
 }
 

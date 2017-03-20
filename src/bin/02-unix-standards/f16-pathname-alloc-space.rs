@@ -23,7 +23,7 @@ extern crate apue;
 extern crate errno;
 
 use libc::{_SC_VERSION, _SC_XOPEN_VERSION, PATH_MAX, _PC_PATH_MAX, sysconf, pathconf, malloc};
-use apue::LibcResult;
+use apue::{LibcResult, LibcPtrResult};
 use errno::errno;
 
 const PATH_MAX_GUESS: i64 = 1024;
@@ -33,19 +33,19 @@ unsafe fn path_alloc(pathmax: &mut i64,
                      xsi_version: &mut i64)
                      -> (*mut libc::c_void, i64) {
     if *posix_version == 0 {
-        if let Some(val) = sysconf(_SC_VERSION).to_option() {
+        if let Ok(val) = sysconf(_SC_VERSION).check_not_negative() {
             *posix_version = val;
         }
     }
     if *xsi_version == 0 {
-        if let Some(val) = sysconf(_SC_XOPEN_VERSION).to_option() {
+        if let Ok(val) = sysconf(_SC_XOPEN_VERSION).check_not_negative() {
             *xsi_version = val;
         }
     }
     println!("from libc constant: PATH_MAX={:?}", PATH_MAX);
     // would be too easy to just take the constant so we go on..
     if *pathmax == 0 {
-        *pathmax = if let Some(val) = pathconf(cstr!("/"), _PC_PATH_MAX).to_option() {
+        *pathmax = if let Ok(val) = pathconf(cstr!("/"), _PC_PATH_MAX).check_not_negative() {
             val
         } else {
             let e = errno();
@@ -64,7 +64,7 @@ unsafe fn path_alloc(pathmax: &mut i64,
     } else {
         *pathmax
     };
-    if let Some(ptr) = malloc(size as _).to_option() {
+    if let Ok(ptr) = malloc(size as _).check_not_null() {
         (ptr, size)
     } else {
         panic!("malloc error for pathname");
