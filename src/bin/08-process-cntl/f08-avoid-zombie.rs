@@ -25,7 +25,7 @@ unsafe fn doit() {
             // as soon as our real parent calls exit() (3 lines above)
             // After 2 seconds sleep our parent will be dead and
             // init will reap our status.
-            usleep(10);
+            usleep(1000);
             println!("second child, parent pid = {}", getppid());
             exit(0);
         }
