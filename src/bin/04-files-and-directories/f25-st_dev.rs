@@ -6,11 +6,11 @@
 /// $ f25-st_dev > /dev/null # device numbers are different on ev. machine -> only test ret code
 
 extern crate libc;
+#[macro_use(cstr)]
 extern crate apue;
 
 use std::env::args;
 use libc::{S_IFMT, S_IFCHR, S_IFBLK, stat};
-use std::ffi::CString;
 use apue::{err_sys, major, minor, LibcResult};
 
 fn main() {
@@ -19,7 +19,7 @@ fn main() {
     let mut buf: stat = unsafe { std::mem::uninitialized() };
     while let Some(a) = ar.next() {
         print!("{}: ", a);
-        if let None = unsafe { stat(CString::new(a).unwrap().as_ptr(), &mut buf) }.to_option() {
+        if unsafe{stat(cstr!(a), &mut buf)}.check_not_negative().is_err() {
             err_sys("stat error");
             continue;
         }

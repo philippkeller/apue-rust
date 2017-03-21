@@ -14,7 +14,7 @@ fn main() {
         // but as it's only one character the cast below is shorter
         let stdin = libc::fdopen(libc::STDIN_FILENO, &('r' as libc::c_char));
         let stdout = libc::fdopen(libc::STDOUT_FILENO, &('w' as libc::c_char));
-        while let Some(c) = libc::fgetc(stdin).to_option() {
+        while let Ok(c) = libc::fgetc(stdin).check_not_negative() {
             if libc::fputc(c, stdout) == libc::EOF {
                 panic!("output error");
             }

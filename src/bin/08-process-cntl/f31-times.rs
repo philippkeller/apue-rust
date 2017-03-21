@@ -29,14 +29,14 @@ unsafe fn do_cmd(cmd: &str) {
     // clock_t (return type of times) is unsigned on macos (and probably
     // bsd in general) -> don't check for -1
     let start = times(&mut tmsstart);
-    let status = system(cstr!(cmd)).to_option().expect("system() error");
+    let status = system(cstr!(cmd)).check_not_negative().expect("system() error");
     let end = times(&mut tmsend);
     pr_times(end - start, &tmsstart, &tmsend);
     pr_exit(status);
 }
 
 unsafe fn pr_times(real: clock_t, tmsstart: &tms, tmsend: &tms) {
-    let clktick: f64 = sysconf(_SC_CLK_TCK).to_option().expect("sysconf error") as f64;
+    let clktick: f64 = sysconf(_SC_CLK_TCK).check_not_negative().expect("sysconf error") as f64;
     println!("  real: {}", real as f64 / clktick);
     println!("  user: {}",
              (tmsend.tms_utime - tmsstart.tms_utime) as f64 / clktick);

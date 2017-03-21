@@ -17,7 +17,7 @@ extern crate libc;
 extern crate apue;
 
 use libc::{opendir, fcntl, open, close, closedir, F_GETFD, FD_CLOEXEC, O_RDONLY};
-use apue::LibcResult;
+use apue::{LibcResult, LibcPtrResult};
 use apue::my_libc::{readdir, dirfd};
 
 unsafe fn pr_flags(fd: i32) {
@@ -35,11 +35,9 @@ fn main() {
         let dp = opendir(cstr!("/"));
         let dfd = dirfd(dp);
         assert!(!dp.is_null(), "can't open root dir");
-        if let Some(_) = readdir(dp).to_option() {
-            // just read one entry and discard it
-        }
+        readdir(dp).check_not_null().ok(); // just read one entry and discard it
         pr_flags(dfd);
-        let fd = open(cstr!("/"), O_RDONLY).to_option().expect("cannot open root for reading");
+        let fd = open(cstr!("/"), O_RDONLY).check_not_negative().expect("cannot open root for reading");
         pr_flags(fd);
         close(fd);
         closedir(dp);
