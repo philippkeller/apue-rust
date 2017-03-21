@@ -18,13 +18,13 @@ extern crate libc;
 
 use libc::{c_int, SIGALRM};
 use libc::{getpwnam, alarm, signal, printf};
-use apue::LibcResult;
+use apue::LibcPtrResult;
 use std::ffi::CStr;
 
 extern "C" fn my_alarm(_: c_int) {
     unsafe {
         printf(cstr!("in signal handler\n"));
-        getpwnam(cstr!("root")).to_option().expect("getpwnam(root) error");
+        getpwnam(cstr!("root")).check_not_null().expect("getpwnam(root) error");
         alarm(1);
     }
 }
@@ -34,7 +34,7 @@ fn main() {
         signal(SIGALRM, my_alarm as usize);
         alarm(1);
         loop {
-            let pwd = getpwnam(cstr!("nobody")).to_option().expect("getpwnam error");
+            let pwd = getpwnam(cstr!("nobody")).check_not_null().expect("getpwnam error");
             let pw_name = CStr::from_ptr((*pwd).pw_name).to_str().unwrap();
             if pw_name != "nobody" {
                 println!("return value corrupted! pw_name = {}", pw_name);

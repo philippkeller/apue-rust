@@ -8,7 +8,7 @@ use apue::LibcResult;
 use apue::my_libc::execl;
 
 unsafe fn _fork() -> i32 {
-    fork().to_option().expect("fork error")
+    fork().check_not_negative().expect("fork error")
 }
 
 fn main() {
@@ -31,7 +31,7 @@ fn main() {
                   cstr!("if=/etc/passwd"),
                   cstr!("of=/dev/stdout"),
                   0 as *const c_char)
-                .to_option()
+                .check_not_negative()
                 .expect("execl error");
             exit(7);
         }

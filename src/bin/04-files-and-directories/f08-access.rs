@@ -30,13 +30,13 @@ fn main() {
     let matches = App::new("check access rights").args_from_usage("<filename>").get_matches();
     let filename = CString::new(matches.value_of("filename").unwrap()).unwrap();
     unsafe {
-        if let None = access(filename.as_ptr(), R_OK).to_option() {
+        if access(filename.as_ptr(), R_OK).check_not_negative().is_err() {
             println!("access error for {:?}", filename);
             exit(1);
         } else {
             println!("read access OK");
         }
-        if let None = open(filename.as_ptr(), O_RDONLY).to_option() {
+        if open(filename.as_ptr(), O_RDONLY).check_not_negative().is_err() {
             println!("open error for {:?}", filename);
             exit(1);
         } else {

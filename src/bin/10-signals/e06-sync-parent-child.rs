@@ -41,7 +41,7 @@ fn main() {
             f.write_all(b"0").unwrap();
         }
         let oldmask = tell_wait();
-        let pid = fork().to_option().expect("fork error");
+        let pid = fork().check_not_negative().expect("fork error");
         if pid == 0 {
             // child
             let ppid = getppid();

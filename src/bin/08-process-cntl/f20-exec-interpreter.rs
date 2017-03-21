@@ -41,7 +41,7 @@ fn main() {
     }
 
     unsafe {
-        let pid = fork().to_option().expect("cannot fork");
+        let pid = fork().check_not_negative().expect("cannot fork");
         match pid {
             0 => {
                 execl(cstr!(testinterp.to_str().unwrap()),
@@ -49,11 +49,11 @@ fn main() {
                       cstr!("myarg1"),
                       cstr!("MY ARG2"),
                       0 as *const c_char)
-                    .to_option()
+                    .check_not_negative()
                     .expect(&format!("execl error: {}", errno::errno()));
             }
             _ => {
-                waitpid(pid, std::ptr::null_mut(), 0).to_option().expect("waitpid error");
+                waitpid(pid, std::ptr::null_mut(), 0).check_not_negative().expect("waitpid error");
             }
         }
     }

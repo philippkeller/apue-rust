@@ -44,11 +44,9 @@ fn main() {
         let from = matches.value_of("from").unwrap();
         let to = matches.value_of("to").unwrap();
         let fd1 = open(cstr!(from), O_RDONLY)
-            .to_option()
-            .expect(&format!("can't open file {}: {}", from, errno::errno()));
+            .check_not_negative().expect(&format!("can't open file {}", from));
         let fd2 = open(cstr!(to), O_RDWR | O_CREAT, 0o600)
-            .to_option()
-            .expect(&format!("can't open file {}: {}", to, errno::errno()));
+            .check_not_negative().expect(&format!("can't open file {}", to));
         let mut buf: Vec<u8> = vec![0; BUFLEN];
         let mut sparse = false;
         while read(fd1, buf.as_mut_ptr() as *mut c_void, BUFLEN) == BUFLEN as _ {

@@ -12,7 +12,7 @@
 ///     pointer
 ///   + Enum instead of constants
 ///
-/// timing wise this rust implementation is about the same as the c program without chdir.
+/// Timing wise this rust implementation is slightly faster than the c program without chdir.
 /// (before implementing chdir it was about 100% slower, most probably due to the fact that
 /// this implementation does too much string copying)
 ///
@@ -40,7 +40,7 @@ extern crate errno;
 
 use libc::{stat, S_IFMT, S_IFDIR, S_IFREG, S_IFBLK, S_IFCHR, S_IFIFO, S_IFLNK, S_IFSOCK, opendir,
            closedir, lstat, chdir};
-use apue::LibcResult;
+use apue::{LibcResult, LibcPtrResult};
 use apue::my_libc::readdir;
 use clap::App;
 use std::ffi::{CString, CStr};
@@ -114,30 +114,30 @@ enum FileType {
 }
 
 unsafe fn myftw(cnt: &mut Counter) {
-    let dp = match opendir(cstr!(".")).to_option() {
-        Some(dp) => dp,
-        None => {
+    let dp = match opendir(cstr!(".")).check_not_null() {
+        Ok(dp) => dp,
+        Err(_) => {
             print_err!("cannot open dir: {}", errno::errno());
             cnt.count_other(".", FileType::DirectoryCannotRead);
             return;
         }
     };
-    while let Some(dirp) = readdir(dp).to_option() {
+    while let Ok(dirp) = readdir(dp).check_not_null() {
         let filename = CStr::from_ptr((&(*dirp).d_name).as_ptr()).to_str().expect("invalid string");
         if filename == "." || filename == ".." {
             continue;
         }
         let mut statbuf: stat = std::mem::uninitialized();
-        if let None = lstat(CString::new(filename.to_owned()).unwrap().as_ptr(),
+        if lstat(CString::new(filename.to_owned()).unwrap().as_ptr(),
                             &mut statbuf)
-            .to_option() {
+            .check_not_negative().is_err() {
             cnt.count_other(&filename, FileType::FileCannotStat);
             continue;
         }
         match statbuf.st_mode & S_IFMT {
             S_IFDIR => {
                 cnt.count_other(&filename, FileType::Directory);
-                if let Some(_) = chdir(cstr!(filename)).to_option() {
+                if chdir(cstr!(filename)).check_not_negative().is_ok() {
                     myftw(cnt);
                     chdir(cstr!(".."));
                 }
@@ -145,9 +145,7 @@ unsafe fn myftw(cnt: &mut Counter) {
             _ => cnt.count_file(&filename, &statbuf),
         }
     }
-    if let None = closedir(dp).to_option() {
-        panic!("can’t close directory {}", errno::errno());
-    }
+    closedir(dp).check_not_negative().expect("can’t close directory");
 }
 
 fn main() {

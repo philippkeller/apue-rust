@@ -56,7 +56,7 @@ macro_rules! doit {
 
 unsafe fn pr_limits(name: &str, resource: i32) {
     let mut limit: rlimit = std::mem::uninitialized();
-    getrlimit(resource, &mut limit).to_option().expect(&format!("getrlimit error for {}", name));
+    getrlimit(resource, &mut limit).check_not_negative().expect(&format!("getrlimit error for {}", name));
     print!("{:16}", name);
     match limit.rlim_cur {
         RLIM_INFINITY => print!("(infinite)  "),

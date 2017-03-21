@@ -8,11 +8,9 @@ extern crate libc;
 extern crate apue;
 
 use libc::chdir;
-use apue::{LibcResult, err_sys};
+use apue::{LibcResult};
 
 fn main() {
-    if let None = unsafe { chdir(cstr!("/tmp")) }.to_option() {
-        err_sys("chdir failed");
-    }
+    unsafe {chdir(cstr!("/tmp"))}.check_not_negative().expect("chdir failed");
     println!("chdir to /tmp succeeded");
 }

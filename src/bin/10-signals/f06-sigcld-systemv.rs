@@ -23,7 +23,7 @@ mod sigcld {
             panic!("signal error");
         }
         let mut status: c_int = 0;
-        let pid = wait(&mut status).to_option().expect("wait error");
+        let pid = wait(&mut status).check_not_negative().expect("wait error");
         println!("pid = {}", pid);
     }
 
@@ -32,7 +32,7 @@ mod sigcld {
             if signal(SIGCLD, sig_cld as usize) == SIG_ERR {
                 panic!("signal error");
             }
-            let pid = fork().to_option().expect("fork error");
+            let pid = fork().check_not_negative().expect("fork error");
             if pid == 0 {
                 // child
                 usleep(100);

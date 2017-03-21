@@ -18,7 +18,7 @@ extern crate libc;
 extern crate errno;
 
 use libc::{c_int, SIGALRM, fwrite, fopen, alarm};
-use apue::{LibcResult, signal};
+use apue::{LibcResult, LibcPtrResult, signal};
 
 fn sig_alrm(_: c_int) {
     println!("alarm has happened..");
@@ -27,12 +27,12 @@ fn sig_alrm(_: c_int) {
 const SIZE: usize = 1 << 32;
 fn main() {
     unsafe {
-        signal(SIGALRM, sig_alrm).to_option().expect("couldn't set alarm");
+        signal(SIGALRM, sig_alrm).check_not_negative().expect("couldn't set alarm");
         alarm(1);
         let buffer: Vec<u8> = Vec::with_capacity(SIZE);
         let file = fopen(cstr!("/tmp/10_fwrite_1gb.txt"), cstr!("w"))
-            .to_option()
+            .check_not_null()
             .expect("can't open file");
-        fwrite(as_void!(buffer), 1, SIZE, file).to_option().expect("can't write to file");
+        fwrite(as_void!(buffer), 1, SIZE, file).check_not_negative().expect("can't write to file");
     }
 }

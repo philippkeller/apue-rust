@@ -46,19 +46,14 @@ extern crate libc;
 extern crate apue;
 
 use libc::{open, sleep, unlink, c_int};
-use apue::{LibcResult, err_sys};
+use apue::{LibcResult};
 
 const O_RDWR: c_int = 2; // taken from /usr/include/sys/fcntl.h
 
 fn main() {
     unsafe {
-        if let None = open(cstr!("/tmp/f16-unlink.tmp"), O_RDWR).to_option() {
-            err_sys("open error");
-        }
-
-        if let None = unlink(cstr!("/tmp/f16-unlink.tmp")).to_option() {
-            err_sys("unlink error");
-        }
+        open(cstr!("/tmp/f16-unlink.tmp"), O_RDWR).check_not_negative().expect("open error");
+        unlink(cstr!("/tmp/f16-unlink.tmp")).check_not_negative().expect("unlink error");
         sleep(0);// change this to 15 to make the test as explained in the book
         println!("file unlinked");
     }

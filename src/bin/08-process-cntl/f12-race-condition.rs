@@ -26,7 +26,7 @@ fn main() {
         // set unbuffered
         let stdout = fdopen(STDOUT_FILENO, &('w' as c_char));
         setbuf(stdout, std::ptr::null_mut());
-        let pid = fork().to_option().expect("fork error");
+        let pid = fork().check_not_negative().expect("fork error");
         match pid {
             0 => charatatime(stdout, "output from child \n"),
             _ => charatatime(stdout, "output from parent \n"),

@@ -32,7 +32,7 @@ fn main() {
         // if stdout is going into a file (e.g. starting from intellij) it is fully buffered
         // and hence output is delayed after fork -> printed twice
         printf(cstr!("before fork\n"));
-        if let Some(pid) = fork().to_option() {
+        if let Some(pid) = fork().check_not_negative() {
             match pid {
                 0 => {
                     GLOBVAR += 1;

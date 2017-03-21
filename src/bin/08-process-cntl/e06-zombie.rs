@@ -14,7 +14,7 @@ use apue::LibcResult;
 
 fn main() {
     unsafe {
-        let pid = fork().to_option().expect("fork error");
+        let pid = fork().check_not_negative().expect("fork error");
         if pid == 0 {
             exit(0);
         }
