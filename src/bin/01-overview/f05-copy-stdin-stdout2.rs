@@ -6,16 +6,14 @@
 extern crate libc;
 extern crate apue;
 
-use libc::{c_char, STDIN_FILENO, STDOUT_FILENO, fdopen, ferror};
+use libc::ferror;
 use apue::LibcResult;
-use apue::my_libc::{putc, getc};
+use apue::my_libc::{putc, getc, stdin, stdout};
 
 
 fn main() {
     unsafe {
-        let stdin = fdopen(STDIN_FILENO, &('r' as c_char));
-        let stdout = fdopen(STDOUT_FILENO, &('w' as c_char));
-        while let Some(c) = getc(stdin).to_option() {
+        while let Ok(c) = getc(stdin).check_not_negative() {
             assert!(putc(c, stdout) >= 0, "output error");
         }
         assert!(ferror(stdin) == 0, "input error");

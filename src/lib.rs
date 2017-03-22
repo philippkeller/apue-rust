@@ -1,5 +1,6 @@
 extern crate libc;
 extern crate errno;
+extern crate num;
 
 use libc::{c_int, c_char, dev_t, utsname, sigset_t, sighandler_t, PATH_MAX, SA_RESTART, EINTR};
 use libc::{SIG_ERR, SIG_BLOCK, SIG_IGN, SIG_SETMASK, SIGALRM, SIGINT, SIGUSR1, SIGQUIT, SIGCHLD};
@@ -11,6 +12,7 @@ use std::ffi::CStr;
 use std::mem::{zeroed, uninitialized};
 use std::ptr::{null, null_mut};
 use std::io::{Result, Error};
+use num::{Num, Zero, One, Signed};
 
 /// Turns a str into a c string. Warning: the cstring only lives as long the
 /// str lives. Don't e.g. assign the return value to a variable!
@@ -68,10 +70,37 @@ pub trait LibcResult<T> {
     #[deprecated(since="0.0.2", note="please use `check_*` instead")]
     fn to_option(&self) -> Option<T>;
     fn check_not_negative(&self) -> Result<T>;
+    fn check_positive(&self) -> Result<T>;
+    fn check_minus_one(&self) -> Result<T>;
 }
 
 pub trait LibcPtrResult<T> {
     fn check_not_null(&self) -> Result<T>;
+}
+
+fn check_positive<N: num::Num + PartialOrd + Copy>(val:N) -> Result<N> {
+    if val < N::zero() {
+        Err(Error::last_os_error())
+    } else if val == N::zero() {
+        Err(Error::from_raw_os_error(0))
+    } else {
+        Ok(val)
+    }
+}
+fn check_not_negative<N: num::Num + PartialOrd + Copy>(val:N) -> Result<N> {
+    if val < N::zero() {
+        Err(Error::last_os_error())
+    } else {
+        Ok(val)
+    }
+}
+
+fn check_minus_one<N: num::Num + PartialOrd + Copy + Signed>(val:N) -> Result<N> {
+    if val.is_negative() && val.abs() == N::one() {
+        Err(Error::from(std::io::ErrorKind::Other))
+    } else {
+        Ok(val)
+    }
 }
 
 impl LibcResult<c_int> for c_int {
@@ -79,7 +108,13 @@ impl LibcResult<c_int> for c_int {
         if *self < 0 { None } else { Some(*self) }
     }
     fn check_not_negative(&self) -> Result<c_int> {
-        if *self < 0 { Err(Error::last_os_error()) } else { Ok(*self) }
+        check_not_negative(*self)
+    }
+    fn check_positive(&self) -> Result<c_int> {
+        check_positive(*self)
+    }
+    fn check_minus_one(&self) -> Result<c_int> {
+        check_minus_one(*self)
     }
 }
 impl LibcResult<i64> for i64 {
@@ -87,30 +122,48 @@ impl LibcResult<i64> for i64 {
         if *self < 0 { None } else { Some(*self) }
     }
     fn check_not_negative(&self) -> Result<i64> {
-        if *self < 0 { Err(Error::last_os_error()) } else { Ok(*self) }
+        check_not_negative(*self)
+    }
+    fn check_positive(&self) -> Result<i64> {
+        check_positive(*self)
+    }
+    fn check_minus_one(&self) -> Result<i64> {
+        check_minus_one(*self)
     }
 }
 
-// implementation for isize, sentinel = 0 (means end of file/buffer/... e.g. in read)
 impl LibcResult<isize> for isize {
     fn to_option(&self) -> Option<isize> {
         if *self <= 0 { None } else { Some(*self) }
     }
     fn check_not_negative(&self) -> Result<isize> {
-        if *self < 0 { Err(Error::last_os_error()) } else { Ok(*self) }
+        check_not_negative(*self)
+    }
+    fn check_positive(&self) -> Result<isize> {
+        check_positive(*self)
+    }
+    fn check_minus_one(&self) -> Result<isize> {
+        check_minus_one(*self)
     }
 }
 
-impl LibcResult<sighandler_t> for sighandler_t {
-    fn to_option(&self) -> Option<sighandler_t> {
+impl LibcResult<usize> for usize {
+    fn to_option(&self) -> Option<usize> {
         if *self == SIG_ERR { None } else { Some(*self) }
     }
-    fn check_not_negative(&self) -> Result<sighandler_t> {
-        if *self < 0 { Err(Error::last_os_error()) } else { Ok(*self) }
+    fn check_not_negative(&self) -> Result<usize> {
+        check_not_negative(*self)
+    }
+    fn check_positive(&self) -> Result<usize> {
+        check_positive(*self)
+    }
+    fn check_minus_one(&self) -> Result<usize> {
+        // usize is unsigned -> can never be minus one
+        Err(Error::from(std::io::ErrorKind::Other))
     }
 }
 
-
+// legacy, will go away
 impl<T> LibcResult<*mut T> for *mut T {
     fn to_option(&self) -> Option<*mut T> {
         if self.is_null() { None } else { Some(*self) }
@@ -118,11 +171,21 @@ impl<T> LibcResult<*mut T> for *mut T {
     fn check_not_negative(&self) -> Result<*mut T> {
         unimplemented!()
     }
+    fn check_positive(&self) -> Result<*mut T> {
+        unimplemented!();
+    }
+    fn check_minus_one(&self) -> Result<*mut T> {
+        unimplemented!();
+    }
 }
 
 impl<T> LibcPtrResult<*mut T> for *mut T {
     fn check_not_null(&self) -> Result<*mut T> {
-        if self.is_null() { Err(Error::last_os_error()) } else { Ok(*self) }
+        if self.is_null() {
+            Err(Error::last_os_error())
+        } else {
+            Ok(*self)
+        }
     }
 }
 
@@ -526,6 +589,13 @@ pub mod my_libc {
 
         #[cfg(not(target_os = "macos"))]
         pub static mut stdout: *mut FILE;
+
+        #[cfg(target_os = "macos")]
+        #[link_name = "__stdinp"]
+        pub static mut stdin: *mut FILE;
+
+        #[cfg(not(target_os = "macos"))]
+        pub static mut stdin: *mut FILE;
 
         pub fn times(arg1: *mut tms) -> clock_t;
 

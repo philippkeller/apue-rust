@@ -9,7 +9,7 @@
 ///   to fall back on `st_atime` and `st_atime_nsec`
 /// - from the rust function definition of `futimens` it was not clear that the
 ///   function takes an array of size two
-/// - there no way of changing the ctime with commandline tools to the past
+/// - there is no way of changing the ctime with commandline tools to the past
 ///   so we need to touch and then wait one second
 ///
 /// linux only:
@@ -38,9 +38,9 @@ fn main() {
         args.next(); // skip filename
         while let Some(filename) = args.next() {
             let filename = CString::new(filename).unwrap();
-            if let None = stat(filename.as_ptr(), &mut statbuf).to_option() {
+            if stat(filename.as_ptr(), &mut statbuf).check_not_negative().is_err() {
                 print_err!("{:?}: stat error", filename);
-            } else if let Some(fd) = open(filename.as_ptr(), O_RDWR | O_TRUNC).to_option() {
+            } else if let Ok(fd) = open(filename.as_ptr(), O_RDWR | O_TRUNC).check_not_negative() {
                 let times: [timespec; 2] = [timespec {
                                                 tv_sec: statbuf.st_atime,
                                                 tv_nsec: statbuf.st_atime_nsec,
@@ -50,7 +50,7 @@ fn main() {
                                                 tv_nsec: statbuf.st_mtime_nsec,
                                             }];
                 // reset times
-                if let None = futimens(fd, times.as_ptr() as *const _).to_option() {
+                if futimens(fd, times.as_ptr() as *const _).check_not_negative().is_err() {
                     print_err!("{:?}: futimens error", filename);
                 }
                 close(fd);

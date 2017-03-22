@@ -28,25 +28,23 @@ extern crate libc;
 extern crate apue;
 
 use libc::{mode_t, S_IXUSR, S_ISUID, S_IROTH, S_IRGRP, S_IWUSR, S_IRUSR, stat, chmod};
-use apue::{LibcResult, err_sys};
+use apue::LibcResult;
 
 fn main() {
     unsafe {
         let mut statbuf: stat = std::mem::uninitialized();
-        if let None = stat(cstr!("/tmp/foo"), &mut statbuf).to_option() {
-            err_sys("stat error for /tmp/foo");
-        }
-
+        stat(cstr!("/tmp/foo"), &mut statbuf)
+            .check_not_negative()
+            .expect("stat error for /tmp/foo");
         // turn on set-group-ID and turn off group-execute
-        if let None = chmod(cstr!("/tmp/foo"),
-                            (statbuf.st_mode & !S_IXUSR) | S_ISUID as mode_t)
-            .to_option() {
-            err_sys("chmod error for foo");
-        }
+        chmod(cstr!("/tmp/foo"),
+              (statbuf.st_mode & !S_IXUSR) | S_ISUID as mode_t)
+            .check_not_negative()
+            .expect("chmod error for foo");
 
         // set absolute mode to "rw-r--r--"
-        if let None = chmod(cstr!("/tmp/bar"), S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH).to_option() {
-            err_sys("chmod error for bar");
-        }
+        chmod(cstr!("/tmp/bar"), S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
+            .check_not_negative()
+            .expect("chmod error for bar");
     }
 }

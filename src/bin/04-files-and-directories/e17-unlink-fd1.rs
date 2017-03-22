@@ -31,7 +31,13 @@ const FILE_MODE: mode_t = S_IRUSR + S_IWUSR + S_IRGRP + S_IWGRP + S_IROTH + S_IW
 
 fn main() {
     let fd = unsafe {
-        unlink(cstr!("/dev/fd/1")).check_not_negative().or_else(|e| {println!("{}", e); Err(e)}).ok();
+        unlink(cstr!("/dev/fd/1"))
+            .check_not_negative()
+            .or_else(|e| {
+                println!("{}", e);
+                Err(e)
+            })
+            .ok();
         creat(cstr!("/dev/fd/1"), FILE_MODE).check_not_negative().expect("creat error")
     };
     println!("new fd: {}", fd);

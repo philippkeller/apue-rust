@@ -37,7 +37,8 @@ fn main() {
         assert!(!dp.is_null(), "can't open root dir");
         readdir(dp).check_not_null().ok(); // just read one entry and discard it
         pr_flags(dfd);
-        let fd = open(cstr!("/"), O_RDONLY).check_not_negative().expect("cannot open root for reading");
+        let fd =
+            open(cstr!("/"), O_RDONLY).check_not_negative().expect("cannot open root for reading");
         pr_flags(fd);
         close(fd);
         closedir(dp);

@@ -1,7 +1,4 @@
 /// Figure 10.22 Protecting a critical region from a signal
-///
-/// Takeaway: this is the first place where to_option() is wrong, as we
-/// explicetly expect a -1 from sigsuspend
 
 extern crate libc;
 extern crate apue;

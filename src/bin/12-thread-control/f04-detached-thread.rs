@@ -10,14 +10,17 @@ extern crate libc;
 extern crate apue;
 
 use libc::{c_void, PTHREAD_CREATE_DETACHED};
-use libc::{pthread_create, pthread_attr_destroy, pthread_attr_init, pthread_attr_setdetachstate, usleep};
+use libc::{pthread_create, pthread_attr_destroy, pthread_attr_init, pthread_attr_setdetachstate,
+           usleep};
 
 extern "C" fn my_thread(_: *mut c_void) -> *mut c_void {
     println!("called!");
     0 as _
 }
 
-unsafe fn makethread(func: extern "C" fn(*mut c_void) -> *mut c_void, arg:*mut c_void) -> Result<i32, i32> {
+unsafe fn makethread(func: extern "C" fn(*mut c_void) -> *mut c_void,
+                     arg: *mut c_void)
+                     -> Result<i32, i32> {
     let (mut attr, mut tid) = std::mem::uninitialized();
     let err = pthread_attr_init(&mut attr);
     if err != 0 {

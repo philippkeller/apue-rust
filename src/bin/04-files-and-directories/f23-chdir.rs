@@ -8,9 +8,9 @@ extern crate libc;
 extern crate apue;
 
 use libc::chdir;
-use apue::{LibcResult};
+use apue::LibcResult;
 
 fn main() {
-    unsafe {chdir(cstr!("/tmp"))}.check_not_negative().expect("chdir failed");
+    unsafe { chdir(cstr!("/tmp")) }.check_not_negative().expect("chdir failed");
     println!("chdir to /tmp succeeded");
 }

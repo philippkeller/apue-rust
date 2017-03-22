@@ -4,7 +4,6 @@
 /// immediately firing ^\ results in only one echo of "caught SIGQUIT"
 ///
 /// test.py doesn't handle the following lines correctly (yet), -> only in // and not in ///:
-//
 // $ f15-sigpending &
 // $ pkill -SIGQUIT f15-sigpending && sleep 2 && pkill -SIGQUIT f15-sigpending
 // SIGQUIT pending

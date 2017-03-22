@@ -22,6 +22,7 @@ errno = "*"
 clap = "*"
 regex = "*"
 rand = "*"
+num = "*"
 
 [build-dependencies]
 gcc = { version = "0.3", features = ["parallel"] }
@@ -119,8 +120,8 @@ name="f16-unlink"
 path = "src/bin/04-files-and-directories/f16-unlink.rs"
 
 [[bin]]
-name="f21-futimes"
-path = "src/bin/04-files-and-directories/f21-futimes.rs"
+name="f21-futimens"
+path = "src/bin/04-files-and-directories/f21-futimens.rs"
 
 [[bin]]
 name="f22-path-traversal"

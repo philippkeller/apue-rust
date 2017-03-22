@@ -36,9 +36,7 @@ fn main() {
         unsafe {
             let mut buf: stat = std::mem::uninitialized();
             let s = CString::new(filename).unwrap();
-            if let None = lstat(s.as_ptr(), &mut buf).to_option() {
-                panic!("lstat error: {}", errno::errno());
-            }
+            lstat(s.as_ptr(), &mut buf).check_not_negative().expect("lstat error");
             let a: mode_t = buf.st_mode & S_IFMT;
             let t = match a {
                 S_IFREG => "regular",

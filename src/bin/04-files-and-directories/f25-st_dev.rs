@@ -19,7 +19,7 @@ fn main() {
     let mut buf: stat = unsafe { std::mem::uninitialized() };
     while let Some(a) = ar.next() {
         print!("{}: ", a);
-        if unsafe{stat(cstr!(a), &mut buf)}.check_not_negative().is_err() {
+        if unsafe { stat(cstr!(a), &mut buf) }.check_not_negative().is_err() {
             err_sys("stat error");
             continue;
         }

@@ -9,25 +9,22 @@
 /// cwd = "/run"
 
 extern crate libc;
+#[macro_use(cstr)]
 extern crate apue;
 extern crate clap;
 
 use libc::{chdir, getcwd};
 use std::ffi::CString;
-use apue::{LibcResult, err_sys, path_alloc};
+use apue::{LibcResult, LibcPtrResult, path_alloc};
 use clap::App;
 
 fn main() {
     unsafe {
         let matches = App::new("fcntl").args_from_usage("<path> path/to/cd/to").get_matches();
         let path = matches.value_of("path").unwrap();
-        if let None = chdir(CString::new(path).unwrap().as_ptr()).to_option() {
-            err_sys("chdir failed");
-        }
+        chdir(cstr!(path)).check_not_negative().expect("chdir failed");
         let mut buf = path_alloc();
-        if let None = getcwd(buf.as_mut_ptr(), buf.capacity()).to_option() {
-            err_sys("getcwd failed");
-        }
+        getcwd(buf.as_mut_ptr(), buf.capacity()).check_not_null().expect("getcwd failed");
         println!("cwd = {:?}", CString::from_raw(buf.as_mut_ptr()));
     }
 }

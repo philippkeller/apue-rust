@@ -46,7 +46,7 @@ extern crate libc;
 extern crate apue;
 
 use libc::{open, sleep, unlink, c_int};
-use apue::{LibcResult};
+use apue::LibcResult;
 
 const O_RDWR: c_int = 2; // taken from /usr/include/sys/fcntl.h
 

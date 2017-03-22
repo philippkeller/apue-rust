@@ -39,14 +39,14 @@ fn main() {
             if buf[len - 1] == '\n' as _ {
                 buf[len - 1] = 0;
             }
-            if let Some(pid) = fork().to_option() {
+            if let Ok(pid) = fork().check_not_negative() {
                 if pid == 0 {
                     // child
                     execlp(as_char!(buf), as_char!(buf), 0);
                     panic!("could not execute {}", array_to_string(&buf));
                 } else {
                     // parent
-                    if let Some(_) = waitpid(pid, &mut status, 0).to_option() {
+                    if waitpid(pid, &mut status, 0).check_not_negative().is_ok() {
                         printf(cstr!("%% "));
                     } else {
                         panic!("waitpid error");

@@ -129,8 +129,9 @@ unsafe fn myftw(cnt: &mut Counter) {
         }
         let mut statbuf: stat = std::mem::uninitialized();
         if lstat(CString::new(filename.to_owned()).unwrap().as_ptr(),
-                            &mut statbuf)
-            .check_not_negative().is_err() {
+                 &mut statbuf)
+            .check_not_negative()
+            .is_err() {
             cnt.count_other(&filename, FileType::FileCannotStat);
             continue;
         }

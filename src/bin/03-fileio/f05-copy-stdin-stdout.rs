@@ -101,7 +101,7 @@ use std::io::Write;
 
 fn main() {
     let args = std::env::args();
-    let buffsize: usize = if args.len() == 2 {
+    let buffsize = if args.len() == 2 {
         let args: Vec<String> = args.collect();
         args[1].parse::<usize>().expect("arg needs to be a number")
     } else {
@@ -110,7 +110,7 @@ fn main() {
     unsafe {
         let mut num_loops = 0;
         let buf = vec![0; buffsize];
-        while let Some(n) = read(STDIN_FILENO, as_void!(buf), buffsize).to_option() {
+        while let Ok(n) = read(STDIN_FILENO, as_void!(buf), buffsize).check_positive() {
             assert!(write(STDOUT_FILENO, as_void!(buf), n as _) == n,
                     "write error");
             num_loops += 1;
