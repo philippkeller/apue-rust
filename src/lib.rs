@@ -71,7 +71,9 @@ pub trait LibcResult<T> {
     fn to_option(&self) -> Option<T>;
     fn check_not_negative(&self) -> Result<T>;
     fn check_positive(&self) -> Result<T>;
-    fn check_minus_one(&self) -> Result<T>;
+    /// verify that the command exited with -1, if true, then last error
+    /// is wrapped into Ok(last_error)
+    fn check_minus_one(&self) -> Result<i32>;
 }
 
 pub trait LibcPtrResult<T> {
@@ -95,11 +97,11 @@ fn check_not_negative<N: num::Num + PartialOrd + Copy>(val:N) -> Result<N> {
     }
 }
 
-fn check_minus_one<N: num::Num + PartialOrd + Copy + Signed>(val:N) -> Result<N> {
+fn check_minus_one<N: num::Num + PartialOrd + Copy + Signed>(val:N) -> Result<i32> {
     if val.is_negative() && val.abs() == N::one() {
-        Err(Error::from(std::io::ErrorKind::Other))
+        Ok(errno::errno().0)
     } else {
-        Ok(val)
+        Err(Error::from(std::io::ErrorKind::Other))
     }
 }
 
@@ -127,7 +129,7 @@ impl LibcResult<i64> for i64 {
     fn check_positive(&self) -> Result<i64> {
         check_positive(*self)
     }
-    fn check_minus_one(&self) -> Result<i64> {
+    fn check_minus_one(&self) -> Result<i32> {
         check_minus_one(*self)
     }
 }
@@ -142,7 +144,7 @@ impl LibcResult<isize> for isize {
     fn check_positive(&self) -> Result<isize> {
         check_positive(*self)
     }
-    fn check_minus_one(&self) -> Result<isize> {
+    fn check_minus_one(&self) -> Result<i32> {
         check_minus_one(*self)
     }
 }
@@ -157,9 +159,8 @@ impl LibcResult<usize> for usize {
     fn check_positive(&self) -> Result<usize> {
         check_positive(*self)
     }
-    fn check_minus_one(&self) -> Result<usize> {
-        // usize is unsigned -> can never be minus one
-        Err(Error::from(std::io::ErrorKind::Other))
+    fn check_minus_one(&self) -> Result<i32> {
+        unimplemented!();
     }
 }
 
@@ -174,7 +175,7 @@ impl<T> LibcResult<*mut T> for *mut T {
     fn check_positive(&self) -> Result<*mut T> {
         unimplemented!();
     }
-    fn check_minus_one(&self) -> Result<*mut T> {
+    fn check_minus_one(&self) -> Result<i32> {
         unimplemented!();
     }
 }

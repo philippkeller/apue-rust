@@ -30,12 +30,8 @@ const RWRWRW: mode_t = (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOT
 fn main() {
     unsafe {
         umask(0);
-        if let None = creat(cstr!("/tmp/foo"), RWRWRW).to_option() {
-            panic!("creat error for /tmp/foo");
-        }
+        creat(cstr!("/tmp/foo"), RWRWRW).check_not_negative().expect("creat error for /tmp/foo");
         umask(S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
-        if let None = creat(cstr!("/tmp/bar"), RWRWRW).to_option() {
-            panic!("creat error for /tmp/bar");
-        }
+        creat(cstr!("/tmp/bar"), RWRWRW).check_not_negative().expect("creat error for /tmp/bar");
     }
 }

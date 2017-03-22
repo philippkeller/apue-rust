@@ -27,17 +27,15 @@ fn main() {
         sigaddset(&mut newmask, SIGINT);
 
         // Block SIGINT and save current signal mask
-        sigprocmask(SIG_BLOCK, &newmask, &mut oldmask).to_option().expect("SIG_BLOCK error");
+        sigprocmask(SIG_BLOCK, &newmask, &mut oldmask).check_not_negative().expect("SIG_BLOCK error");
         // Critical region of code
         pr_mask("in critical region: ");
         // Pause, allowing all signals except SIGUSR1
-        if sigsuspend(&waitmask) != -1 {
-            panic!("sigsuspend error");
-        }
+        sigsuspend(&waitmask).check_minus_one().expect("sigsuspend error");
         pr_mask("after return from sigsuspend: ");
         // reset signal mask which unblocks SIGINT
         sigprocmask(SIG_SETMASK, &oldmask, std::ptr::null_mut())
-            .to_option()
+            .check_not_negative()
             .expect("SIG_SETMASK error");
         pr_mask("program exit: ");
     }
