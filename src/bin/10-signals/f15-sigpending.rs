@@ -34,16 +34,16 @@ fn main() {
         let (mut newmask, mut oldmask, mut pendmask) = std::mem::uninitialized();
         sigemptyset(&mut newmask);
         sigaddset(&mut newmask, SIGQUIT);
-        sigprocmask(SIG_BLOCK, &newmask, &mut oldmask).to_option().expect("SIG_BLOCK error");
+        sigprocmask(SIG_BLOCK, &newmask, &mut oldmask).check_not_negative().expect("SIG_BLOCK error");
         sleep(2); // time to send SIGQUIT -> will remain pending
-        sigpending(&mut pendmask).to_option().expect("sigpending error");
+        sigpending(&mut pendmask).check_not_negative().expect("sigpending error");
         if sigismember(&pendmask, SIGQUIT) == 1 {
             println!("SIGQUIT pending");
         }
 
         // restore signal mask which unblocks SIGQUIT
         sigprocmask(SIG_SETMASK, &oldmask, std::ptr::null_mut())
-            .to_option()
+            .check_not_negative()
             .expect("SIG_SETMASK error");
         println!("SIGQUIT unblocked");
         sleep(2); // <-- SIGQUIT will hit here with core dump

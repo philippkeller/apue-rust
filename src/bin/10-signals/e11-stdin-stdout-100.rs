@@ -40,22 +40,22 @@ fn exceed_filesize_limit(_: c_int) {
 
 fn main() {
     let buffsize = 100;
+    signal_intr(SIGXFSZ, exceed_filesize_limit).expect("can't set SIGXFSZ");
+    let mut num_loops = 0;
+    let limit = rlimit {
+        rlim_cur: 1000,
+        rlim_max: 1000,
+    };
     unsafe {
-        signal_intr(SIGXFSZ, exceed_filesize_limit).to_option().expect("can't set SIGXFSZ");
-        let mut num_loops = 0;
-        let limit = rlimit {
-            rlim_cur: 1000,
-            rlim_max: 1000,
-        };
         setrlimit(RLIMIT_FSIZE, &limit);
         let buf = vec![0; buffsize];
-        while let Some(n) = read(STDIN_FILENO, as_void!(buf), buffsize).to_option() {
+        while let Ok(n) = read(STDIN_FILENO, as_void!(buf), buffsize).check_positive() {
             if write(STDOUT_FILENO, as_void!(buf), n as _) != n {
                 println!("write error: {}", errno());
                 break;
             }
             num_loops += 1;
         }
-        writeln!(&mut std::io::stderr(), "total loops: {}", num_loops).unwrap();
     }
+    writeln!(&mut std::io::stderr(), "total loops: {}", num_loops).unwrap();
 }

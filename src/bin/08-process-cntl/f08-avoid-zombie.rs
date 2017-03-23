@@ -13,10 +13,10 @@ use apue::{LibcResult, err_sys};
 
 // separate function to avoid one indent because of the unsafe block
 unsafe fn doit() {
-    let pid = fork().to_option().expect("fork error");
+    let pid = fork().check_not_negative().expect("fork error");
     match pid {
         0 => {
-            let pid = fork().to_option().expect("fork error");
+            let pid = fork().check_not_negative().expect("fork error");
             if pid > 0 {
                 // parent from second fork == first child
                 exit(0);

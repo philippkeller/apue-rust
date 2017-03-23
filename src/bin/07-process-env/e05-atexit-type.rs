@@ -1,5 +1,11 @@
 /// Exercise 7.5: Use the typedef facility of C to define a new data type Exitfunc for an exit
 /// handler. Redo the prototype for atexit using this data type.
+///
+/// $ e05-atexit-type
+/// main is done
+/// first exit handler
+/// first exit handler
+/// second exit handler
 
 extern crate libc;
 #[macro_use(cstr)]
@@ -11,8 +17,8 @@ use libc::{atexit, printf};
 
 type Exitfunc = extern "C" fn();
 
-fn my_atexit(f: Exitfunc) -> Option<i32> {
-    unsafe { atexit(f).to_option() }
+fn my_atexit(f: Exitfunc) -> std::io::Result<i32> {
+    unsafe { atexit(f).check_not_negative() }
 }
 
 extern "C" fn my_exit1() {

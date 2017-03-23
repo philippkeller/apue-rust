@@ -26,6 +26,7 @@
 // $ sudo accton /var/account/acct
 // .. do a few commands
 // $ f29-acdata /var/account/acct
+// $ sudo accton # disable
 #[macro_use(cstr)]
 extern crate apue;
 extern crate libc;
@@ -34,7 +35,7 @@ use libc::{fopen, fread, c_char, c_ushort, c_uint, c_void, ferror};
 #[cfg(target_os = "macos")]
 use libc::{c_uchar, c_int};
 
-use apue::{LibcResult, err_sys, array_to_string};
+use apue::{LibcPtrResult, err_sys, array_to_string};
 
 const AFORK: u8 = 0x01; // fork'd but not exec'd
 const ASU: u8 = 0x02; // used super-user permissions
@@ -110,7 +111,7 @@ fn main() {
         }
         let fname = args.next_back().unwrap();
         let fp = fopen(cstr!(fname.clone()), cstr!("r"))
-            .to_option()
+            .check_not_null()
             .expect(&format!("can't open {}", fname));
         let mut acdata: acct = std::mem::zeroed();
         while fread(&mut acdata as *mut _ as *mut c_void,

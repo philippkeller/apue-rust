@@ -28,15 +28,9 @@ extern "C" fn my_exit2() {
 
 fn main() {
     unsafe {
-        atexit(my_exit2)
-            .to_option()
-            .expect(&format!("can't register my_exit2: {}", errno::errno()));
-        atexit(my_exit1)
-            .to_option()
-            .expect(&format!("can't register my_exit1: {}", errno::errno()));
-        atexit(my_exit1)
-            .to_option()
-            .expect(&format!("can't register my_exit1: {}", errno::errno()));
+        atexit(my_exit2).check_not_negative().expect("can't register my_exit2");
+        atexit(my_exit1).check_not_negative().expect("can't register my_exit1");
+        atexit(my_exit1).check_not_negative().expect("can't register my_exit1");
         println!("main is done");
     }
 }

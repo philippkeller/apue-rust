@@ -389,16 +389,16 @@ pub unsafe fn system2(cmdstring: &str) -> std::result::Result<i32, String> {
 
 // Figure 10.19: The signal_intr function, same as signal() above
 // with the only difference that no system call is restarted
-pub unsafe fn signal_intr(signo: i32, func: fn(c_int)) -> usize {
-    let mut act: sigaction = zeroed();
-    let mut oact: sigaction = uninitialized();
-    act.sa_sigaction = func as usize;
-    sigemptyset(&mut act.sa_mask);
-    act.sa_flags = 0;
-    if sigaction(signo, &act, &mut oact) < 0 {
-        SIG_ERR
-    } else {
-        oact.sa_sigaction as usize
+pub fn signal_intr(signo: i32, func: fn(c_int)) -> Result<usize> {
+    unsafe {
+        let mut act: sigaction = zeroed();
+        let mut oact: sigaction = uninitialized();
+        act.sa_sigaction = func as usize;
+        sigemptyset(&mut act.sa_mask);
+        act.sa_flags = 0;
+
+        sigaction(signo, &act, &mut oact).check_not_negative()?;
+        Ok(oact.sa_sigaction as usize)
     }
 }
 

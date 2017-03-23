@@ -43,7 +43,7 @@ fn pr_conf(key: &str, path: &str, name: i32) {
                        key)
             }
         };
-        if let Some(val) = res.to_option() {
+        if let Ok(val) = res.check_not_negative() {
             printf(cstr!(" %ld\n"), val);
         } else {
             let e = errno();

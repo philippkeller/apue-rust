@@ -16,7 +16,7 @@ extern crate libc;
 #[macro_use(cstr)]
 extern crate apue;
 
-use apue::{array_to_string, LibcResult};
+use apue::{array_to_string, LibcResult, LibcPtrResult};
 use apue::my_libc::readdir;
 use libc::{opendir, closedir};
 
@@ -25,9 +25,9 @@ fn main() {
     unsafe {
         let dp = opendir(cstr!(dir.clone()));
         assert!(!dp.is_null(), format!("can't open directory {:?}", dir));
-        while let Some(dirp) = readdir(dp).to_option() {
+        while let Ok(dirp) = readdir(dp).check_not_null() {
             println!("{}", array_to_string(&(*dirp).d_name));
         }
-        closedir(dp);
+        closedir(dp).check_not_negative().expect("closedir");
     }
 }
