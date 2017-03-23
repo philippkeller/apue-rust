@@ -3,32 +3,35 @@
 /// correctly.
 ///
 /// $ e02-dup2
-/// registering fd=1
-/// registering fd=3
-/// registering fd=4
+/// registered 3
+/// registered 4
+/// registered 5
 
 extern crate libc;
 extern crate apue;
 
-use libc::dup;
+use libc::{dup, close};
 use apue::LibcResult;
 
 unsafe fn dup2(fd1: i32, fd2: i32) {
     if fd2 < fd1 {
         panic!("the fd you want is already taken");
     }
-    let mut fd = fd1;
-    while fd < fd2 {
-        println!("registering fd={}", fd);
-        fd = match dup(fd1).to_option() {
-            Some(fd) => fd,
-            None => panic!("error calling dup"),
+    loop {
+        let fd = dup(fd1).check_not_negative().expect("error calling dup");
+        println!("registered {}", fd);
+        if fd >= fd2 {
+            break;
         }
     }
 }
 
 fn main() {
     unsafe {
-        dup2(1, 5);
+        // 3 is stderr, but why are 4 and 5 are already taken..?
+        close(3);
+        close(4);
+        close(5);
+        dup2(2, 5);
     }
 }

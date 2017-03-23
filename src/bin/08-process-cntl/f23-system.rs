@@ -25,10 +25,7 @@ use apue::{err_sys, pr_exit, system};
 
 fn main() {
     for cmd in ["date", "nosuchcommand", "who; exit 44"].into_iter() {
-        if let Some(status) = unsafe { system(cmd) } {
-            pr_exit(status);
-        } else {
-            err_sys(&format!("{} error", cmd));
-        }
+        let status = system(cmd).expect("system error");
+        pr_exit(status);
     }
 }

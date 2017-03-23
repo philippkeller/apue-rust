@@ -28,26 +28,25 @@ fn main() {
         let matches =
             App::new("fcntl").args_from_usage("<descr> id of the descriptor").get_matches();
         let desc = value_t!(matches.value_of("descr"), u8).unwrap_or_else(|e| e.exit());
-        if let Some(val) = fcntl(desc as _, F_GETFL, 0).to_option() {
-            let mode = match val & O_ACCMODE {
-                O_RDONLY => "read only",
-                O_WRONLY => "write only",
-                O_RDWR => "read write",
-                _ => "unknown access mode",
-            };
-            print!("{}", mode);
-            if val & O_APPEND > 0 {
-                print!(", append");
-            }
-            if val & O_NONBLOCK > 0 {
-                print!(", nonblocking");
-            }
-            if val & O_SYNC > 0 {
-                print!(", synchronous writes");
-            }
-            println!("");
-        } else {
-            panic!("fcntl error for fd {}", desc);
+        let val = fcntl(desc as _, F_GETFL, 0)
+            .check_not_negative()
+            .expect(&format!("fcntl error for fd {}", desc));
+        let mode = match val & O_ACCMODE {
+            O_RDONLY => "read only",
+            O_WRONLY => "write only",
+            O_RDWR => "read write",
+            _ => "unknown access mode",
+        };
+        print!("{}", mode);
+        if val & O_APPEND > 0 {
+            print!(", append");
         }
+        if val & O_NONBLOCK > 0 {
+            print!(", nonblocking");
+        }
+        if val & O_SYNC > 0 {
+            print!(", synchronous writes");
+        }
+        println!("");
     }
 }

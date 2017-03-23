@@ -12,30 +12,17 @@
 extern crate libc;
 #[macro_use(cstr)]
 extern crate apue;
-extern crate errno;
-extern crate clap;
 
 use libc::{SEEK_SET, fopen, fseek, fputs};
-use errno::errno;
-use apue::LibcResult;
-use clap::App;
-use std::ffi::CString;
+use apue::{LibcResult, LibcPtrResult};
 
 fn main() {
-    let matches = App::new("e06")
-        .args_from_usage("<file> path to file to be opened for read/write/seek")
-        .get_matches();
-    let file = matches.value_of("file").unwrap();
     unsafe {
-        if let Some(f) = fopen(CString::new(file).unwrap().as_ptr(), cstr!("r+")).to_option() {
-            if let Some(_) = fseek(f, 3, SEEK_SET).to_option() {
-                fputs(cstr!("hansaplast!") as _, f);
-            } else {
-                panic!("fseek exited with '{}'", errno());
-            }
-        } else {
-            panic!("fopen exited with '{}'", errno());
-        }
-
+        let file = std::env::args()
+            .next_back()
+            .expect("specify path to file to be opened for read/write/seek");
+        let f = fopen(cstr!(file), cstr!("r+")).check_not_null().expect("fopen failed");
+        fseek(f, 3, SEEK_SET).check_not_negative().expect("fseek failed");
+        fputs(cstr!("hansaplast!") as _, f);
     }
 }

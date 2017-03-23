@@ -14,7 +14,7 @@ use libc::{STDIN_FILENO, SEEK_CUR, lseek};
 use apue::LibcResult;
 
 fn main() {
-    if let Some(_) = unsafe { lseek(STDIN_FILENO, 0, SEEK_CUR).to_option() } {
+    if unsafe { lseek(STDIN_FILENO, 0, SEEK_CUR).check_not_negative() }.is_ok() {
         println!("seek OK");
     } else {
         println!("cannot seek");

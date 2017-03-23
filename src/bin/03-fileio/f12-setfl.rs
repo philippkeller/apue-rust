@@ -30,20 +30,15 @@ use libc::{F_GETFL, F_SETFL, O_NONBLOCK, fcntl};
 use clap::App;
 use apue::LibcResult;
 
-unsafe fn get_fl(fd: i32) -> Option<i32> {
-    return fcntl(fd, F_GETFL, 0).to_option();
+unsafe fn get_fl(fd: i32) -> std::io::Result<i32> {
+    return fcntl(fd, F_GETFL, 0).check_not_negative();
 }
 
 unsafe fn set_fl(fd: i32, flags: i32) {
-    if let Some(val) = get_fl(fd) {
-        println!("current flags: {:b}", val);
-        let val = val | flags;
-        if let None = fcntl(fd, F_SETFL, val).to_option() {
-            panic!("fcntl F_SETFL error");
-        }
-    } else {
-        panic!("fcntl F_GETFL error");
-    }
+    let val = get_fl(fd).expect("fcntl F_GETFL error");
+    println!("current flags: {:b}", val);
+    let val = val | flags;
+    fcntl(fd, F_SETFL, val).check_not_negative().expect("fcntl F_SETFL error");
 }
 
 fn main() {

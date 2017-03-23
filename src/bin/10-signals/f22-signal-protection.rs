@@ -27,7 +27,9 @@ fn main() {
         sigaddset(&mut newmask, SIGINT);
 
         // Block SIGINT and save current signal mask
-        sigprocmask(SIG_BLOCK, &newmask, &mut oldmask).check_not_negative().expect("SIG_BLOCK error");
+        sigprocmask(SIG_BLOCK, &newmask, &mut oldmask)
+            .check_not_negative()
+            .expect("SIG_BLOCK error");
         // Critical region of code
         pr_mask("in critical region: ");
         // Pause, allowing all signals except SIGUSR1

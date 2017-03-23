@@ -34,7 +34,9 @@ fn main() {
         let (mut newmask, mut oldmask, mut pendmask) = std::mem::uninitialized();
         sigemptyset(&mut newmask);
         sigaddset(&mut newmask, SIGQUIT);
-        sigprocmask(SIG_BLOCK, &newmask, &mut oldmask).check_not_negative().expect("SIG_BLOCK error");
+        sigprocmask(SIG_BLOCK, &newmask, &mut oldmask)
+            .check_not_negative()
+            .expect("SIG_BLOCK error");
         sleep(2); // time to send SIGQUIT -> will remain pending
         sigpending(&mut pendmask).check_not_negative().expect("sigpending error");
         if sigismember(&pendmask, SIGQUIT) == 1 {

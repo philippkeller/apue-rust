@@ -56,17 +56,7 @@ macro_rules! print_err {
     )
 }
 
-/// turn libc result into an option
 pub trait LibcResult<T> {
-    /// returns None if the result is empty (-1 if an integer, Null if a pointer)
-    /// and Some otherwise
-    ///
-    /// # Example
-    /// if let Some(fd) = libc::creat(fd1, FILE_MODE).to_option() {
-    ///     fd
-    /// } else {
-    ///     panic!("{}", io::Error::last_os_error());
-    /// }
     #[deprecated(since="0.0.2", note="please use `check_*` instead")]
     fn to_option(&self) -> Option<T>;
     fn check_not_negative(&self) -> Result<T>;
@@ -80,7 +70,7 @@ pub trait LibcPtrResult<T> {
     fn check_not_null(&self) -> Result<T>;
 }
 
-fn check_positive<N: num::Num + PartialOrd + Copy>(val:N) -> Result<N> {
+fn check_positive<N: num::Num + PartialOrd + Copy>(val: N) -> Result<N> {
     if val < N::zero() {
         Err(Error::last_os_error())
     } else if val == N::zero() {
@@ -89,7 +79,7 @@ fn check_positive<N: num::Num + PartialOrd + Copy>(val:N) -> Result<N> {
         Ok(val)
     }
 }
-fn check_not_negative<N: num::Num + PartialOrd + Copy>(val:N) -> Result<N> {
+fn check_not_negative<N: num::Num + PartialOrd + Copy>(val: N) -> Result<N> {
     if val < N::zero() {
         Err(Error::last_os_error())
     } else {
@@ -97,7 +87,7 @@ fn check_not_negative<N: num::Num + PartialOrd + Copy>(val:N) -> Result<N> {
     }
 }
 
-fn check_minus_one<N: num::Num + PartialOrd + Copy + Signed>(val:N) -> Result<i32> {
+fn check_minus_one<N: num::Num + PartialOrd + Copy + Signed>(val: N) -> Result<i32> {
     if val.is_negative() && val.abs() == N::one() {
         Ok(errno::errno().0)
     } else {
@@ -317,8 +307,9 @@ pub unsafe fn signal(signo: i32, func: fn(c_int)) -> usize {
 }
 
 // Figure 8.22 The system function, without signal handling
-pub unsafe fn system(cmdstring: &str) -> Option<i32> {
-    if let Some(pid) = fork().to_option() {
+pub fn system(cmdstring: &str) -> Result<i32> {
+    unsafe {
+        let pid = fork().check_not_negative()?;
         match pid {
             0 => {
                 // child
@@ -334,56 +325,56 @@ pub unsafe fn system(cmdstring: &str) -> Option<i32> {
                 let mut status = 0;
                 while waitpid(pid, &mut status, 0) < 0 {
                     if errno::errno().0 != EINTR {
-                        return None;
+                        return Err(Error::from_raw_os_error(errno::errno().0));
                     }
                 }
-                return Some(status);
+                Ok(status)
             }
         }
-    } else {
-        return None;
     }
 }
 
 
 // Figure 10.28 Correct POSIX.1 implementation of system function
 // (with signal handling)
-pub unsafe fn system2(cmdstring: &str) -> std::result::Result<i32, String> {
-    let mut ignore: sigaction = std::mem::zeroed();
-    let (mut saveintr, mut savemask, mut savequit) = uninitialized();
-    ignore.sa_sigaction = SIG_IGN; // ignore SIGINT and SIGQUIT
-    sigemptyset(&mut ignore.sa_mask);
-    ignore.sa_flags = 0;
-    sigaction(SIGINT, &ignore, &mut saveintr).to_option().ok_or("sigaction error")?;
-    sigaction(SIGQUIT, &ignore, &mut savequit).to_option().ok_or("sigaction error")?;
-    let mut chldmask = uninitialized();
-    sigemptyset(&mut chldmask);
-    sigaddset(&mut chldmask, SIGCHLD);
-    sigprocmask(SIG_BLOCK, &chldmask, &mut savemask).to_option().ok_or("sigprocmask error")?;
+pub unsafe fn system2(cmdstring: &str) -> Result<i32> {
+    unsafe {
+        let mut ignore: sigaction = std::mem::zeroed();
+        let (mut saveintr, mut savemask, mut savequit) = uninitialized();
+        ignore.sa_sigaction = SIG_IGN; // ignore SIGINT and SIGQUIT
+        sigemptyset(&mut ignore.sa_mask);
+        ignore.sa_flags = 0;
+        sigaction(SIGINT, &ignore, &mut saveintr).check_not_negative()?;
+        sigaction(SIGQUIT, &ignore, &mut savequit).check_not_negative()?;
+        let mut chldmask = uninitialized();
+        sigemptyset(&mut chldmask);
+        sigaddset(&mut chldmask, SIGCHLD);
+        sigprocmask(SIG_BLOCK, &chldmask, &mut savemask).check_not_negative()?;
 
-    let pid = fork().to_option().ok_or("fork error")?;
-    let mut status = 0;
-    if pid == 0 {
-        sigaction(SIGINT, &mut saveintr, null_mut());
-        sigaction(SIGQUIT, &mut savequit, null_mut());
-        sigprocmask(SIG_SETMASK, &mut savemask, null_mut());
-        execl(cstr!("/bin/sh"),
-              cstr!("sh"),
-              cstr!("-c"),
-              cstr!(cmdstring),
-              0 as *const c_char);
-        _exit(127); // exec error
-    } else {
-        while waitpid(pid, &mut status, 0) < 0 {
-            if errno::errno().0 != EINTR {
-                return Err(format!("waitpid error, got error {:?}", errno::errno()));
+        let pid = fork().check_not_negative()?;
+        let mut status = 0;
+        if pid == 0 {
+            sigaction(SIGINT, &mut saveintr, null_mut());
+            sigaction(SIGQUIT, &mut savequit, null_mut());
+            sigprocmask(SIG_SETMASK, &mut savemask, null_mut());
+            execl(cstr!("/bin/sh"),
+                  cstr!("sh"),
+                  cstr!("-c"),
+                  cstr!(cmdstring),
+                  0 as *const c_char);
+            _exit(127); // exec error
+        } else {
+            while waitpid(pid, &mut status, 0) < 0 {
+                if errno::errno().0 != EINTR {
+                    return Err(Error::from_raw_os_error(errno::errno().0));
+                }
             }
         }
+        sigaction(SIGINT, &saveintr, null_mut()).check_not_negative()?;
+        sigaction(SIGQUIT, &savequit, null_mut()).check_not_negative()?;
+        sigprocmask(SIG_SETMASK, &savemask, null_mut()).check_not_negative()?;
+        Ok(status)
     }
-    sigaction(SIGINT, &saveintr, null_mut()).to_option().ok_or("sigaction error")?;
-    sigaction(SIGQUIT, &savequit, null_mut()).to_option().ok_or("sigaction error")?;
-    sigprocmask(SIG_SETMASK, &savemask, null_mut()).to_option().ok_or("sigprocmask error")?;
-    Ok(status)
 }
 
 
