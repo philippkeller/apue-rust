@@ -20,7 +20,7 @@ fn main() {
         sigemptyset(&mut sigs);
         sigaddset(&mut sigs, SIGINT);
         sigprocmask(SIG_SETMASK, &sigs, std::ptr::null_mut())
-            .to_option()
+            .check_not_negative()
             .expect("couldn't set signals");
         pr_mask("after setting mask:");
     }

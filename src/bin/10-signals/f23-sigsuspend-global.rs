@@ -63,7 +63,7 @@ fn main() {
         sigemptyset(&mut newmask);
         sigaddset(&mut newmask, SIGQUIT);
         // Block SIGQUIT and save current signal mask
-        sigprocmask(SIG_BLOCK, &newmask, &mut oldmask).to_option().expect("SIG_BLOCK error");
+        sigprocmask(SIG_BLOCK, &newmask, &mut oldmask).check_not_negative().expect("SIG_BLOCK error");
 
         // here comes the AtomicBool into play which goes sure that whenever
         // QUITFLAG becomes false it is immediately set to true again
@@ -73,7 +73,7 @@ fn main() {
             sigsuspend(&zeromask);
         }
         sigprocmask(SIG_SETMASK, &oldmask, std::ptr::null_mut())
-            .to_option()
+            .check_not_negative()
             .expect("SIG_SETMASK error");
     }
 }

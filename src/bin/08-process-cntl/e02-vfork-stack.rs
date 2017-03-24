@@ -19,7 +19,7 @@ use apue::LibcResult;
 use libc::sleep;
 
 fn callme() {
-    let pid = unsafe { vfork() }.to_option().expect("vfork failed");
+    let pid = unsafe { vfork() }.check_not_negative().expect("vfork failed");
     let b = 2;
     match pid {
         0 => {

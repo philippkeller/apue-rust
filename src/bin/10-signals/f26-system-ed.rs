@@ -55,8 +55,8 @@ fn sig_chld(_: c_int) {
 
 fn main() {
     unsafe {
-        signal(SIGINT, sig_int as usize).to_option().expect("signal(SIGINT) error");
-        signal(SIGCHLD, sig_chld as usize).to_option().expect("signal(SIGCHLD) error");
+        signal(SIGINT, sig_int as usize).check_not_sigerr().expect("signal(SIGINT) error");
+        signal(SIGCHLD, sig_chld as usize).check_not_sigerr().expect("signal(SIGCHLD) error");
         system("/bin/ed").expect("system() error");
     }
 }

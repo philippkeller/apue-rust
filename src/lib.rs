@@ -2,7 +2,7 @@ extern crate libc;
 extern crate errno;
 extern crate num;
 
-use libc::{c_int, c_char, dev_t, utsname, sigset_t, sighandler_t, PATH_MAX, SA_RESTART, EINTR};
+use libc::{c_int, c_char, dev_t, utsname, sigset_t, PATH_MAX, SA_RESTART, EINTR};
 use libc::{SIG_ERR, SIG_BLOCK, SIG_IGN, SIG_SETMASK, SIGALRM, SIGINT, SIGUSR1, SIGQUIT, SIGCHLD};
 use libc::{WSTOPSIG, WEXITSTATUS, WIFSTOPPED, WCOREDUMP, WTERMSIG, WIFSIGNALED, WIFEXITED};
 use libc::{exit, _exit, sigemptyset, sigaddset, sigaction, sigismember, fork, waitpid};
@@ -12,7 +12,7 @@ use std::ffi::CStr;
 use std::mem::{zeroed, uninitialized};
 use std::ptr::{null, null_mut};
 use std::io::{Result, Error};
-use num::{Num, Zero, One, Signed};
+use num::{Signed, NumCast};
 
 /// Turns a str into a c string. Warning: the cstring only lives as long the
 /// str lives. Don't e.g. assign the return value to a variable!
@@ -57,13 +57,12 @@ macro_rules! print_err {
 }
 
 pub trait LibcResult<T> {
-    #[deprecated(since="0.0.2", note="please use `check_*` instead")]
-    fn to_option(&self) -> Option<T>;
     fn check_not_negative(&self) -> Result<T>;
     fn check_positive(&self) -> Result<T>;
     /// verify that the command exited with -1, if true, then last error
     /// is wrapped into Ok(last_error)
     fn check_minus_one(&self) -> Result<i32>;
+    fn check_not_sigerr(&self) -> Result<T>;
 }
 
 pub trait LibcPtrResult<T> {
@@ -95,10 +94,15 @@ fn check_minus_one<N: num::Num + PartialOrd + Copy + Signed>(val: N) -> Result<i
     }
 }
 
-impl LibcResult<c_int> for c_int {
-    fn to_option(&self) -> Option<c_int> {
-        if *self < 0 { None } else { Some(*self) }
+fn check_not_sigerr<N: num::Num + PartialOrd + Copy + NumCast>(val: N) -> Result<N> {
+    if val == NumCast::from(SIG_ERR).unwrap() {
+        Err(Error::from(std::io::ErrorKind::Other))
+    } else {
+        Ok(val)
     }
+}
+
+impl LibcResult<c_int> for c_int {
     fn check_not_negative(&self) -> Result<c_int> {
         check_not_negative(*self)
     }
@@ -108,11 +112,11 @@ impl LibcResult<c_int> for c_int {
     fn check_minus_one(&self) -> Result<c_int> {
         check_minus_one(*self)
     }
+    fn check_not_sigerr(&self) -> Result<c_int> {
+        check_not_sigerr(*self)
+    }
 }
 impl LibcResult<i64> for i64 {
-    fn to_option(&self) -> Option<i64> {
-        if *self < 0 { None } else { Some(*self) }
-    }
     fn check_not_negative(&self) -> Result<i64> {
         check_not_negative(*self)
     }
@@ -122,12 +126,12 @@ impl LibcResult<i64> for i64 {
     fn check_minus_one(&self) -> Result<i32> {
         check_minus_one(*self)
     }
+    fn check_not_sigerr(&self) -> Result<i64> {
+        check_not_sigerr(*self)
+    }
 }
 
 impl LibcResult<isize> for isize {
-    fn to_option(&self) -> Option<isize> {
-        if *self <= 0 { None } else { Some(*self) }
-    }
     fn check_not_negative(&self) -> Result<isize> {
         check_not_negative(*self)
     }
@@ -137,12 +141,12 @@ impl LibcResult<isize> for isize {
     fn check_minus_one(&self) -> Result<i32> {
         check_minus_one(*self)
     }
+    fn check_not_sigerr(&self) -> Result<isize> {
+        check_not_sigerr(*self)
+    }
 }
 
 impl LibcResult<usize> for usize {
-    fn to_option(&self) -> Option<usize> {
-        if *self == SIG_ERR { None } else { Some(*self) }
-    }
     fn check_not_negative(&self) -> Result<usize> {
         check_not_negative(*self)
     }
@@ -152,13 +156,13 @@ impl LibcResult<usize> for usize {
     fn check_minus_one(&self) -> Result<i32> {
         unimplemented!();
     }
+    fn check_not_sigerr(&self) -> Result<usize> {
+        check_not_sigerr(*self)
+    }
 }
 
 // legacy, will go away
 impl<T> LibcResult<*mut T> for *mut T {
-    fn to_option(&self) -> Option<*mut T> {
-        if self.is_null() { None } else { Some(*self) }
-    }
     fn check_not_negative(&self) -> Result<*mut T> {
         unimplemented!()
     }
@@ -166,6 +170,9 @@ impl<T> LibcResult<*mut T> for *mut T {
         unimplemented!();
     }
     fn check_minus_one(&self) -> Result<i32> {
+        unimplemented!();
+    }
+    fn check_not_sigerr(&self) -> Result<*mut T> {
         unimplemented!();
     }
 }
@@ -337,7 +344,7 @@ pub fn system(cmdstring: &str) -> Result<i32> {
 
 // Figure 10.28 Correct POSIX.1 implementation of system function
 // (with signal handling)
-pub unsafe fn system2(cmdstring: &str) -> Result<i32> {
+pub fn system2(cmdstring: &str) -> Result<i32> {
     unsafe {
         let mut ignore: sigaction = std::mem::zeroed();
         let (mut saveintr, mut savemask, mut savequit) = uninitialized();
@@ -426,8 +433,8 @@ pub mod sync_parent_child {
     pub fn tell_wait() -> sigset_t {
         unsafe {
             let mut newmask = uninitialized();
-            signal(SIGUSR1, sig_usr as usize).to_option().expect("signal(SIGUSR1) error");
-            signal(SIGUSR2, sig_usr as usize).to_option().expect("signal(SIGUSR2) error");
+            signal(SIGUSR1, sig_usr as usize).check_not_sigerr().expect("signal(SIGUSR1) error");
+            signal(SIGUSR2, sig_usr as usize).check_not_sigerr().expect("signal(SIGUSR2) error");
             let mut zeromask = uninitialized();
             sigemptyset(&mut zeromask);
             sigemptyset(&mut newmask);
@@ -436,7 +443,7 @@ pub mod sync_parent_child {
 
             // Block SIGUSR1 and SIGUSR2 and save current signal mask
             let mut oldmask = uninitialized();
-            sigprocmask(SIG_BLOCK, &newmask, &mut oldmask).to_option().expect("SIG_BLOCK error");
+            sigprocmask(SIG_BLOCK, &newmask, &mut oldmask).check_not_negative().expect("SIG_BLOCK error");
             oldmask
         }
     }
@@ -453,7 +460,7 @@ pub mod sync_parent_child {
             sigsuspend(&zeromask);
         }
         // Reset signal mask to original value
-        sigprocmask(SIG_SETMASK, &oldmask, null_mut()).to_option().expect("SIG_SETMASK error");
+        sigprocmask(SIG_SETMASK, &oldmask, null_mut()).check_not_negative().expect("SIG_SETMASK error");
     }
 
     pub unsafe fn tell_child(pid: pid_t) {
@@ -469,7 +476,7 @@ pub mod sync_parent_child {
         }
         // Reset signal mask to original value
         sigprocmask(SIG_SETMASK, &oldmask, null_mut())
-            .to_option()
+            .check_not_negative()
             .expect("SIG_SETMASK error");
     }
 }

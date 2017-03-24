@@ -20,8 +20,8 @@ extern crate libc;
 #[macro_use(cstr)]
 extern crate apue;
 
-use libc::{printf, exit, getpid, c_int, _exit, sleep};
-use apue::{LibcResult, err_sys};
+use libc::{printf, getpid, c_int, _exit};
+use apue::{LibcResult};
 use apue::my_libc::vfork;
 
 static mut GLOBVAR: i64 = 6;
@@ -31,23 +31,19 @@ fn main() {
     unsafe {
         let mut var = Box::new(88);
         printf(cstr!("before vfork\n"));
-        if let Some(pid) = vfork().to_option() {
-            match pid {
-                0 => {
-                    // child
-                    GLOBVAR += 1;
-                    *var += 1;
-                    _exit(0);
-                }
-                _ => {
-                    printf(cstr!("pid = %ld, glob = %d, var = %d\n"),
-                           getpid(),
-                           GLOBVAR,
-                           *var as c_int);
-                }
+        match vfork().check_not_negative().expect("vfork error") {
+            0 => {
+                // child
+                GLOBVAR += 1;
+                *var += 1;
+                _exit(0);
             }
-        } else {
-            err_sys("vfork error");
+            _ => {
+                printf(cstr!("pid = %ld, glob = %d, var = %d\n"),
+                       getpid(),
+                       GLOBVAR,
+                       *var as c_int);
+            }
         }
     }
 }

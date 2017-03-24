@@ -37,7 +37,7 @@ fn main() {
             signal(SIGTSTP, sig_tstp as usize);
         }
         let buf = vec![0; BUFFSIZE];
-        while let Some(n) = read(STDIN_FILENO, as_void!(buf), BUFFSIZE).to_option() {
+        while let Ok(n) = read(STDIN_FILENO, as_void!(buf), BUFFSIZE).check_positive() {
             if write(STDOUT_FILENO, as_void!(buf), n as _) != n {
                 err_sys("write error");
             }

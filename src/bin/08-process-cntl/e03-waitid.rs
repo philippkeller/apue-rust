@@ -65,31 +65,31 @@ fn main() {
     panic::set_hook(Box::new(handle_panic));
     unsafe {
         let mut siginfo: siginfo_t = std::mem::uninitialized();
-        let mut pid = fork().to_option().expect("fork error");
+        let mut pid = fork().check_not_negative().expect("fork error");
         if pid == 0 {
             // child
             exit(7);
         }
-        waitid(idtype_t::P_PID, pid as _, &mut siginfo, WEXITED).to_option().expect("waitid error");
+        waitid(idtype_t::P_PID, pid as _, &mut siginfo, WEXITED).check_not_negative().expect("waitid error");
 
         pr_exit(siginfo);
 
-        pid = fork().to_option().expect("fork error");
+        pid = fork().check_not_negative().expect("fork error");
         if pid == 0 {
             // child
             abort(); // generate SIGABRT
         }
-        waitid(idtype_t::P_PID, pid as _, &mut siginfo, WEXITED).to_option().expect("waitid error");
+        waitid(idtype_t::P_PID, pid as _, &mut siginfo, WEXITED).check_not_negative().expect("waitid error");
         pr_exit(siginfo);
 
-        pid = fork().to_option().expect("fork error");
+        pid = fork().check_not_negative().expect("fork error");
         if pid == 0 {
             // child
             let z = 0;
             pid = 1 / z; // divide by 0 generates SIGFPE
         }
 
-        waitid(idtype_t::P_PID, pid as _, &mut siginfo, WEXITED).to_option().expect("waitid error");
+        waitid(idtype_t::P_PID, pid as _, &mut siginfo, WEXITED).check_not_negative().expect("waitid error");
         pr_exit(siginfo);
     }
 }

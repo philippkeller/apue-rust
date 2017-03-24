@@ -51,7 +51,7 @@ fn main() {
         let mut end: timeval = std::mem::uninitialized();
         gettimeofday(&mut end, null());
         end.tv_sec += 10;
-        let pid = fork().to_option().expect("fork error");
+        let pid = fork().check_not_negative().expect("fork error");
         let str = if pid == 0 {
             println!("current nice value in child is {}, adjusting by {}",
                      nice(0) + nzero,

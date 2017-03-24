@@ -96,7 +96,7 @@ mod e09_allsignals {
             sigaddset(&mut sigs, SIGILL);
             sigaddset(&mut sigs, SIGTRAP);
             sigprocmask(SIG_SETMASK, &sigs, null_mut())
-                .to_option()
+                .check_not_negative()
                 .expect("couldn't set signals");
             pr_mask("after setting mask", m);
         }

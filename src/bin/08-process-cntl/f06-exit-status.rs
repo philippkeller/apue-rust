@@ -42,7 +42,7 @@ fn main() {
     panic::set_hook(Box::new(handle_panic));
     unsafe {
         let mut status: c_int = 0;
-        let mut pid = fork().to_option().expect("fork error");
+        let mut pid = fork().check_not_negative().expect("fork error");
         if pid == 0 {
             // child
             exit(7);
@@ -53,7 +53,7 @@ fn main() {
         }
         pr_exit(status);
 
-        pid = fork().to_option().expect("fork error");
+        pid = fork().check_not_negative().expect("fork error");
         if pid == 0 {
             // child
             abort(); // generate SIGABRT
@@ -64,7 +64,7 @@ fn main() {
         }
         pr_exit(status);
 
-        pid = fork().to_option().expect("fork error");
+        pid = fork().check_not_negative().expect("fork error");
         if pid == 0 {
             // child
             let z = 0;

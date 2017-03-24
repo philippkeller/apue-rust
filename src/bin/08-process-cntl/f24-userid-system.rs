@@ -24,6 +24,6 @@ fn main() {
     }
     args.next(); // skip exe-name
     let status =
-        unsafe { system(cstr!(args.next().unwrap())).to_option().expect("system() error") };
+        unsafe { system(cstr!(args.next().unwrap())).check_not_negative().expect("system() error") };
     pr_exit(status);
 }

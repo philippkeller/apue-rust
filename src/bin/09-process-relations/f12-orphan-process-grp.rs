@@ -51,7 +51,7 @@ unsafe fn pr_ids(name: &str) {
 fn main() {
     unsafe {
         pr_ids("parent");
-        let pid = fork().to_option().expect("fork error");
+        let pid = fork().check_not_negative().expect("fork error");
         if pid > 0 {
             // parent: sleep to let child stop itself
             sleep(1);
