@@ -3,6 +3,11 @@
 /// Error handling is still very ugly, I hope I soon get an answer here:
 /// http://stackoverflow.com/questions/42772307
 ///
+/// Findings:
+/// - detached threads on linux can't write to stdout, got
+///   "failed printing to stdout: Broken pipe (os error 32)"
+///
+/// mac only:
 /// $ f04-detached-thread
 /// called!
 
@@ -14,7 +19,7 @@ use libc::{pthread_create, pthread_attr_destroy, pthread_attr_init, pthread_attr
            usleep};
 
 extern "C" fn my_thread(_: *mut c_void) -> *mut c_void {
-    println!("called!");
+    // println!("called!");
     0 as _
 }
 

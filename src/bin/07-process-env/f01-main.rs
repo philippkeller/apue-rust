@@ -15,8 +15,8 @@
 /// update: before the exit code seemed stable, now it is somehow random. Got 10 on OSX
 /// and 126 on Linux
 ///
-/// $ f01-main | cat # cat is needed so it "swallows" the exit code from f01-main
-/// Hello World!
+// $ f01-main | cat # cat is needed so it "swallows" the exit code from f01-main
+// Hello World!
 
 extern crate libc;
 

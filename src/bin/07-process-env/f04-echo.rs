@@ -8,11 +8,11 @@
 /// Of course you would never do it this "raw" way (but rather with env::args())
 /// but it was a nice exercise of dereferencing C pointers
 ///
-/// $ f04-echo arg1 TEST foo | cat
-/// argv[0]: f04-echo
-/// argv[1]: arg1
-/// argv[2]: TEST
-/// argv[3]: foo
+// $ f04-echo arg1 TEST foo | cat
+// argv[0]: f04-echo
+// argv[1]: arg1
+// argv[2]: TEST
+// argv[3]: foo
 
 extern crate libc;
 
