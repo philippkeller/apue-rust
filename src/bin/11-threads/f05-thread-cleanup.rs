@@ -33,7 +33,7 @@ use libc::c_void;
 use libc::{pthread_join, usleep};
 use std::ptr::null_mut;
 use apue::my_libc::pthread_create;
-use apue::PthreadExpect;
+use apue::LibcResult;
 
 #[no_mangle]
 pub extern "C" fn cleanup(arg: *mut c_void) {
@@ -55,14 +55,14 @@ fn main() {
     unsafe {
         let (mut tid1, mut tid2) = std::mem::zeroed();
         let mut tret = std::mem::uninitialized();
-        pthread_create(&mut tid1, null_mut(), thr_fn1, 1 as _).expect("can't create thread 1");
+        pthread_create(&mut tid1, null_mut(), thr_fn1, 1 as _).check_zero().expect("can't create thread 1");
         usleep(1000);
-        pthread_create(&mut tid2, null_mut(), thr_fn2, 1 as _).expect("can't create thread 2");
+        pthread_create(&mut tid2, null_mut(), thr_fn2, 1 as _).check_zero().expect("can't create thread 2");
         usleep(1000);
-        pthread_join(tid1, &mut tret).expect("can’t join with thread 1");
+        pthread_join(tid1, &mut tret).check_zero().expect("can’t join with thread 1");
         println!("thread 1 exit code: {:?}", tret);
         usleep(1000);
-        pthread_join(tid2, &mut tret).expect("can’t join with thread 2");
+        pthread_join(tid2, &mut tret).check_zero().expect("can’t join with thread 2");
         println!("thread 2 exit code: {:?}", tret);
     }
 }

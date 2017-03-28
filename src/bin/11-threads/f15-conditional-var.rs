@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 /// Figure 11.15: using a conditional variable
 ///
 /// Finding: the text for pthread_cond_wait was somehow hard to understand
@@ -7,7 +9,6 @@ extern crate libc;
 
 use libc::{pthread_cond_t, pthread_mutex_t, PTHREAD_COND_INITIALIZER, PTHREAD_MUTEX_INITIALIZER};
 use libc::{pthread_mutex_lock, pthread_cond_wait, pthread_mutex_unlock, pthread_cond_signal};
-use std::ptr::null;
 use std::collections::VecDeque;
 
 struct Msg {}
@@ -34,7 +35,7 @@ impl Messages {
                 while self.messages.len() == 0 {
                     pthread_cond_wait(&mut self.qready, &mut self.qlock);
                 }
-                let mp = self.messages.pop_front();
+                let _ = self.messages.pop_front();
                 pthread_mutex_unlock(&mut self.qlock);
                 // now process the message mp
             }

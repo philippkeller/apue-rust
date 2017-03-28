@@ -16,7 +16,7 @@ extern crate apue;
 use libc::c_void;
 use libc::usleep;
 use apue::my_libc::pthread_create;
-use apue::PthreadExpect;
+use apue::LibcResult;
 use std::ptr::null_mut;
 
 #[derive(Debug)]
@@ -44,9 +44,8 @@ fn main() {
         });
         let mut tid1 = std::mem::uninitialized();
         let foo_ptr = Box::into_raw(foo);
-        pthread_create(&mut tid1, null_mut(), thr_fn1, foo_ptr as *mut c_void)
-            .expect("can't create thread 1");
-        libc::pthread_join(tid1, null_mut());
+        pthread_create(&mut tid1, null_mut(), thr_fn1, foo_ptr as *mut c_void).check_zero().expect("can't create thread 1");
+        libc::pthread_join(tid1, null_mut()).check_zero().expect("join error");
         let foo: Box<Foo> = Box::from_raw(foo_ptr);
         usleep(100);
         println!("{:?}", foo);

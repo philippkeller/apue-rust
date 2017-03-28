@@ -20,7 +20,7 @@ extern crate libc;
 extern crate apue;
 extern crate errno;
 
-use apue::{err_sys, pr_exit, system};
+use apue::{pr_exit, system};
 
 
 fn main() {

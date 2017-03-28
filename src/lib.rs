@@ -62,6 +62,7 @@ pub trait LibcResult<T> {
     /// verify that the command exited with -1, if true, then last error
     /// is wrapped into Ok(last_error)
     fn check_minus_one(&self) -> Result<i32>;
+    fn check_zero(&self) -> Result<T>;
     fn check_not_sigerr(&self) -> Result<T>;
 }
 
@@ -94,6 +95,14 @@ fn check_minus_one<N: num::Num + PartialOrd + Copy + Signed>(val: N) -> Result<i
     }
 }
 
+fn check_zero<N: num::Num + PartialOrd + Copy + NumCast>(val: N) -> Result<N> {
+    if val == N::zero() {
+        Ok(val)
+    } else {
+        Err(Error::from_raw_os_error(NumCast::from(val).unwrap()))
+    }
+}
+
 fn check_not_sigerr<N: num::Num + PartialOrd + Copy + NumCast>(val: N) -> Result<N> {
     if val == NumCast::from(SIG_ERR).unwrap() {
         Err(Error::from(std::io::ErrorKind::Other))
@@ -112,6 +121,9 @@ impl LibcResult<c_int> for c_int {
     fn check_minus_one(&self) -> Result<c_int> {
         check_minus_one(*self)
     }
+    fn check_zero(&self) -> Result<c_int> {
+        check_zero(*self)
+    }
     fn check_not_sigerr(&self) -> Result<c_int> {
         check_not_sigerr(*self)
     }
@@ -125,6 +137,9 @@ impl LibcResult<i64> for i64 {
     }
     fn check_minus_one(&self) -> Result<i32> {
         check_minus_one(*self)
+    }
+    fn check_zero(&self) -> Result<i64> {
+        check_zero(*self)
     }
     fn check_not_sigerr(&self) -> Result<i64> {
         check_not_sigerr(*self)
@@ -141,6 +156,9 @@ impl LibcResult<isize> for isize {
     fn check_minus_one(&self) -> Result<i32> {
         check_minus_one(*self)
     }
+    fn check_zero(&self) -> Result<isize> {
+        check_zero(*self)
+    }
     fn check_not_sigerr(&self) -> Result<isize> {
         check_not_sigerr(*self)
     }
@@ -156,24 +174,11 @@ impl LibcResult<usize> for usize {
     fn check_minus_one(&self) -> Result<i32> {
         unimplemented!();
     }
+    fn check_zero(&self) -> Result<usize> {
+        check_zero(*self)
+    }
     fn check_not_sigerr(&self) -> Result<usize> {
         check_not_sigerr(*self)
-    }
-}
-
-// legacy, will go away
-impl<T> LibcResult<*mut T> for *mut T {
-    fn check_not_negative(&self) -> Result<*mut T> {
-        unimplemented!()
-    }
-    fn check_positive(&self) -> Result<*mut T> {
-        unimplemented!();
-    }
-    fn check_minus_one(&self) -> Result<i32> {
-        unimplemented!();
-    }
-    fn check_not_sigerr(&self) -> Result<*mut T> {
-        unimplemented!();
     }
 }
 
@@ -187,24 +192,10 @@ impl<T> LibcPtrResult<*mut T> for *mut T {
     }
 }
 
-pub trait PthreadExpect {
-    fn expect(&self, msg: &str);
-}
-
-impl PthreadExpect for c_int {
-    fn expect(&self, msg: &str) {
-        if *self != 0 {
-            println!("{}: error {}", msg, *self);
-            unsafe {
-                exit(1);
-            }
-        }
-    }
-}
-
 pub unsafe fn array_to_string(sl: &[i8]) -> &str {
     CStr::from_ptr(sl.as_ptr()).to_str().expect("invalid string")
 }
+
 
 /// Return uname -s
 pub fn uname() -> Option<String> {

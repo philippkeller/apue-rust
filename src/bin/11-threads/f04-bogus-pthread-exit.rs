@@ -17,7 +17,7 @@ extern crate apue;
 use libc::c_void;
 use libc::{pthread_self, pthread_join, usleep};
 use apue::my_libc::{pthread_exit, pthread_create};
-use apue::PthreadExpect;
+use apue::LibcResult;
 use std::ptr::null_mut;
 
 #[derive(Debug)]
@@ -61,11 +61,11 @@ fn main() {
     unsafe {
         let mut fp: Box<Foo> = std::mem::uninitialized();
         let (mut tid1, mut tid2) = std::mem::zeroed();
-        pthread_create(&mut tid1, null_mut(), thr_fn1, null_mut()).expect("can't create thread 1");
-        pthread_join(tid1, &mut fp as *mut _ as *mut _).expect("can't join thread 1");
+        pthread_create(&mut tid1, null_mut(), thr_fn1, null_mut()).check_zero().expect("can't create thread 1");
+        pthread_join(tid1, &mut fp as *mut _ as *mut _).check_zero().expect("can't join thread 1");
         usleep(100);
         println!("parent starting second thread");
-        pthread_create(&mut tid2, null_mut(), thr_fn2, null_mut()).expect("can't create thread 2");
+        pthread_create(&mut tid2, null_mut(), thr_fn2, null_mut()).check_zero().expect("can't create thread 2");
         usleep(100);
         printfoo("parent:", fp.as_ref());
 

@@ -85,7 +85,8 @@ fn main() {
         pid = fork().check_not_negative().expect("fork error");
         if pid == 0 {
             // child
-            let z = 0;
+            let mut z = 1;
+            z -= 1;
             pid = 1 / z; // divide by 0 generates SIGFPE
         }
 
