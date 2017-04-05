@@ -450,3 +450,7 @@ path = "src/bin/11-threads/e01-pass-struct.rs"
 [[bin]]
 name="f04-detached-thread"
 path = "src/bin/12-thread-control/f04-detached-thread.rs"
+
+[[bin]]
+name="f08-recursive-mutex"
+path = "src/bin/12-thread-control/f08-recursive-mutex.rs"

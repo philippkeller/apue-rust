@@ -475,7 +475,7 @@ pub mod sync_parent_child {
 #[allow(non_camel_case_types)]
 pub mod my_libc {
     use libc::{dirent, c_void, c_int, c_char, c_long, c_ulong, c_uint, pid_t, clock_t, siginfo_t,
-               sigset_t, id_t, size_t, tm, pthread_attr_t, pthread_t, pthread_rwlock_t};
+               sigset_t, id_t, size_t, tm, pthread_attr_t, pthread_t, pthread_rwlock_t, timespec};
     use libc::{DIR, FILE};
 
     #[repr(C)]
@@ -541,6 +541,11 @@ pub mod my_libc {
     pub const CLD_TRAPPED: c_int = 4;       // [XSI] traced child has trapped
     pub const CLD_STOPPED: c_int = 5;       // [XSI] child has stopped
     pub const CLD_CONTINUED: c_int = 6;       // [XSI] stopped child has continued
+
+    pub type clockid_t = u32;
+    pub const CLOCK_REALTIME: clockid_t = 0;
+    pub const CLOCK_MONOTONIC_RAW: clockid_t = 4;
+    pub const CLOCK_MONOTONIC: clockid_t = 6;
 
     extern "C" {
         #[cfg(target_os = "macos")]
@@ -625,5 +630,6 @@ pub mod my_libc {
                         -> c_int;
         pub fn random() -> c_long;
         pub fn srandom(arg1: c_uint);
+        pub fn clock_gettime(__clock_id: clockid_t, __tp: *mut timespec) -> c_int;
     }
 }
