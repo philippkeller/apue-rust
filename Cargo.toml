@@ -454,3 +454,7 @@ path = "src/bin/12-thread-control/f04-detached-thread.rs"
 [[bin]]
 name="f08-recursive-mutex"
 path = "src/bin/12-thread-control/f08-recursive-mutex.rs"
+
+[[bin]]
+name="f11-getenv-nonreentrant"
+path = "src/bin/12-thread-control/f11-getenv-nonreentrant.rs"
