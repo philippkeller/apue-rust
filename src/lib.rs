@@ -552,7 +552,10 @@ pub mod my_libc {
 
     #[allow(non_upper_case_globals)]
     pub const PTHREAD_ONCE_SIG_init: c_long = 0x30B1BCBA;
+    #[cfg(target_os = "macos")]
     pub const PTHREAD_ONCE_INIT:pthread_once_t = pthread_once_t { __sig: PTHREAD_ONCE_SIG_init, __opaque: [0,0,0,0,0,0,0,0]};
+    #[cfg(target_os = "linux")]
+    pub const PTHREAD_ONCE_INIT:pthread_once_t = pthread_once_t { __sig: 0, __opaque: [0,0,0,0,0,0,0,0]};
 
 
     #[cfg(target_os = "macos")]
@@ -631,9 +634,8 @@ pub mod my_libc {
                                    -> c_int;
 
         pub fn pthread_once(arg1: *mut pthread_once_t,
-                            arg2: unsafe extern "C" fn())
+                            arg2: Option<unsafe extern "C" fn()>)
                             -> c_int;
-
 
         pub static mut sys_errlist: [*const c_char; 0usize];
         pub static sys_nerr: c_int;

@@ -38,7 +38,7 @@ extern "C" fn thread_init() {
 
 fn getenv_r(name:&str) -> Option<&str> {
     unsafe {
-        pthread_once(&mut INIT_DONE, thread_init);
+        pthread_once(&mut INIT_DONE, Some(thread_init));
         pthread_mutex_lock(&mut ENV_MUTEX);
         let mut cmp = name.to_owned();
         cmp.push_str("=");
