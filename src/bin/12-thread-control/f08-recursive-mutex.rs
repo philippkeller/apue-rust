@@ -48,8 +48,8 @@ fn timeout_helper(tip: ToInfo) {
     unsafe {
         #[cfg(target_os = "macos")]
         libc::nanosleep(&tip.to_wait, std::ptr::null_mut());
-        #[cfg(not(target_os = "macos"))]
-        libc::clock_nanosleep(CLOCK_REALTIME, 0, tip.to_wait, std::ptr::null());
+        #[cfg(target_os = "linux")]
+        libc::clock_nanosleep(CLOCK_REALTIME, 0, &tip.to_wait, std::ptr::null_mut());
     }
     (tip.to_fn)(tip.to_arg);
 }

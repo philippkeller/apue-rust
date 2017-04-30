@@ -555,7 +555,10 @@ pub mod my_libc {
     pub const PTHREAD_ONCE_INIT:pthread_once_t = pthread_once_t { __sig: PTHREAD_ONCE_SIG_init, __opaque: [0,0,0,0,0,0,0,0]};
 
 
+    #[cfg(target_os = "macos")]
     pub type clockid_t = u32;
+    #[cfg(target_os = "linux")]
+    pub type clockid_t = i32;
     pub const CLOCK_REALTIME: clockid_t = 0;
     pub const CLOCK_MONOTONIC_RAW: clockid_t = 4;
     pub const CLOCK_MONOTONIC: clockid_t = 6;
