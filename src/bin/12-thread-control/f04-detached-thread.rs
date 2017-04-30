@@ -20,7 +20,7 @@ use libc::{pthread_create, pthread_attr_destroy, pthread_attr_init, pthread_attr
 use apue::LibcResult;
 
 extern "C" fn my_thread(_: *mut c_void) -> *mut c_void {
-    // println!("called!");
+    println!("called!");
     0 as _
 }
 

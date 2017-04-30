@@ -5,6 +5,9 @@
 ///   just malloc a buffer for the caller, no? Of course the caller would
 ///   need to free it up, but isn't that normal in C that you need take
 ///   care of buffers that "others" did malloc for you?
+///
+/// $ f12-getenv-reentrant | sed 's/=.*//g'
+/// PATH
 
 extern crate libc;
 extern crate apue;

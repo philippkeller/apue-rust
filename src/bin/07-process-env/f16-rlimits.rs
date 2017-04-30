@@ -9,14 +9,13 @@
 ///   `ulimit -c unlimited` first: http://stackoverflow.com/questions/9412156
 ///
 /// mac only:
-/// $ f16-rlimits
+/// $ f16-rlimits | grep -v NOFILE
 /// RLIMIT_AS       (infinite)  (infinite)
 /// RLIMIT_CORE              0  (infinite)
 /// RLIMIT_CPU      (infinite)  (infinite)
 /// RLIMIT_DATA     (infinite)  (infinite)
 /// RLIMIT_FSIZE    (infinite)  (infinite)
 /// RLIMIT_MEMLOCK  (infinite)  (infinite)
-/// RLIMIT_NOFILE         2560  (infinite)
 /// RLIMIT_NPROC           709        1064
 /// RLIMIT_RSS      (infinite)  (infinite)
 /// $ ulimit -c unlimited && f16-rlimits | grep CORE

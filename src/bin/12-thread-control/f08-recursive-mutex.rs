@@ -14,7 +14,7 @@
 ///     need Mutex in Arc which is a joke, since I would have a
 ///     Arc<Mutex<pthread_mutex_t>> which would be a mutex within a mutex
 ///
-/// $ f08=recursive-mutex
+/// $ f08-recursive-mutex
 /// within retry: before lock
 /// within retry: after lock
 /// within retry: after unlock
