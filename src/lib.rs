@@ -529,6 +529,14 @@ pub mod my_libc {
         pub _bindgen_data_: [u64; 1usize],
     }
 
+    #[repr(C)]
+    #[derive(Debug, Clone)]
+    pub struct pthread_once_t {
+        pub __sig: c_long,
+        pub __opaque: [c_char; 8usize],
+    }
+
+
     pub const WEXITED: c_int = 0x00000004;  // [XSI] Processes which have exitted
     pub const WSTOPPED: c_int = 0x00000008;  // [XSI] Any child stopped by signal
     pub const WCONTINUED: c_int = 0x00000010;  // [XSI] Any child stopped then continued
@@ -541,6 +549,11 @@ pub mod my_libc {
     pub const CLD_TRAPPED: c_int = 4;       // [XSI] traced child has trapped
     pub const CLD_STOPPED: c_int = 5;       // [XSI] child has stopped
     pub const CLD_CONTINUED: c_int = 6;       // [XSI] stopped child has continued
+
+    #[allow(non_upper_case_globals)]
+    pub const PTHREAD_ONCE_SIG_init: c_long = 0x30B1BCBA;
+    pub const PTHREAD_ONCE_INIT:pthread_once_t = pthread_once_t { __sig: PTHREAD_ONCE_SIG_init, __opaque: [0,0,0,0,0,0,0,0]};
+
 
     pub type clockid_t = u32;
     pub const CLOCK_REALTIME: clockid_t = 0;
@@ -613,6 +626,11 @@ pub mod my_libc {
         pub fn pthread_rwlock_init(arg1: *mut pthread_rwlock_t,
                                    arg2: *const pthread_rwlockattr_t)
                                    -> c_int;
+
+        pub fn pthread_once(arg1: *mut pthread_once_t,
+                            arg2: unsafe extern "C" fn())
+                            -> c_int;
+
 
         pub static mut sys_errlist: [*const c_char; 0usize];
         pub static sys_nerr: c_int;
