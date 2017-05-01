@@ -466,3 +466,7 @@ path = "src/bin/12-thread-control/f12-getenv-reentrant.rs"
 [[bin]]
 name="f13-getenv-setspecific"
 path = "src/bin/12-thread-control/f13-getenv-setspecific.rs"
+
+[[bin]]
+name="f16-signal-handling"
+path = "src/bin/12-thread-control/f16-signal-handling.rs"

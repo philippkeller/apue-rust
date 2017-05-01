@@ -1,0 +1,73 @@
+/// Figure 12.16: Synchronous signal handling
+///
+/// Status: only partially implemented, maybe does not work yet
+///
+/// Findings:
+///
+/// - instead of pthread_mutex_lock and pthread_cond_signal I found that
+///   Rusts Mutex/Condvar serves the same purpose
+/// - it took me a while to understand how the mutex works together with
+///   pthread_cond_wait (namely, taht pthread_cond_wait unlocks the mutex),
+///   although this has been the subject before.. Interesting to see
+///   that rusts Mutex/Condvar behave exactly the same:
+///   https://doc.rust-lang.org/std/sync/struct.Condvar.html#examples
+
+extern crate libc;
+extern crate apue;
+
+use apue::LibcResult;
+
+use std::sync::{Arc, Mutex, Condvar};
+use std::thread;
+
+use libc::{sigset_t, pthread_mutex_t, SIGINT, SIGQUIT, SIG_BLOCK, PTHREAD_MUTEX_INITIALIZER};
+use libc::{sigwait, pthread_mutex_lock, pthread_mutex_unlock, sleep, exit, sigemptyset, sigaddset, pthread_sigmask};
+
+unsafe fn thr_fn(mask:&sigset_t, pair:Arc<(Mutex<bool>, Condvar)>) {
+    let mut signo = std::mem::uninitialized();
+    loop {
+        sigwait(mask, &mut signo).check_zero().expect("sigwait failed");
+        match signo {
+            SIGINT => {
+                println!("\ninterrupt");
+            },
+            SIGQUIT => {
+                let &(ref lock, ref cvar) = &*pair;
+                let mut quitflag = lock.lock().unwrap();
+                *quitflag = true;
+                cvar.notify_one();
+            },
+            _ => {
+                println!("unexpectd signal {}", signo);
+                exit(1);
+            }
+        }
+    }
+}
+
+static mut LOCK:pthread_mutex_t = PTHREAD_MUTEX_INITIALIZER;
+
+fn main() {
+    unsafe {
+        let pair = Arc::new((Mutex::new(false), Condvar::new()));
+        let pair2 = pair.clone();
+        let (mut mask, mut oldmask) = std::mem::uninitialized();
+        sigemptyset(&mut mask);
+        sigaddset(&mut mask, SIGINT);
+        sigaddset(&mut mask, SIGQUIT);
+        pthread_sigmask(SIG_BLOCK, &mask, &mut oldmask).check_zero().expect("SIG_BLOCK error");
+        thread::spawn(move || {
+            thr_fn(&mask, pair2);
+        });
+        // Wait for the thread to start up.
+        let &(ref lock, ref cvar) = &*pair;
+        {
+            let mut quitflag = lock.lock().unwrap();
+            while !*quitflag {
+                quitflag = cvar.wait(quitflag).unwrap();
+            }
+                * quitflag = false;
+        }
+
+    }
+}
